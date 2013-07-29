@@ -1,0 +1,27 @@
+merge "mvn:org.kevoree.corelibrary.sky/org.kevoree.library.sky.api/{kevoree.version}"
+merge "mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/{kevoree.version}"
+merge "mvn:org.kevoree.kabaztag/org.kevoree.library.javase.http.api/1.0.0-SNAPSHOT"
+merge "mvn:org.kevoree.kabaztag/org.kevoree.library.javase.http.samples/1.0.0-SNAPSHOT"
+merge "mvn:org.kevoree.kabaztag/org.kevoree.library.javase.http.webbit/1.0.0-SNAPSHOT"
+
+addNode node0 : PJavaSENode {logLevel="DEBUG"}
+addComponent webserver@node0 : WebbitHTTPServer
+
+addComponent favicon@node0 : FaviconHandler { urlpattern='/favicon*' }
+addComponent page@node0 : HelloWorldHandler { urlpattern='/'}
+addComponent page1@node0 : StaticFileHandler { urlpattern='/static/', path = '/var/www/', contained = 'false', defaultFile = 'showcase.html'}
+
+addChannel request : defMSG
+addChannel response : defMSG
+
+bind webserver.request@node0 => request
+bind webserver.response@node0 => response
+
+bind page.request@node0 => request
+bind page.content@node0 => response
+
+bind page1.request@node0 => request
+bind page1.content@node0 => response
+
+bind favicon.request@node0 => request
+bind favicon.content@node0 => response
