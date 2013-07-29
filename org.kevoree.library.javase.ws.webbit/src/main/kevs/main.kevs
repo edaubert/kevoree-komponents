@@ -1,0 +1,30 @@
+merge "mvn:org.kevoree.corelibrary.sky/org.kevoree.library.sky.api/{kevoree.version}"
+merge "mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/{kevoree.version}"
+merge "mvn:org.kevoree.komponents/org.kevoree.library.javase.ws.api/1.0.0-SNAPSHOT"
+merge "mvn:org.kevoree.komponents/org.kevoree.library.javase.ws.samples/1.0.0-SNAPSHOT"
+merge "mvn:org.kevoree.komponents/org.kevoree.library.javase.ws.webbit/1.0.0-SNAPSHOT"
+
+addNode node0 : PJavaSENode {logLevel="DEBUG"}
+addComponent webserver@node0 : WebbitWebSocketServer
+
+addComponent page@node0 : EchoWebSocketHandler { urlpattern='/'}
+
+addChannel onOpen : defMSG
+addChannel onMessage : defMSG
+addChannel onClose : defMSG
+addChannel send : defMSG
+addChannel broadcast : defMSG
+
+bind webserver.onOpen@node0 => onOpen
+bind webserver.onMessage@node0 => onMessage
+bind webserver.onClose@node0 => onClose
+
+bind webserver.send@node0 => send
+bind webserver.broadcast@node0 => broadcast
+
+bind page.onOpen@node0 => onOpen
+bind page.onMessage@node0 => onMessage
+bind page.onClose@node0 => onClose
+
+bind page.send@node0 => send
+//bind page.broadcast@node0 => broadcast
