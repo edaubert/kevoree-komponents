@@ -17,11 +17,11 @@ import org.webbitserver.HttpResponse;
  * @author Erwan Daubert
  * @version 1.0
  */
-public class WebbitHandler implements HttpHandler {
+public class WebbitHTTPHandler implements HttpHandler {
     private WebbitHTTPServer server;
     private Monitor monitor;
 
-    public WebbitHandler(WebbitHTTPServer server) {
+    public WebbitHTTPHandler(WebbitHTTPServer server) {
         this.server = server;
         monitor = new Monitor(Long.parseLong(server.getDictionary().get("timeout").toString()));
     }

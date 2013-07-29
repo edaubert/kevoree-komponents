@@ -32,7 +32,7 @@ import java.util.concurrent.TimeoutException;
 public class WebbitHTTPServer extends AbstractHTTPServer {
     private int port;
     WebServer server;
-    private WebbitHandler handler;
+    private WebbitHTTPHandler handler;
 
     @Override
     public void start() throws ExecutionException, InterruptedException {
@@ -40,7 +40,7 @@ public class WebbitHTTPServer extends AbstractHTTPServer {
 
         server = WebServers.createWebServer(port);
 //        server.staleConnectionTimeout(Integer.parseInt(getDictionary().get("timeout").toString()));
-        handler = new WebbitHandler(this);
+        handler = new WebbitHTTPHandler(this);
         server.add(handler);
         server.start().get();
     }
