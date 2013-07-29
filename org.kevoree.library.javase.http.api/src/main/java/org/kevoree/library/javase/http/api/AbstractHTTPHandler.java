@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
  * @author Erwan Daubert
  * @version 1.0
  */
-@Library(name = "JavaSE")
+@Library(name = "web")
 @ComponentFragment
 @Provides({
         @ProvidedPort(name = "request", type = PortType.MESSAGE)

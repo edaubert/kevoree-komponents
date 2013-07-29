@@ -11,7 +11,7 @@ import org.kevoree.framework.AbstractComponentType;
  * @author Erwan Daubert
  * @version 1.0
  */
-@Library(name = "JavaSE")
+@Library(name = "web")
 @ComponentFragment
 @DictionaryType({
         @DictionaryAttribute(name = "port" , defaultValue = "8080"),
