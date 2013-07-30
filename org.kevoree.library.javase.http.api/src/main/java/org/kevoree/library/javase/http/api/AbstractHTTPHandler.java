@@ -30,57 +30,47 @@ import java.util.regex.Pattern;
         @RequiredPort(name = "forward", type = PortType.MESSAGE, optional = true)
 })
 @DictionaryType({
-        @DictionaryAttribute(name = "urlpattern", optional = true, defaultValue = "/")
+        @DictionaryAttribute(name = "urlPattern", optional = true, defaultValue = "/"),
+        @DictionaryAttribute(name = "patternToRemove", optional = true, defaultValue = "/"),
 })
 public abstract class AbstractHTTPHandler extends AbstractComponentType {
     protected static final int NO_RETURN_RESPONSE = 418;
 
     private KevoreeHttpServlet servlet;
     protected String urlPatternRegex;
+    protected String patternToRemove;
 
     @Start
     public void start() {
         servlet = new KevoreeHttpServlet();
-        urlPatternRegex = getDictionary().get("urlpattern").toString().replaceAll("\\*{2,}", ".*")/*.replaceAll("[^.]\\*+", "/?[^/]*")*/;
+        urlPatternRegex = getDictionary().get("urlPattern").toString();
+        patternToRemove = getDictionary().get("patternToRemove").toString();
     }
 
     @Update
     public void update() {
-        if (!urlPatternRegex.equals(getDictionary().get("urlpattern").toString().replaceAll("\\*{2,}", ".*")/*.replaceAll("[^.]\\*+", "/?[^/]*")*/)) {
+        if (!urlPatternRegex.equals(getDictionary().get("urlPattern").toString()) && !patternToRemove.equals(getDictionary().get("patternToRemove").toString())) {
 //            stop();
             start();
         }
     }
 
-    protected String getUrlPatternWithoutRegex() {
-        Log.warn("trying to build the urlPattern but removing the regex specificities: {}", urlPatternRegex);
-        return urlPatternRegex.replaceAll("\\.\\*", "");
-    }
+    protected String applyPatternToRemove(String uri) {
 
-    protected String getLastParam(String uri) {
-        String result = uri;
-        String urlPattern = this.urlPatternRegex;
-        Pattern p = Pattern.compile("\\{(\\w+)\\}");
-        Matcher m = p.matcher(urlPattern);
-        while (m.find()) {
-            urlPattern = urlPattern.replace("{" + m.group(1) + "}", ".*");
-        }
-
-        String regex = urlPattern.replace(".", "\\.").replaceAll("\\*{2,}", "(.*)")/*.replaceAll("[^.]\\*+", "(/?[^/]*)")*/;
-        p = Pattern.compile(regex);
-        m = p.matcher(result);
-        if (m.find()) {
-            result = result.replace(m.group(1), "");
-        }
-        return result;
+        Pattern pattern = Pattern.compile(patternToRemove);
+        Matcher matcher = pattern.matcher(uri);
+        System.err.println(urlPatternRegex);
+        System.err.println(uri);
+        System.err.println(matcher.replaceFirst(""));
+        return matcher.replaceFirst("");
     }
 
     public void forward(HttpServletRequest req, HttpServletResponse response) {
         if (req instanceof KevoreeHTTPServletRequest) {
             KevoreeHTTPServletRequestWrapper request = new KevoreeHTTPServletRequestWrapper((KevoreeHTTPServletRequest) req);
-            // remove already used pattern => / + getLastParam(...)
+
             String uri = request.getRequestURI();
-            uri = getLastParam(uri);
+            uri = applyPatternToRemove(uri);
             if (!uri.startsWith("/")) {
                 uri = "/" + uri;
             }
@@ -106,6 +96,7 @@ public abstract class AbstractHTTPHandler extends AbstractComponentType {
         Matcher m = pattern.matcher(url);
         return m.matches();
     }
+
     // TODO change type and name of the parameter
     @Port(name = "request")
     public void request(/*HTTPOperationTuple*/Object msg) {

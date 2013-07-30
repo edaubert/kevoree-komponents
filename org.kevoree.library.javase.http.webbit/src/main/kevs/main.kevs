@@ -1,15 +1,15 @@
 merge "mvn:org.kevoree.corelibrary.sky/org.kevoree.library.sky.api/{kevoree.version}"
 merge "mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/{kevoree.version}"
-merge "mvn:org.kevoree.kabaztag/org.kevoree.library.javase.http.api/1.0.0-SNAPSHOT"
-merge "mvn:org.kevoree.kabaztag/org.kevoree.library.javase.http.samples/1.0.0-SNAPSHOT"
-merge "mvn:org.kevoree.kabaztag/org.kevoree.library.javase.http.webbit/1.0.0-SNAPSHOT"
+merge "mvn:org.kevoree.komponents/org.kevoree.library.javase.http.api/1.0.0-SNAPSHOT"
+merge "mvn:org.kevoree.komponents/org.kevoree.library.javase.http.samples/1.0.0-SNAPSHOT"
+merge "mvn:org.kevoree.komponents/org.kevoree.library.javase.http.webbit/1.0.0-SNAPSHOT"
 
 addNode node0 : PJavaSENode {logLevel="DEBUG"}
 addComponent webserver@node0 : WebbitHTTPServer
 
-addComponent favicon@node0 : FaviconHandler { urlpattern='/favicon*' }
-addComponent page@node0 : HelloWorldHandler { urlpattern='/'}
-addComponent page1@node0 : StaticFileHandler { urlpattern='/static/', path = '/var/www/', contained = 'false', defaultFile = 'showcase.html'}
+addComponent favicon@node0 : FaviconHandler { urlPattern='/favicon*' }
+addComponent page@node0 : HelloWorldHandler { urlPattern='/'}
+addComponent page1@node0 : StaticFileHandler { urlPattern='/static/', path = '/var/www/', contained = 'false', defaultFile = 'showcase.html'}
 
 addChannel request : defMSG
 addChannel response : defMSG

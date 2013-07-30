@@ -3,7 +3,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.kevoree.komponents</groupId>
-    <artifactId>root</artifactId>
+    <artifactId>komponents.root</artifactId>
     <packaging>pom</packaging>
     
     <name>Komponents</name>
@@ -34,11 +34,11 @@
         <module>org.kevoree.library.javase.http.webbit</module>
 
         <module>org.kevoree.library.javase.ws.api</module>
+        <module>org.kevoree.library.javase.ws.samples</module>
         <module>org.kevoree.library.javase.ws.webbit</module>
 
         <module>org.kevoree.library.javase.jenkins-master</module>
         <module>org.kevoree.library.javase.jenkins-slave</module>
-        <module>org.kevoree.library.javase.ws.samples</module>
     </modules>
 
     <build>

@@ -23,7 +23,7 @@ import java.io.IOException;
 @DictionaryType({
         @DictionaryAttribute(name = "path", optional = true, defaultValue = "."),
         @DictionaryAttribute(name = "contained", defaultValue = "true"),
-        @DictionaryAttribute(name = "defaultFile", defaultValue = "index.html"),
+        @DictionaryAttribute(name = "defaultFile", defaultValue = "index.html")
 })
 public class StaticFileHandler extends AbstractParentHTTPHandler {
 
@@ -33,7 +33,7 @@ public class StaticFileHandler extends AbstractParentHTTPHandler {
 
     @Start
     public void start() {
-        contained = getDictionary().get("contained").equals("true");
+        contained = getDictionary().get("contained").toString().equalsIgnoreCase("true");
         sourceFolder = getDictionary().get("path").toString();
         defaultFile = getDictionary().get("defaultFile").toString();
         super.start();

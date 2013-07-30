@@ -23,7 +23,7 @@ import java.io.IOException;
 @ComponentType
 @DictionaryType({
         @DictionaryAttribute(name = "favicon", optional = true, defaultValue = "favicon.ico"),
-        @DictionaryAttribute(name = "urlpattern", optional = true, defaultValue = "/favicon.ico")
+        @DictionaryAttribute(name = "urlPattern", optional = true, defaultValue = "/favicon.ico")
 })
 public class FaviconHandler extends AbstractHTTPHandler {
     @Override

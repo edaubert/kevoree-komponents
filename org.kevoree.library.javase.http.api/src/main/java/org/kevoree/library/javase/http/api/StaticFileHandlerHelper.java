@@ -34,7 +34,7 @@ public class StaticFileHandlerHelper {
     public static boolean checkStaticFileFromDir(String defaultFile, String baseDir, AbstractHTTPHandler origin, HttpServletRequest req, HttpServletResponse resp) {
         String filePath = req.getRequestURI();
         Log.warn("filePath we are looking for: {}", filePath);
-        filePath = filePath.substring(origin.getUrlPatternWithoutRegex().length());
+        filePath = origin.applyPatternToRemove(filePath);
 
         if (filePath.contains("?")) {
             filePath = filePath.substring(0, filePath.indexOf("?"));
@@ -112,7 +112,7 @@ public class StaticFileHandlerHelper {
 
     public static boolean checkStaticFile(String defaultFile, AbstractHTTPHandler origin, HttpServletRequest req, HttpServletResponse resp) {
         String filePath = req.getRequestURI();
-        filePath = filePath.substring(origin.getUrlPatternWithoutRegex().length());
+        filePath = origin.applyPatternToRemove(filePath);
 
         if (filePath.contains("?")) {
             filePath = filePath.substring(0, filePath.indexOf("?"));

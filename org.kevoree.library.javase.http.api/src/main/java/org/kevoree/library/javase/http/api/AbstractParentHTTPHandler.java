@@ -20,9 +20,9 @@ public abstract class AbstractParentHTTPHandler extends AbstractHTTPHandler {
     @Override
     @Start
     public void start() {
-        if (!this.getDictionary().get("urlpattern").toString().endsWith("**")) {
-            this.getDictionary().put("urlpattern", this.getDictionary().get("urlpattern").toString() + "**");
-            Log.debug("Parent abstract page start with pattern = {}", this.getDictionary().get("urlpattern").toString());
+        if (!this.getDictionary().get("urlPattern").toString().endsWith(".*")) {
+            this.getDictionary().put("urlPattern", this.getDictionary().get("urlPattern").toString() + ".*");
+            Log.debug("Parent abstract page start with pattern = {}", this.getDictionary().get("urlPattern").toString());
         }
         super.start();
     }
