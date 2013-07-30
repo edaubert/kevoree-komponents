@@ -22,19 +22,20 @@ public class WebbitWebSocketHandler implements WebSocketHandler {
     @Override
     public void onOpen(WebSocketConnection connection) throws Throwable {
         server.addConnection(connection);
-        server.onOpen(connection.hashCode());
+        Log.debug(connection.httpRequest().uri());
+        server.onOpen(connection.hashCode(), connection.httpRequest().uri());
     }
 
     @Override
     public void onClose(WebSocketConnection connection) throws Throwable {
         server.removeConnection(connection);
-        server.onClose(connection.hashCode());
+        server.onClose(connection.hashCode(), connection.httpRequest().uri());
     }
 
     @Override
     public void onMessage(WebSocketConnection connection, String msg) throws Throwable {
         Log.debug("Message received on internal handler of the websocket server: {} on {}", msg, server.getName());
-        server.onMessage(connection.hashCode(), msg);
+        server.onMessage(connection.hashCode(), connection.httpRequest().uri(), msg);
     }
 
     @Override

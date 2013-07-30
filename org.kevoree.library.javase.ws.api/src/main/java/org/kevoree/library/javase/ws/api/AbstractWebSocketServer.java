@@ -38,7 +38,7 @@ public abstract class AbstractWebSocketServer extends AbstractComponentType {
     abstract public void update() throws Exception;
 
     abstract public void send(long id, String message);
-    abstract public void broadcast(String message);
+    abstract public void broadcast(String uri, String message);
 
     // TODO change type and name of the parameter
     @Port(name = "send")
@@ -52,25 +52,25 @@ public abstract class AbstractWebSocketServer extends AbstractComponentType {
     @Port(name = "broadcast")
     public void broadcast(Object msg) {
         if (msg instanceof WebSocketTuple) {
-            broadcast(((WebSocketTuple) msg).message);
+            broadcast(((WebSocketTuple) msg).uri, ((WebSocketTuple) msg).message);
         }
     }
 
-    public void onOpen(long id) {
+    public void onOpen(long id, String uri) {
         if (isPortBinded("onOpen")) {
-            getPortByName("onOpen", MessagePort.class).process(new WebSocketTuple(id, null));
+            getPortByName("onOpen", MessagePort.class).process(new WebSocketTuple(id, uri));
         }
     }
 
-    public void onMessage(long id, String message) {
+    public void onMessage(long id, String uri, String message) {
         if (isPortBinded("onMessage")) {
-            getPortByName("onMessage", MessagePort.class).process(new WebSocketTuple(id, message));
+            getPortByName("onMessage", MessagePort.class).process(new WebSocketTuple(id, uri, message));
         }
     }
 
-    public void onClose(long id) {
+    public void onClose(long id, String uri) {
         if (isPortBinded("onClose")) {
-            getPortByName("onClose", MessagePort.class).process(new WebSocketTuple(id, null));
+            getPortByName("onClose", MessagePort.class).process(new WebSocketTuple(id, uri));
         }
     }
 }

@@ -6,8 +6,11 @@ import org.kevoree.log.Log;
 import org.webbitserver.WebServer;
 import org.webbitserver.WebServers;
 import org.webbitserver.WebSocketConnection;
+import org.webbitserver.handler.HttpToWebSocketHandler;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -27,27 +30,40 @@ public class WebbitWebSocketServer extends AbstractWebSocketServer {
     WebServer server;
     private WebbitWebSocketHandler handler;
 
-    private Map<Long, WebSocketConnection> connections;
+    private Map<Long, WebSocketConnection> connectionsFromId;
+    private Map<String, List<WebSocketConnection>> connectionsFromUri;
 
     @Override
     public void start() throws Exception {
         port = Integer.parseInt(getDictionary().get("port").toString());
-        connections = new HashMap<Long, WebSocketConnection>();
+        connectionsFromId = new HashMap<Long, WebSocketConnection>();
+        connectionsFromUri = new HashMap<String, List<WebSocketConnection>>();
 
         server = WebServers.createWebServer(port);
 //        server.staleConnectionTimeout(Integer.parseInt(getDictionary().get("timeout").toString()));
         handler = new WebbitWebSocketHandler(this);
-        server.add("/", handler);
+        server.add(new HttpToWebSocketHandler(handler));
         server.start().get();
     }
 
     public void addConnection(WebSocketConnection connection) {
-        connections.put(connection.hashCode() + 0l, connection);
+        connectionsFromId.put(connection.hashCode() + 0l, connection);
+        List<WebSocketConnection> connections = connectionsFromUri.get(connection.httpRequest().uri());
+        if (connections == null) {
+            connections = new ArrayList<WebSocketConnection>();
+        }
+        connections.add(connection);
+        connectionsFromUri.put(connection.httpRequest().uri(), connections);
     }
 
 
     public void removeConnection(WebSocketConnection connection) {
-        connections.remove(connection.hashCode() + 0l);
+        connectionsFromId.remove(connection.hashCode() + 0l);
+        List<WebSocketConnection> connections = connectionsFromUri.get(connection.httpRequest().uri());
+        if (connections != null) {
+            connections.remove(connection);
+            connectionsFromUri.put(connection.httpRequest().uri(), connections);
+        }
     }
 
     @Override
@@ -71,15 +87,17 @@ public class WebbitWebSocketServer extends AbstractWebSocketServer {
 
     @Override
     public void send(long id, String message) {
-        if (connections.containsKey(id)) {
-            connections.get(id).send(message);
+        if (connectionsFromId.containsKey(id)) {
+            connectionsFromId.get(id).send(message);
         }
     }
 
     @Override
-    public void broadcast(String message) {
-        for (long id : connections.keySet()) {
-            connections.get(id).send(message);
+    public void broadcast(String uri, String message) {
+        if (connectionsFromUri.get(uri) != null) {
+            for (WebSocketConnection connection : connectionsFromUri.get(uri)) {
+                connection.send(message);
+            }
         }
     }
 }
