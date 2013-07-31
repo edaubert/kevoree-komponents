@@ -100,6 +100,7 @@ public abstract class AbstractHTTPHandler extends AbstractComponentType {
         if (msg != null && msg instanceof HTTPOperationTuple) {
             HttpServletRequest request = ((HTTPOperationTuple) msg).request;
             if (check(request.getRequestURI())) {
+                Log.debug("The url '{}' is accepted by '{}' with urlPattern '{}' ", request.getRequestURI(), getName(), urlPatternRegex);
                 KevoreeHTTPServletResponse response = ((HTTPOperationTuple) msg).response;
                 if (request.getMethod().equalsIgnoreCase("get")) {
                     try {
