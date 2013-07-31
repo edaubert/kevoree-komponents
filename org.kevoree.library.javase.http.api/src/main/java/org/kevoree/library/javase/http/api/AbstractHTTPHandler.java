@@ -59,9 +59,6 @@ public abstract class AbstractHTTPHandler extends AbstractComponentType {
 
         Pattern pattern = Pattern.compile(patternToRemove);
         Matcher matcher = pattern.matcher(uri);
-        System.err.println(urlPatternRegex);
-        System.err.println(uri);
-        System.err.println(matcher.replaceFirst(""));
         return matcher.replaceFirst("");
     }
 
