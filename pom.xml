@@ -12,7 +12,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <kevoree.version>2.0.0-SNAPSHOT</kevoree.version>
+        <kevoree.version>2.0.4-SNAPSHOT</kevoree.version>
     </properties>
 
     <dependencies>
@@ -84,17 +84,9 @@
             <id>kevoree-oss</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
-        <repository>
-            <id>jetbrains-release</id>
-            <url>http://repository.jetbrains.com/all</url>
-        </repository>
     </repositories>
 
     <pluginRepositories>
-        <pluginRepository>
-            <id>jetbrains-release</id>
-            <url>http://repository.jetbrains.com/all</url>
-        </pluginRepository>
         <pluginRepository>
             <id>plugin.kevoree-oss</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
