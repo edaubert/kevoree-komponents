@@ -13,6 +13,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <kevoree.version>2.0.4-SNAPSHOT</kevoree.version>
+        <kevoree.corelibrary.version>2.0.0-SNAPSHOT</kevoree.corelibrary.version>
     </properties>
 
     <dependencies>

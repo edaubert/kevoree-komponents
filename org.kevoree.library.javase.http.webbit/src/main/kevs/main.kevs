@@ -1,5 +1,5 @@
-merge "mvn:org.kevoree.corelibrary.sky/org.kevoree.library.sky.api/{kevoree.version}"
-merge "mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/{kevoree.version}"
+merge "mvn:org.kevoree.corelibrary.sky/org.kevoree.library.sky.api/{kevoree.corelibrary.version}"
+merge "mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/{kevoree.corelibrary.version}"
 merge "mvn:org.kevoree.komponents/org.kevoree.library.javase.http.api/1.0.0-SNAPSHOT"
 merge "mvn:org.kevoree.komponents/org.kevoree.library.javase.http.samples/1.0.0-SNAPSHOT"
 merge "mvn:org.kevoree.komponents/org.kevoree.library.javase.http.webbit/1.0.0-SNAPSHOT"
@@ -25,3 +25,7 @@ bind page1.content@node0 => response
 
 bind favicon.request@node0 => request
 bind favicon.content@node0 => response
+
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.jexxus/{kevoree.corelibrary.version}'
+addGroup group1208104496:BasicGroup
+addToGroup group1208104496 node0

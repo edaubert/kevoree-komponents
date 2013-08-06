@@ -4,10 +4,6 @@ import org.kevoree.library.javase.http.api.KevoreeHTTPServletRequest;
 import org.webbitserver.HttpRequest;
 import org.webbitserver.WebServer;
 
-import javax.servlet.ServletInputStream;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 /**
@@ -69,8 +65,22 @@ public class WebbitKevoreeHTTPServletRequest extends KevoreeHTTPServletRequest {
     }
 
     @Override
+    public String getPathInfo() {
+        String uri = getRequestURI();
+        if (uri.contains("?")) {
+            uri = uri.substring(0, uri.lastIndexOf("?"));
+        }
+        return uri;
+    }
+
+    @Override
     public String getQueryString() {
-        return httpRequest.uri().substring(httpRequest.uri().lastIndexOf("?"));
+        String uri = getRequestURI();
+        if (uri.contains("?")) {
+            return uri.substring(uri.lastIndexOf("?"));
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -81,106 +91,6 @@ public class WebbitKevoreeHTTPServletRequest extends KevoreeHTTPServletRequest {
     @Override
     public StringBuffer getRequestURL() {
         return new StringBuffer(server.getUri().toASCIIString());
-    }
-
-    @Override
-    public Object getAttribute(String name) {
-        return super.getAttribute(name);
-    }
-
-    @Override
-    public Enumeration getAttributeNames() {
-        return super.getAttributeNames();
-    }
-
-    @Override
-    public String getCharacterEncoding() {
-        return super.getCharacterEncoding();
-    }
-
-    @Override
-    public void setCharacterEncoding(String env) throws UnsupportedEncodingException {
-        super.setCharacterEncoding(env);
-    }
-
-    @Override
-    public int getContentLength() {
-        return super.getContentLength();
-    }
-
-    @Override
-    public String getContentType() {
-        return super.getContentType();
-    }
-
-    @Override
-    public ServletInputStream getInputStream() throws IOException {
-        return super.getInputStream();
-    }
-
-    @Override
-    public String getParameter(String name) {
-        return super.getParameter(name);
-    }
-
-    @Override
-    public Enumeration getParameterNames() {
-        return super.getParameterNames();
-    }
-
-    @Override
-    public String[] getParameterValues(String name) {
-        return super.getParameterValues(name);
-    }
-
-    @Override
-    public Map getParameterMap() {
-        return super.getParameterMap();
-    }
-
-    @Override
-    public String getProtocol() {
-        return super.getProtocol();
-    }
-
-    @Override
-    public String getScheme() {
-        return super.getScheme();
-    }
-
-    @Override
-    public String getServerName() {
-        return super.getServerName();
-    }
-
-    @Override
-    public int getServerPort() {
-        return super.getServerPort();
-    }
-
-    @Override
-    public BufferedReader getReader() throws IOException {
-        return super.getReader();
-    }
-
-    @Override
-    public String getRemoteAddr() {
-        return super.getRemoteAddr();
-    }
-
-    @Override
-    public String getRemoteHost() {
-        return super.getRemoteHost();
-    }
-
-    @Override
-    public void setAttribute(String name, Object o) {
-        super.setAttribute(name, o);
-    }
-
-    @Override
-    public void removeAttribute(String name) {
-        super.removeAttribute(name);
     }
 
     @Override
@@ -195,20 +105,5 @@ public class WebbitKevoreeHTTPServletRequest extends KevoreeHTTPServletRequest {
     @Override
     public Enumeration getLocales() {
         return Collections.enumeration(Arrays.asList(Locale.getAvailableLocales()));
-    }
-
-    @Override
-    public boolean isSecure() {
-        return super.isSecure();
-    }
-
-    @Override
-    public String getLocalName() {
-        return super.getLocalName();
-    }
-
-    @Override
-    public String getLocalAddr() {
-        return super.getLocalAddr();
     }
 }

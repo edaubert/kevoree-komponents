@@ -17,15 +17,14 @@ import java.io.*;
 public class StaticFileHandlerHelper {
 
     public static boolean checkStaticFileFromDir(String defaultFile, String baseDir, AbstractHTTPHandler origin, HttpServletRequest req, HttpServletResponse resp) {
-        String filePath = req.getRequestURI();
-        Log.warn("filePath we are looking for: {}", filePath);
+        String filePath = req.getPathInfo();
         filePath = origin.applyPatternToRemove(filePath);
 
         if (filePath.contains("?")) {
             filePath = filePath.substring(0, filePath.indexOf("?"));
         }
 
-        if (filePath == null || "".equals(filePath) || "/".equals(filePath)) {
+        if ("".equals(filePath) || "/".equals(filePath)) {
             filePath = defaultFile;
         }
 
@@ -33,7 +32,7 @@ public class StaticFileHandlerHelper {
             filePath = filePath.substring(1);
         }
 
-        filePath.replace("/", File.separator);
+        filePath = filePath.replace("/", File.separator);
         Log.debug("Request received to get file {}", baseDir + File.separator + filePath);
         File in = new File(baseDir + File.separator + filePath);
         if (in.exists() && in.isFile()) {
@@ -64,7 +63,7 @@ public class StaticFileHandlerHelper {
     }
 
     public static boolean checkStaticFileFromDir(String filePath, String baseDir, HttpServletResponse resp) {
-        filePath.replace("/", File.separator);
+        filePath = filePath.replace("/", File.separator);
         Log.debug("Request received to get file {}", baseDir + File.separator + filePath);
         File in = new File(baseDir + File.separator + filePath);
         if (in.exists() && in.isFile()) {
@@ -96,14 +95,14 @@ public class StaticFileHandlerHelper {
 
 
     public static boolean checkStaticFile(String defaultFile, AbstractHTTPHandler origin, HttpServletRequest req, HttpServletResponse resp) {
-        String filePath = req.getRequestURI();
+        String filePath = req.getPathInfo();
         filePath = origin.applyPatternToRemove(filePath);
 
         if (filePath.contains("?")) {
             filePath = filePath.substring(0, filePath.indexOf("?"));
         }
 
-        if (filePath == null || "".equals(filePath) || "/".equals(filePath)) {
+        if ("".equals(filePath) || "/".equals(filePath)) {
             filePath = defaultFile;
         }
 
@@ -124,10 +123,11 @@ public class StaticFileHandlerHelper {
                     writer.println(new String(HTTPHelper.convertStream(in), "UTF-8"));
                     writer.flush();
                 }
+                in.close();
                 resp.addHeader("Content-Type", (HTTPHelper.getHttpHeaderFromURL(filePath)));
                 return true;
             } catch (Exception e) {
-                Log.error("", e);
+                Log.error("Unable to load file: {}", e, filePath);
             }
         } else {
             Log.debug("Resource {} doesn't exist ", filePath);

@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
 })
 @DictionaryType({
         @DictionaryAttribute(name = "urlPattern", optional = true, defaultValue = "/"),
-        @DictionaryAttribute(name = "patternToRemove", optional = true, defaultValue = "/"),
+        @DictionaryAttribute(name = "patternToRemove", optional = true, defaultValue = "/")
 })
 public abstract class AbstractHTTPHandler extends AbstractComponentType {
     protected static final int NO_RETURN_RESPONSE = 418;
@@ -41,17 +41,25 @@ public abstract class AbstractHTTPHandler extends AbstractComponentType {
     protected String patternToRemove;
 
     @Start
-    public void start() {
+    public void start() throws Exception {
         servlet = new KevoreeHttpServlet();
         urlPatternRegex = getDictionary().get("urlPattern").toString();
         patternToRemove = getDictionary().get("patternToRemove").toString();
     }
 
     @Update
-    public void update() {
+    public void update() throws Exception {
         if (!urlPatternRegex.equals(getDictionary().get("urlPattern").toString()) && !patternToRemove.equals(getDictionary().get("patternToRemove").toString())) {
-//            stop();
+            stop();
             start();
+        }
+    }
+
+    @Stop
+    public void stop() throws Exception {
+        if (servlet != null) {
+            servlet.destroy();
+            servlet = null;
         }
     }
 
@@ -88,7 +96,7 @@ public abstract class AbstractHTTPHandler extends AbstractComponentType {
     }
 
     private boolean check(String url) {
-        Log.debug("Checking url in component '{}' with urlPattern '{}' and url '{}'", getName(), urlPatternRegex, url);
+        Log.trace("Checking url in component '{}' with urlPattern '{}' and url '{}'", getName(), urlPatternRegex, url);
         Pattern pattern = Pattern.compile(urlPatternRegex);
         Matcher m = pattern.matcher(url);
         return m.matches();
@@ -99,8 +107,8 @@ public abstract class AbstractHTTPHandler extends AbstractComponentType {
     public void request(/*HTTPOperationTuple*/Object msg) {
         if (msg != null && msg instanceof HTTPOperationTuple) {
             HttpServletRequest request = ((HTTPOperationTuple) msg).request;
-            if (check(request.getRequestURI())) {
-                Log.debug("The url '{}' is accepted by '{}' with urlPattern '{}' ", request.getRequestURI(), getName(), urlPatternRegex);
+            if (check(request.getPathInfo())) {
+                Log.debug("The url '{}' is accepted by '{}' with urlPattern '{}' ", request.getPathInfo(), getName(), urlPatternRegex);
                 KevoreeHTTPServletResponse response = ((HTTPOperationTuple) msg).response;
                 if (request.getMethod().equalsIgnoreCase("get")) {
                     try {

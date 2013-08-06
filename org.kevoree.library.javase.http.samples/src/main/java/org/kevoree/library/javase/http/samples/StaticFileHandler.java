@@ -32,7 +32,7 @@ public class StaticFileHandler extends AbstractParentHTTPHandler {
     private String defaultFile;
 
     @Start
-    public void start() {
+    public void start() throws Exception {
         contained = getDictionary().get("contained").toString().equalsIgnoreCase("true");
         sourceFolder = getDictionary().get("path").toString();
         defaultFile = getDictionary().get("defaultFile").toString();
@@ -40,7 +40,7 @@ public class StaticFileHandler extends AbstractParentHTTPHandler {
     }
 
     @Update
-    public void update() {
+    public void update() throws Exception {
         if (contained != getDictionary().get("contained").equals("true") || !sourceFolder.equals(getDictionary().get("path").toString()) || !defaultFile.equals(getDictionary().get("defaultFile").toString())) {
 //            stop();
             start();
