@@ -23,8 +23,8 @@
         showMessage("Disconnected");
     };
     ws.onerror = function (e) {
-        console.log('* Unexpected error');
-        showMessage("Unexpected error");
+        console.log('Unexpected error:' + e.message);
+        showMessage("Unexpected error" + e.message);
     };
     ws.onmessage = function (e) {
         showMessage(e.data);
