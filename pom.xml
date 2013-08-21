@@ -12,8 +12,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <kevoree.version>2.0.4-SNAPSHOT</kevoree.version>
-        <kevoree.corelibrary.version>2.0.0-SNAPSHOT</kevoree.corelibrary.version>
+        <kevoree.version>2.0.8</kevoree.version>
+        <kevoree.corelibrary.version>2.0.2</kevoree.corelibrary.version>
     </properties>
 
     <dependencies>
@@ -38,8 +38,11 @@
         <module>org.kevoree.library.javase.ws.samples</module>
         <module>org.kevoree.library.javase.ws.webbit</module>
 
-        <module>org.kevoree.library.javase.jenkins-master</module>
-        <module>org.kevoree.library.javase.jenkins-slave</module>
+        <module>org.kevoree.library.javase.file.api</module>
+        <module>org.kevoree.library.javase.file.samples</module>
+
+        <!--<module>org.kevoree.library.javase.jenkins-master</module>
+        <module>org.kevoree.library.javase.jenkins-slave</module>-->
     </modules>
 
     <build>

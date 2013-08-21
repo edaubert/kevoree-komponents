@@ -1,0 +1,20 @@
+merge "mvn:org.kevoree.corelibrary.sky/org.kevoree.library.sky.api/{kevoree.corelibrary.version}"
+merge "mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/{kevoree.corelibrary.version}"
+merge "mvn:org.kevoree.komponents/org.kevoree.library.javase.file.api/{project.version}"
+merge "mvn:org.kevoree.komponents/org.kevoree.library.javase.file.samples/{project.version}"
+
+addNode node0 : PJavaSENode {logLevel="DEBUG"}
+
+addComponent fileSystem@node0 : BasicFileSystem { basedir = '/tmp/basicFileSystem'}
+
+// TODO must be tested
+//addComponent treeFileSystem@node0 : TreeBasicFileSystem { basedir = '/tmp/treeBasicFileSystem'}
+//addComponent lockFileSystem@node0 : LockBasicFileSystem { basedir = '/tmp/lockFasicFileSystem'}
+//addComponent lockTreeFileSystem@node0 : LockTreeBasicFileSystem { basedir = '/tmp/lockTreeBasicFileSystem'}
+
+addComponent basicClient@node0 : BasicFileSystemClient { urlPattern='/echo'}
+
+addChannel basicService : defService
+
+bind basicClient.files@node0 => basicService
+bind fileSystem.files@node0 => basicService
