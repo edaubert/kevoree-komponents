@@ -1,8 +1,8 @@
 merge "mvn:org.kevoree.corelibrary.sky/org.kevoree.library.sky.api/{kevoree.corelibrary.version}"
 merge "mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/{kevoree.corelibrary.version}"
-merge "mvn:org.kevoree.komponents/org.kevoree.library.javase.http.api/1.0.0-SNAPSHOT"
-merge "mvn:org.kevoree.komponents/org.kevoree.library.javase.http.samples/1.0.0-SNAPSHOT"
-merge "mvn:org.kevoree.komponents/org.kevoree.library.javase.http.webbit/1.0.0-SNAPSHOT"
+merge "mvn:org.kevoree.komponents/org.kevoree.library.javase.http.api/{project.version}"
+merge "mvn:org.kevoree.komponents/org.kevoree.library.javase.http.samples/{project.version}"
+merge "mvn:org.kevoree.komponents/org.kevoree.library.javase.http.webbit/{project.version}"
 
 addNode node0 : PJavaSENode {logLevel="DEBUG"}
 addComponent webserver@node0 : WebbitHTTPServer
