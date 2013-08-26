@@ -77,7 +77,7 @@ public class WebbitKevoteeHTTPServletResponse extends KevoreeHTTPServletResponse
 
     @Override
     public void setDateHeader(String name, long date) {
-        httpResponse.header(name, (Long)null);
+        httpResponse.header(name, (String)null);
         addDateHeader(name, date);
     }
 
@@ -99,7 +99,7 @@ public class WebbitKevoteeHTTPServletResponse extends KevoreeHTTPServletResponse
 
     @Override
     public void setIntHeader(String name, int value) {
-        httpResponse.header(name, (Integer)null);
+        httpResponse.header(name, (String)null);
         addIntHeader(name, value);
     }
 
@@ -136,7 +136,7 @@ public class WebbitKevoteeHTTPServletResponse extends KevoreeHTTPServletResponse
 
     @Override
     public void setContentLength(int len) {
-        httpResponse.header("Content-Length", (Integer)null);
+        httpResponse.header("Content-Length", (String)null);
         httpResponse.header("Content-Length", len);
     }
 
