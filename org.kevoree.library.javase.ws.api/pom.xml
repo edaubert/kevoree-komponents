@@ -11,6 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>org.kevoree.library.javase.ws.api</artifactId>
+    <name>Kevoree :: Library :: Websocket api</name>
 
 
 </project>

@@ -21,7 +21,7 @@ import java.util.concurrent.TimeoutException;
  * @author Erwan Daubert
  * @version 1.0
  */
-@ComponentType
+@ComponentType (description = "Webbit server to server HTTP request. Thhis implementations is based on servlet API. However webbit doesn't provide a way to do chunked response for binary content. That's why this implementation is not able to stream binary content like media.")
 @Requires({
         @RequiredPort(name = "error", type = PortType.MESSAGE, optional = true/*, messageType = HTTPOperationTuple.class.getName()*/)
 })

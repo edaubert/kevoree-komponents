@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
  * @version 1.0
  */
 @Library(name = "web")
-@ComponentFragment
+@ComponentType
 @Provides({
         @ProvidedPort(name = "request", type = PortType.MESSAGE)
 })

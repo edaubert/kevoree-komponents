@@ -13,7 +13,7 @@ import org.kevoree.framework.MessagePort;
  * @version 1.0
  */
 @Library(name = "web")
-@ComponentFragment
+@ComponentType
 @DictionaryType({
         @DictionaryAttribute(name = "port" , defaultValue = "8080"),
         @DictionaryAttribute(name = "timeout" , defaultValue = "5000", optional = true)

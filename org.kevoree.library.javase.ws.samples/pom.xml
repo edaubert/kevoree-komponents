@@ -9,8 +9,8 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.kevoree.komponents</groupId>
     <artifactId>org.kevoree.library.javase.ws.samples</artifactId>
+    <name>Kevoree :: Library :: Websocket Samples</name>
 
     <dependencies>
         <dependency>

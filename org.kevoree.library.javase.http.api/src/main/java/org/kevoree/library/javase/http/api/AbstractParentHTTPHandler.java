@@ -1,6 +1,6 @@
 package org.kevoree.library.javase.http.api;
 
-import org.kevoree.annotation.ComponentFragment;
+import org.kevoree.annotation.ComponentType;
 import org.kevoree.annotation.Library;
 import org.kevoree.annotation.Start;
 import org.kevoree.log.Log;
@@ -14,7 +14,7 @@ import org.kevoree.log.Log;
  * @version 1.0
  */
 @Library(name = "JavaSE")
-@ComponentFragment
+@ComponentType
 public abstract class AbstractParentHTTPHandler extends AbstractHTTPHandler {
 
     @Override
