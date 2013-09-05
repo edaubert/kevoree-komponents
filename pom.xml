@@ -12,8 +12,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <kevoree.version>2.0.11-SNAPSHOT</kevoree.version>
-        <kevoree.corelibrary.version>2.0.3-SNAPSHOT</kevoree.corelibrary.version>
+        <kevoree.version>2.0.11</kevoree.version>
+        <kevoree.corelibrary.version>2.0.3</kevoree.corelibrary.version>
     </properties>
 
     <dependencies>
@@ -30,20 +30,11 @@
     </dependencies>
 
     <modules>
-        <module>org.kevoree.library.javase.http.api</module>
-        <module>org.kevoree.library.javase.http.samples</module>
-        <module>org.kevoree.library.javase.http.webbit</module>
-        <!--<module>org.kevoree.library.javase.http.netty</module>-->
-
-        <module>org.kevoree.library.javase.ws.api</module>
-        <module>org.kevoree.library.javase.ws.samples</module>
-        <module>org.kevoree.library.javase.ws.webbit</module>
-
-        <module>org.kevoree.library.javase.file.api</module>
-        <module>org.kevoree.library.javase.file.samples</module>
-
-        <!--<module>org.kevoree.library.javase.jenkins-master</module>
-        <module>org.kevoree.library.javase.jenkins-slave</module>-->
+        <module>javafx</module>
+        <module>http</module>
+        <module>ws</module>
+        <module>file</module>
+        <!--<module>jenkins</module>-->
     </modules>
 
     <build>
