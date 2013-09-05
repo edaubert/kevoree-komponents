@@ -1,7 +1,6 @@
 merge "mvn:org.kevoree.corelibrary.sky/org.kevoree.library.sky.api/{kevoree.corelibrary.version}"
 merge "mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/{kevoree.corelibrary.version}"
-merge "mvn:org.kevoree.komponents/org.kevoree.library.javase.file.api/{project.version}"
-merge "mvn:org.kevoree.komponents/org.kevoree.library.javase.file.samples/{project.version}"
+merge "mvn:org.kevoree.komponents/file-samples/{project.version}"
 
 addNode node0 : PJavaSENode {logLevel="DEBUG"}
 

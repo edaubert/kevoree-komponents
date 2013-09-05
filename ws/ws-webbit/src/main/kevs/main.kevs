@@ -1,8 +1,7 @@
 merge "mvn:org.kevoree.corelibrary.sky/org.kevoree.library.sky.api/{kevoree.corelibrary.version}"
 merge "mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/{kevoree.corelibrary.version}"
-merge "mvn:org.kevoree.komponents/org.kevoree.library.javase.ws.api/{project.version}"
-merge "mvn:org.kevoree.komponents/org.kevoree.library.javase.ws.samples/{project.version}"
-merge "mvn:org.kevoree.komponents/org.kevoree.library.javase.ws.webbit/{project.version}"
+merge "mvn:org.kevoree.komponents/ws-samples/{project.version}"
+merge "mvn:org.kevoree.komponents/ws-webbit/{project.version}"
 
 addNode node0 : PJavaSENode {logLevel="DEBUG"}
 addComponent webserver@node0 : WebbitWebSocketServer
