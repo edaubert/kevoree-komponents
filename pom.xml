@@ -12,8 +12,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <kevoree.version>2.0.11</kevoree.version>
-        <kevoree.corelibrary.version>2.0.3</kevoree.corelibrary.version>
+        <kevoree.version>2.0.12</kevoree.version>
+        <kevoree.corelibrary.version>2.0.4</kevoree.corelibrary.version>
     </properties>
 
     <dependencies>
@@ -26,6 +26,11 @@
             <groupId>org.kevoree.tools</groupId>
             <artifactId>org.kevoree.tools.annotation.api</artifactId>
             <version>${kevoree.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kevoree.corelibrary.javase</groupId>
+            <artifactId>org.kevoree.library.javase.javaseNode</artifactId>
+            <version>${kevoree.corelibrary.version}</version>
         </dependency>
     </dependencies>
 
