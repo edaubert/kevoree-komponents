@@ -1,8 +1,8 @@
 package org.kevoree.library.javase.javafx.media;
 
 import javafx.application.Platform;
-import javafx.event.Event;
-import javafx.event.EventHandler;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
 import javafx.scene.control.Tab;
 import javafx.scene.media.Media;
@@ -11,8 +11,7 @@ import javafx.stage.Stage;
 import org.kevoree.annotation.*;
 import org.kevoree.framework.AbstractComponentType;
 import org.kevoree.library.javase.javafx.layout.SingleWindowLayout;
-
-import java.util.HashMap;
+import org.kevoree.log.Log;
 
 /**
  * User: Erwan Daubert - erwan.daubert@gmail.com
@@ -46,8 +45,10 @@ public class JavaFXVideoDisplay extends AbstractComponentType {
     // when the user select one the media, this one is played
     private String mediaUrl;
 
+    private final Object wait = new Object();
+
     @Start
-    public void start() {
+    public void start() throws InterruptedException {
         SingleWindowLayout.initJavaFX();
         Platform.runLater(new Runnable() {
             @Override
@@ -56,28 +57,27 @@ public class JavaFXVideoDisplay extends AbstractComponentType {
                 if (Boolean.valueOf((String) getDictionary().get("singleFrame"))) {
                     tab = new Tab();
                     tab.setText(getName());
-                    tab.setOnSelectionChanged(new EventHandler<Event>() {
+                    tab.selectedProperty().addListener(new ChangeListener<Boolean>() {
                         @Override
-                        public void handle(Event event) {
+                        public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean aBoolean2) {
                             if (tab.isSelected()) {
-                                if (mediaUrl != null) {
-                                    if (mediaPlayer != null &&
-                                            (mediaPlayer.getStatus().equals(MediaPlayer.Status.PAUSED)
-                                                    || mediaPlayer.getStatus().equals(MediaPlayer.Status.STOPPED)
-                                                    || mediaPlayer.getStatus().equals(MediaPlayer.Status.READY))) {
-                                        mediaPlayer.play();
-                                    } else {
-                                        defineMedia(mediaUrl);
-                                    }
-                                }
+                                playOrInit();
                             } else {
-                                if (mediaPlayer != null && mediaPlayer.getStatus().equals(MediaPlayer.Status.PLAYING)) {
-                                    mediaPlayer.pause();
-                                }
+                                pause();
                             }
                         }
                     });
                     SingleWindowLayout.getInstance().addTab(tab);
+                    SingleWindowLayout.getInstance().getStage().focusedProperty().addListener(new ChangeListener<Boolean>() {
+                        @Override
+                        public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean aBoolean2) {
+                            if (SingleWindowLayout.getInstance().getStage().isFocused() && tab.isSelected()) {
+                                playOrInit();
+                            } else if (!SingleWindowLayout.getInstance().getStage().isFocused()) {
+                                pause();
+                            }
+                        }
+                    });
                 } else {
                     localWindow = new Stage();
                     localWindow.setTitle(getName() + "@@@" + getNodeName());
@@ -87,20 +87,55 @@ public class JavaFXVideoDisplay extends AbstractComponentType {
 
                 }
                 if (mediaUrl != null) {
-                    defineMedia(mediaUrl);
+                    playOrInit();
+                }
+                synchronized (wait) {
+                    wait.notify();
                 }
             }
         });
+        synchronized (wait) {
+            wait.wait();
+        }
+    }
+
+    private void playOrInit() {
+        if (mediaUrl != null) {
+            if (mediaPlayer != null &&
+                    (mediaPlayer.getStatus().equals(MediaPlayer.Status.PAUSED)
+                            || mediaPlayer.getStatus().equals(MediaPlayer.Status.STOPPED)
+                            || mediaPlayer.getStatus().equals(MediaPlayer.Status.READY))) {
+                mediaPlayer.play();
+            } else {
+                defineMedia(mediaUrl);
+            }
+        }
+    }
+
+    private void pause() {
+        if (mediaPlayer != null && mediaPlayer.getStatus().equals(MediaPlayer.Status.PLAYING)) {
+            mediaPlayer.pause();
+        }
     }
 
     @Stop
-    public void stop() {
-        // TODO unload javafx stuff
-        if (Boolean.valueOf((String) getDictionary().get("singleFrame"))) {
-            SingleWindowLayout.getInstance().removeTab(tab);
-        } else {
-            localWindow.hide();
-
+    public void stop() throws InterruptedException {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                // TODO unload javafx stuff
+                if (Boolean.valueOf((String) getDictionary().get("singleFrame"))) {
+                    SingleWindowLayout.getInstance().removeTab(tab);
+                } else {
+                    localWindow.hide();
+                }
+                synchronized (wait) {
+                    wait.notify();
+                }
+            }
+        });
+        synchronized (wait) {
+            wait.wait();
         }
     }
 
@@ -111,6 +146,7 @@ public class JavaFXVideoDisplay extends AbstractComponentType {
 
     @Port(name = "media")
     public void media(final Object o) {
+        Log.warn("URL received: {}", o.toString());
         if (o instanceof String) {
             mediaUrl = (String) o;
             if ((tab != null && tab.isSelected()) || localWindow != null) {
@@ -144,33 +180,5 @@ public class JavaFXVideoDisplay extends AbstractComponentType {
 
         mediaControl.getScene().getStylesheets().add(JavaFXVideoDisplay.class.getResource("/mediaplayer.css").toExternalForm());
 
-    }
-
-    public static void main(String[] args) {
-        HashMap<String, Object> dictionary = new HashMap<String, Object>();
-        dictionary.put("singleFrame", "true");
-        final JavaFXVideoDisplay videoPlayer = new JavaFXVideoDisplay();
-        videoPlayer.setDictionary(dictionary);
-        videoPlayer.start();
-
-        new Thread() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                videoPlayer.media("file:///home/edaubert/Vidéos/BigBuckBunny_640x360.m4v");
-
-                /*try {
-                    Thread.sleep(4000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                videoPlayer.media("file:///home/edaubert/Vidéos/BigBuckBunny_640x360.m4v");*/
-            }
-        }.start();
     }
 }

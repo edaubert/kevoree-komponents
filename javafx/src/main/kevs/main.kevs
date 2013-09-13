@@ -1,0 +1,33 @@
+addRepo "https://oss.sonatype.org/content/groups/public/"
+
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.fakeDomo/{kevoree.corelibrary.version}'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.camel/{kevoree.corelibrary.version}'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.basicGossiper/{kevoree.corelibrary.version}'
+merge 'mvn:org.kevoree.corelibrary.sky/org.kevoree.library.sky.minicloud/{kevoree.corelibrary.version}'
+
+merge 'mvn:org.kevoree.komponents/javafx/{project.version}'
+
+addNode node0:MiniCloudNode { logLevel = "DEBUG", coreLogLevel = "DEBUG" }
+addNode node1:JavaSENode { logLevel = "DEBUG", coreLogLevel = "DEBUG" }
+addNode node2:JavaSENode { logLevel = "DEBUG", coreLogLevel = "DEBUG" }
+
+addChild node1@node0
+addChild node2@node0
+
+
+addComponent FakeConsole@node1 : FakeConsole
+
+addChannel CamelNett100 : CamelNetty
+
+bind FakeConsole.textEntered@node1 => CamelNett100
+bind FakeConsole.showText@node1 => CamelNett100
+
+addComponent FakeConsole2@node2 : FakeConsole
+addComponent videoViewer@node2 : JavaFXVideoDisplay
+
+bind FakeConsole2.textEntered@node2 => CamelNett100
+bind FakeConsole2.showText@node2 => CamelNett100
+bind FakeConsole2.showText@node2 => CamelNett100
+bind videoViewer.media@node2 => CamelNett100
+
+updateDictionary CamelNett100 {port='10030'}@node1,{port='10031'}@node2
