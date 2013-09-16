@@ -30,63 +30,65 @@ public class BasicFileSystemClient extends AbstractComponentType implements File
             @Override
             public void run() {
                 Set<String> filters = new HashSet<String>();
-                filters.add("*.txt");
+                filters.add("first.txt");
                 if (list().length == 0 && listFromFilter(filters).length == 0) {
-                    if (saveFile("/dummy.txt", new byte[0]) && getFileContent("/dummy.txt").length == 0) {
+                    if (saveFile("/dummy.txt", "dummy".getBytes()) && getFileContent("/dummy.txt").length == "dummy".length()) {
                         if (list().length == 1 && listFromFilter(filters).length == 0) {
                             filters.clear();
-                            filters.add("*.txt");
+                            filters.add(".*.txt");
                             if (listFromFilter(filters).length == 1) {
                                 try {
                                     byte[] bytes = "First file created".getBytes("UTF-8");
                                     if (saveFile("/first.txt", bytes) && getFileContent("/first.txt").length == bytes.length) {
                                         filters.clear();
-                                        filters.add("dummy.txt");
+                                        filters.add("/dummy.txt");
                                         if (list().length == 2 && listFromFilter(filters).length == 1) {
                                             if (delete("/first.txt") && getFileContent("/first.txt").length == 0) {
                                                 if (mkdirs("/firstFolder/")) {
                                                     if (saveFile("/firstFolder/first.txt", bytes) && getFileContent("/firstFolder/first.txt").length == bytes.length) {
-                                                        if (delete("/firstFolder/first.txt") && getFileContent("/firstFolder/first.txt").length == bytes.length) {
-                                                            if (move("/first.txt", "/firstFolder/dummy.txt") && !delete("/first.txt")) {
+                                                        filters.clear();
+                                                        filters.add("/firstFolder/first.txt");
+                                                        if (delete("/firstFolder/first.txt") && listFromFilter(filters).length == 0) {
+                                                            if (move("/dummy.txt", "/firstFolder/dummy.txt") && !delete("/first.txt")) {
                                                                 if (delete("/firstFolder/")) {
-                                                                    Log.info("{}: Test on FileSystem done. Everything seems to be fine", getName());
+                                                                    Log.info("{}: Test on FileSystem done. Everything seems to be fine", BasicFileSystemClient.this.getName());
                                                                 } else {
-                                                                    Log.error("{}: Unable to delete the folder: /firstFolder/", getName());
+                                                                    Log.error("{}: Unable to delete the folder: /firstFolder/", BasicFileSystemClient.this.getName());
                                                                 }
                                                             } else {
-                                                                Log.error("{}: Unable to move the file: /first.txt to /firstFolder/first.txt", getName());
+                                                                Log.error("{}: Unable to move the file: /first.txt to /firstFolder/first.txt", BasicFileSystemClient.this.getName());
                                                             }
                                                         } else {
-                                                            Log.error("{}: Unable to delete the file: /firstFolder/first.txt", getName());
+                                                            Log.error("{}: Unable to delete the file: /firstFolder/first.txt", BasicFileSystemClient.this.getName());
                                                         }
                                                     } else {
-                                                        Log.error("{}: Unable to save the file: /firstFolder/first.txt", getName());
+                                                        Log.error("{}: Unable to save the file: /firstFolder/first.txt", BasicFileSystemClient.this.getName());
                                                     }
                                                 } else {
-                                                    Log.error("{}: Unable to create the folder: /firstFolder/", getName());
+                                                    Log.error("{}: Unable to create the folder: /firstFolder/", BasicFileSystemClient.this.getName());
                                                 }
                                             } else {
-                                                Log.error("{}: Unable to delete the file: /first.txt", getName());
+                                                Log.error("{}: Unable to delete the file: /first.txt", BasicFileSystemClient.this.getName());
                                             }
                                         } else {
-                                            Log.error("{}: Unable to list the files: /dummy.txt and first.txt", getName());
+                                            Log.error("{}: Unable to list the files: /dummy.txt and /first.txt", BasicFileSystemClient.this.getName());
                                         }
                                     } else {
-                                        Log.error("{}: Unable to create the file: /first.txt", getName());
+                                        Log.error("{}: Unable to create the file: /first.txt", BasicFileSystemClient.this.getName());
                                     }
                                 } catch (UnsupportedEncodingException ignored) {
                                 }
                             } else {
-                                Log.error("{}: Unable to list using filters the file: /dummy.txt", getName());
+                                Log.error("{}: Unable to list using filters the file: /dummy.txt", BasicFileSystemClient.this.getName());
                             }
                         } else {
-                            Log.error("{}: Unable to list the file: /dummy.txt", getName());
+                            Log.error("{}: Unable to list the file: /dummy.txt", BasicFileSystemClient.this.getName());
                         }
                     } else {
-                        Log.error("{}: Unable to create the empty file: /dummy.txt", getName());
+                        Log.error("{}: Unable to create the file: /dummy.txt with \"dummy\" as content", BasicFileSystemClient.this.getName());
                     }
                 } else {
-                    Log.error("{}: Unable to list the file: /first.txt", getName());
+                    Log.error("{}: Unable to get a empty list of file");
                 }
             }
         }.start();

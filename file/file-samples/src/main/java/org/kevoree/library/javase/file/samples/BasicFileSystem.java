@@ -79,8 +79,12 @@ public class BasicFileSystem extends AbstractComponentType implements FileServic
                         }
                     }
                 }
-                if (!root && !filtered) {
-                    files.add(relativePath + "/" + base.getName());
+                if (!filtered) {
+                    if (!relativePath.endsWith("/") && !base.getName().startsWith("/")) {
+                        files.add(relativePath + "/" + base.getName());
+                    } else {
+                        files.add(relativePath + base.getName());
+                    }
                 }
             }
         }
@@ -91,17 +95,17 @@ public class BasicFileSystem extends AbstractComponentType implements FileServic
 
 
     @Port(name = "files", method = "list")
-    public String[] list() {
+    public synchronized String[] list() {
         return getFlatFiles(baseFolder, "", true, null);
     }
 
     @Port(name = "files", method = "listFromFilter")
-    public String[] listFromFilter(Set<String> filter) {
-        return getFlatFiles(baseFolder, "", true, filter);
+    public synchronized String[] listFromFilter(Set<String> filter) {
+        return getFlatFiles(baseFolder, "/", true, filter);
     }
 
     @Port(name = "files", method = "getFileContent")
-    public byte[] getFileContent(String relativePath) {
+    public synchronized byte[] getFileContent(String relativePath) {
         File f = new File(baseFolder.getAbsolutePath() + File.separator + relativePath);
         if (f.exists()) {
             try {
@@ -131,19 +135,45 @@ public class BasicFileSystem extends AbstractComponentType implements FileServic
     }*/
 
     @Port(name = "files", method = "mkdirs")
-    public boolean mkdirs(String relativePath) {
+    public synchronized boolean mkdirs(String relativePath) {
         return new File(baseFolder.getAbsolutePath() + File.separator + relativePath).mkdirs();
     }
 
     @Port(name = "files", method = "delete")
-    public boolean delete(String relativePath) {
-        return new File(baseFolder.getAbsolutePath() + File.separator + relativePath).delete();
+    public synchronized boolean delete(String relativePath) {
+        String cleanedRelativePath = relativePath;
+        if (cleanedRelativePath.startsWith("/")) {
+            cleanedRelativePath = cleanedRelativePath.substring(1);
+        }
+        if (cleanedRelativePath.endsWith("/")) {
+            cleanedRelativePath = cleanedRelativePath.substring(0, cleanedRelativePath.length() - 1);
+        }
+
+        cleanedRelativePath = cleanedRelativePath.replace("/", File.separator);
+
+        return deleteRecursively(cleanedRelativePath);
+
+    }
+
+    private synchronized boolean deleteRecursively(String relativePath) {
+        File file = new File(baseFolder.getAbsolutePath() + File.separator + relativePath);
+        if (file.exists() && file.isFile()) {
+            return file.delete();
+        } else if (file.exists()) {
+            boolean deleteRecursively = true;
+            for (File child : file.listFiles()) {
+                deleteRecursively = deleteRecursively && deleteRecursively(relativePath + File.separator + child.getName());
+            }
+            return deleteRecursively && file.delete();
+        } else {
+            return false;
+        }
     }
 
     @Port(name = "files", method = "saveFile")
-    public boolean saveFile(String relativePath, byte[] data) {
+    public synchronized boolean saveFile(String relativePath, byte[] data) {
         File f = new File(baseFolder.getAbsolutePath() + File.separator + relativePath);
-        if (f.exists()) {
+        if ((f.exists() && f.isFile()) || !f.exists()) {
             try {
                 FileOutputStream fw = new FileOutputStream(f);
                 fw.write(data);
@@ -161,7 +191,7 @@ public class BasicFileSystem extends AbstractComponentType implements FileServic
     }
 
     @Port(name = "files", method = "move")
-    public boolean move(String oldRelativePath, String newRelativePath) {
+    public synchronized boolean move(String oldRelativePath, String newRelativePath) {
 
         File oldFile = new File(baseFolder.getAbsolutePath() + File.separator + oldRelativePath);
         File newFile = new File(baseFolder.getAbsolutePath() + File.separator + newRelativePath);

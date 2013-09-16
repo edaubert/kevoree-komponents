@@ -26,7 +26,7 @@ public class LockTreeBasicFileSystem extends LockBasicFileSystem implements Lock
     }
 
     @Override
-    public AbstractItem getTree(String relativePath) {
+    public synchronized AbstractItem getTree(String relativePath) {
         return treeFileSystem.getTree(relativePath);
     }
 }

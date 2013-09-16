@@ -1,9 +1,6 @@
 package org.kevoree.library.javase.file.samples;
 
-import org.kevoree.annotation.ComponentType;
-import org.kevoree.annotation.PortType;
-import org.kevoree.annotation.ProvidedPort;
-import org.kevoree.annotation.Provides;
+import org.kevoree.annotation.*;
 import org.kevoree.library.javase.fileSystem.api.LockFileService;
 
 import java.util.ArrayList;
@@ -32,7 +29,8 @@ public class LockBasicFileSystem extends BasicFileSystem implements LockFileServ
     }
 
     @Override
-    public boolean lock(String relativePath) {
+    @Port(name = "files", method = "lock")
+    public synchronized boolean lock(String relativePath) {
         if (relativePath.endsWith("/")) {
             relativePath = relativePath.substring(0, relativePath.length() - 1);
         }
@@ -40,7 +38,8 @@ public class LockBasicFileSystem extends BasicFileSystem implements LockFileServ
     }
 
     @Override
-    public boolean unlock(String relativePath) {
+    @Port(name = "files", method = "unlock")
+    public synchronized boolean unlock(String relativePath) {
         if (relativePath.endsWith("/")) {
             relativePath = relativePath.substring(0, relativePath.length() - 1);
         }
@@ -48,11 +47,11 @@ public class LockBasicFileSystem extends BasicFileSystem implements LockFileServ
     }
 
 
-    public boolean saveFile(String relativePath, byte[] data) {
+    public synchronized boolean saveFile(String relativePath, byte[] data) {
         return !lockFiles.contains(relativePath) && super.saveFile(relativePath, data);
     }
 
-    public boolean mkdirs(String relativePath) {
+    public synchronized boolean mkdirs(String relativePath) {
         String[] splitted = relativePath.split("∕");
         String path = "";
         for (String split : splitted) {
@@ -64,11 +63,11 @@ public class LockBasicFileSystem extends BasicFileSystem implements LockFileServ
         return super.mkdirs(relativePath);
     }
 
-    public boolean delete(String relativePath) {
+    public synchronized boolean delete(String relativePath) {
         return !lockFiles.contains(relativePath) && super.delete(relativePath);
     }
 
-    public boolean move(String oldRelativePath, String newRelativePath) {
+    public synchronized boolean move(String oldRelativePath, String newRelativePath) {
         return !lockFiles.contains(oldRelativePath) && super.move(oldRelativePath, newRelativePath);
     }
 }

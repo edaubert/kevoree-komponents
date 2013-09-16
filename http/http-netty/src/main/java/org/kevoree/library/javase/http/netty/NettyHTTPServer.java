@@ -52,7 +52,6 @@ public class NettyHTTPServer extends AbstractHTTPServer {
     @Override
     public void start() throws Exception {
         port = Integer.parseInt(getDictionary().get("port").toString());
-        System.err.println(port);
 //        ssl = getDictionary().get("ssl") != null && "true".equalsIgnoreCase(getDictionary().get("ssl").toString());
 
         handler = new NettyHTTPHandler(this);

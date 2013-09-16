@@ -2,7 +2,7 @@ merge "mvn:org.kevoree.corelibrary.sky/org.kevoree.library.sky.api/{kevoree.core
 merge "mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/{kevoree.corelibrary.version}"
 merge "mvn:org.kevoree.komponents/file-samples/{project.version}"
 
-addNode node0 : PJavaSENode {logLevel="DEBUG"}
+addNode node0 : PJavaSENode {logLevel="INFO"}
 
 addComponent fileSystem@node0 : BasicFileSystem { basedir = '/tmp/basicFileSystem'}
 
@@ -11,9 +11,9 @@ addComponent fileSystem@node0 : BasicFileSystem { basedir = '/tmp/basicFileSyste
 //addComponent lockFileSystem@node0 : LockBasicFileSystem { basedir = '/tmp/lockFasicFileSystem'}
 //addComponent lockTreeFileSystem@node0 : LockTreeBasicFileSystem { basedir = '/tmp/lockTreeBasicFileSystem'}
 
-addComponent basicClient@node0 : BasicFileSystemClient { urlPattern='/echo'}
+addComponent basicClient@node0 : BasicFileSystemClient
 
-addChannel basicService : defService
+addChannel basicService : defSERVICE
 
 bind basicClient.files@node0 => basicService
 bind fileSystem.files@node0 => basicService

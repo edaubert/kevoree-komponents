@@ -12,8 +12,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <kevoree.version>2.0.12</kevoree.version>
-        <kevoree.corelibrary.version>2.0.4</kevoree.corelibrary.version>
+        <kevoree.version>2.0.13-SNAPSHOT</kevoree.version>
+        <kevoree.corelibrary.version>2.0.5-SNAPSHOT</kevoree.corelibrary.version>
     </properties>
 
     <dependencies>
@@ -93,5 +93,16 @@
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </pluginRepository>
     </pluginRepositories>
+
+    <distributionManagement>
+        <repository>
+            <id>maven2.kevoree.release</id>
+            <url>http://maven.kevoree.org/archiva/repository/release</url>
+        </repository>
+        <snapshotRepository>
+            <id>maven2.kevoree.snapshots</id>
+            <url>http://maven.kevoree.org/archiva/repository/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 
 </project>

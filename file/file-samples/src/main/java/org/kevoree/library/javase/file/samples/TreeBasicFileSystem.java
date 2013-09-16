@@ -21,7 +21,7 @@ import java.util.List;
 public class TreeBasicFileSystem extends BasicFileSystem implements TreeFileService {
 
     @Port(name = "files", method = "getTree")
-    public AbstractItem getTree(String relativePath) {
+    public synchronized AbstractItem getTree(String relativePath) {
         String nameDirectory;
         File file;
         if ("/".equals(relativePath)) {
