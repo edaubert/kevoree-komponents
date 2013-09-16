@@ -35,4 +35,6 @@ public abstract class AbstractHTTPServer  extends AbstractComponentType {
 
     @Port(name = "response")
     abstract public void response(/*HTTPOperationTuple*/Object param);
+
+    abstract public void request(/*HTTPOperationTuple*/Object param);
 }

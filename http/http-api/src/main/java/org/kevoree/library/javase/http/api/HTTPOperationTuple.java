@@ -11,9 +11,11 @@ package org.kevoree.library.javase.http.api;
 public class HTTPOperationTuple {
     public KevoreeHTTPServletRequest request;
     public KevoreeHTTPServletResponse response;
+    public Monitor monitor;
 
-    public HTTPOperationTuple(KevoreeHTTPServletRequest request, KevoreeHTTPServletResponse response) {
+    public HTTPOperationTuple(KevoreeHTTPServletRequest request, KevoreeHTTPServletResponse response, Monitor monitor) {
         this.request = request;
         this.response = response;
+        this.monitor = monitor;
     }
 }

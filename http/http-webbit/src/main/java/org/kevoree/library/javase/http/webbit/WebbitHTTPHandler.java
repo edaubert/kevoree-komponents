@@ -3,6 +3,7 @@ package org.kevoree.library.javase.http.webbit;
 import org.kevoree.library.javase.http.api.HTTPOperationTuple;
 import org.kevoree.library.javase.http.api.KevoreeHTTPServletRequest;
 import org.kevoree.library.javase.http.api.KevoreeHTTPServletResponse;
+import org.kevoree.library.javase.http.api.Monitor;
 import org.kevoree.log.Log;
 import org.webbitserver.HttpControl;
 import org.webbitserver.HttpHandler;
@@ -23,7 +24,7 @@ public class WebbitHTTPHandler implements HttpHandler {
 
     public WebbitHTTPHandler(WebbitHTTPServer server) {
         this.server = server;
-        monitor = new Monitor(Long.parseLong(server.getDictionary().get("timeout").toString()));
+        monitor = new Monitor(Long.parseLong(server.getDictionary().get("timeout").toString()), server);
     }
 
     @Override
@@ -32,7 +33,7 @@ public class WebbitHTTPHandler implements HttpHandler {
         // transform httpRequest in an adequate type, send it through the monitor
         KevoreeHTTPServletRequest request = new WebbitKevoreeHTTPServletRequest(httpRequest, server.server);
         KevoreeHTTPServletResponse response = new WebbitKevoteeHTTPServletResponse(httpResponse);
-        HTTPOperationTuple result = monitor.request(new HTTPOperationTuple(request, response));
+        HTTPOperationTuple result = monitor.request(new HTTPOperationTuple(request, response, monitor));
         Log.info("Status of the response: {} for request uri: {}", httpResponse.status(), request.getRequestURI());
 
         if (httpResponse.status() < 200 || (httpResponse.status() >= 300 && httpResponse.status() < 500)) {
@@ -53,7 +54,7 @@ public class WebbitHTTPHandler implements HttpHandler {
         // use the response
         monitor.response(param);
     }
-
+/*
     class Monitor {
         private long timeout;
         private KevoreeHTTPServletRequest request;
@@ -85,7 +86,7 @@ public class WebbitHTTPHandler implements HttpHandler {
             }
         }
 
-        /*synchronized HTTPOperationTuple error(HTTPOperationTuple param) throws InterruptedException {
+        *//*synchronized HTTPOperationTuple error(HTTPOperationTuple param) throws InterruptedException {
             response = null;
             server.error(param);
             wait(timeout);
@@ -96,7 +97,7 @@ public class WebbitHTTPHandler implements HttpHandler {
             }
             return param;
 
-        }*/
+        }*//*
 
-    }
+    }*/
 }

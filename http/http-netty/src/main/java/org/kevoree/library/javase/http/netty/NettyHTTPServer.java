@@ -1,10 +1,7 @@
 package org.kevoree.library.javase.http.netty;
 
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -55,50 +52,42 @@ public class NettyHTTPServer extends AbstractHTTPServer {
     @Override
     public void start() throws Exception {
         port = Integer.parseInt(getDictionary().get("port").toString());
+        System.err.println(port);
 //        ssl = getDictionary().get("ssl") != null && "true".equalsIgnoreCase(getDictionary().get("ssl").toString());
 
         handler = new NettyHTTPHandler(this);
 
-        try {
-            bossGroup = new NioEventLoopGroup();
-            workerGroup = new NioEventLoopGroup();
-            bootstrap = new ServerBootstrap();
-            bootstrap.group(bossGroup, workerGroup)
-                    .channel(NioServerSocketChannel.class)
-                    .childHandler(new ChannelInitializer<SocketChannel>() {
-                        @Override
-                        public void initChannel(SocketChannel ch) throws Exception {
-                            // Create a default pipeline implementation.
-                            ChannelPipeline pipeline = ch.pipeline();
+        bossGroup = new NioEventLoopGroup();
+        workerGroup = new NioEventLoopGroup();
+        bootstrap = new ServerBootstrap();
+        bootstrap.group(bossGroup, workerGroup)
+                .channel(NioServerSocketChannel.class)
+                .childHandler(new ChannelInitializer<SocketChannel>() {
+                    @Override
+                    public void initChannel(SocketChannel ch) throws Exception {
+                        // Create a default pipeline implementation.
+                        ChannelPipeline pipeline = ch.pipeline();
 
-                            // Uncomment the following line if you want HTTPS
+                        // Uncomment the following line if you want HTTPS
                             /*if (ssl) {
                                 SSLEngine engine = SecureChatSslContextFactory.getServerContext().createSSLEngine();
                                 engine.setUseClientMode(false);
                                 pipeline.addLast("ssl", new SslHandler(engine));
                             }*/
 
-                            pipeline.addLast("decoder", new HttpRequestDecoder());
-                            pipeline.addLast("aggregator", new HttpObjectAggregator(1048576));
-                            pipeline.addLast("encoder", new HttpResponseEncoder());
-                            pipeline.addLast("chunkedWriter", new ChunkedWriteHandler());
-                            // Remove the following line if you don't want automatic content compression.
-                            //p.addLast("deflater", new HttpContentCompressor());
-                            pipeline.addLast("handler", handler);
-                        }
-                    });
+                        pipeline.addLast("decoder", new HttpRequestDecoder());
+                        pipeline.addLast("aggregator", new HttpObjectAggregator(1048576));
+                        pipeline.addLast("encoder", new HttpResponseEncoder());
+                        pipeline.addLast("chunkedWriter", new ChunkedWriteHandler());
+                        pipeline.addLast("handler", handler);
+                    }
+                });
 //                    .option(ChannelOption.SO_BACKLOG, 128)
 //                    .childOption(ChannelOption.SO_KEEPALIVE, true);
 
-            // Bind and start to accept incoming connections.
-            internalStart();
-        } catch (Exception e) {
-            throw e;
-        } finally {
-            // Shut down all event loops to terminate all threads.
-            bossGroup.shutdownGracefully();
-            workerGroup.shutdownGracefully();
-        }
+        // Bind and start to accept incoming connections.
+        internalStart();
+
     }
 
     private void internalStart() throws Exception {
@@ -149,7 +138,8 @@ public class NettyHTTPServer extends AbstractHTTPServer {
     }
 
     // TODO replace Object with a specific type and rename the parameter
-    void request(/*HTTPOperationTuple*/Object param) {
+    @Override
+    public void request(/*HTTPOperationTuple*/Object param) {
         if (param != null && param instanceof HTTPOperationTuple && isPortBinded("request")) {
             getPortByName("request", MessagePort.class).process(param);
         }

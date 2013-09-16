@@ -1,11 +1,11 @@
 package org.kevoree.library.javase.http.netty;
 
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import org.kevoree.library.javase.http.api.KevoreeHTTPServletResponse;
 
 import javax.servlet.ServletOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -19,31 +19,55 @@ import java.io.PrintWriter;
  */
 public class NettyKevoteeHTTPServletResponse extends KevoreeHTTPServletResponse {
 
+    private ChannelHandlerContext ctx;
     private FullHttpResponse httpResponse;
     private NettyKevoreeServletOutputStream outputStream;
 
     private class NettyKevoreeServletOutputStream extends ServletOutputStream {
-        private ByteArrayOutputStream stream;
         FullHttpResponse httpResponse;
-
-        private ByteArrayOutputStream getStream() {
-            return stream;
-        }
+        private boolean isChunked;
 
         private NettyKevoreeServletOutputStream(FullHttpResponse httpResponse) {
-            stream = new ByteArrayOutputStream();
             this.httpResponse = httpResponse;
+            isChunked = false;
+        }
+
+        public void setChunked(boolean isChunked) {
+            this.isChunked = isChunked;
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (NettyKevoreeServletOutputStream.this.isChunked) {
+                        synchronized (httpResponse) {
+                            ctx.write(httpResponse.content());
+                        }
+                        try {
+                            Thread.sleep(200);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    // TODO close the chunk
+                }
+            }).start();
         }
 
         @Override
         public void write(int b) throws IOException {
-            httpResponse.content().writeByte(b);
+            synchronized (httpResponse) {
+                httpResponse.content().writeByte(b);
+            }
         }
     }
 
-    public NettyKevoteeHTTPServletResponse(FullHttpResponse httpResponse) {
+    public NettyKevoteeHTTPServletResponse(ChannelHandlerContext ctx, FullHttpResponse httpResponse) {
+        this.ctx = ctx;
         this.httpResponse = httpResponse;
         outputStream = new NettyKevoreeServletOutputStream(httpResponse);
+    }
+
+    public void end() {
+        outputStream.setChunked(false);
     }
 
     @Override
@@ -86,6 +110,11 @@ public class NettyKevoteeHTTPServletResponse extends KevoreeHTTPServletResponse 
     @Override
     public void addHeader(String name, String value) {
         httpResponse.headers().add(name, value);
+        if (name.equalsIgnoreCase("Transfer-Encoding") && value.equalsIgnoreCase("chunked")) {
+            outputStream.setChunked(true);
+        } else if (name.equalsIgnoreCase("Transfer-Encoding")) {
+            outputStream.setChunked(false);
+        }
     }
 
     @Override

@@ -41,6 +41,8 @@ public class StaticFileHandlerHelper {
 
                 if (HTTPHelper.isRaw(filePath)) {
                     OutputStream writer = resp.getOutputStream();
+                    resp.setHeader("Transfer-Encoding", "chunked");
+                    // TODO send chunked
                     writer.write(HTTPHelper.convertStream(ins));
                     writer.flush();
                 } else {

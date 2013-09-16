@@ -73,7 +73,8 @@ public class WebbitHTTPServer extends AbstractHTTPServer {
     }
 
     // TODO replace Object with a specific type and rename the parameter
-    void request(/*HTTPOperationTuple*/Object param) {
+    @Override
+    public void request(/*HTTPOperationTuple*/Object param) {
         if (param != null && param instanceof HTTPOperationTuple && isPortBinded("request")) {
             getPortByName("request", MessagePort.class).process(param);
         }

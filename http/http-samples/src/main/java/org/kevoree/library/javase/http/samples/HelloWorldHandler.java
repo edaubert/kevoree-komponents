@@ -32,19 +32,20 @@ public class HelloWorldHandler extends AbstractHTTPHandler {
         Log.debug("doGet in {} for {}", getName(), req.getRequestURI());
         resp.setContentType("text/html");
 
+        StringBuilder builder = new StringBuilder();
         PrintWriter out = resp.getWriter();
 
-        out.write("<html><head></head><body>");
-        out.write("Hello world !!!");
+        builder.append("<html><head></head><body>");
+        builder.append("Hello world !!!");
 
+        builder.append("<br/>");
+        builder.append("Hello coming from " + getName() + " on " + getNodeName());
+        builder.append("</body></html>");
+
+        out.write(builder.toString());
         out.flush();
 
-        out.println("<br/>");
-        out.println("Hello coming from " + getName() + " on " + getNodeName());
-        out.println("</body></html>");
-
-        out.flush();
-
+        resp.setContentLength(builder.length());
         resp.addDateHeader("Date", System.currentTimeMillis());
         resp.addDateHeader("Last-Modified", lastModified);
 
