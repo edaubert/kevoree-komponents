@@ -2,6 +2,9 @@ package org.kevoree.library.javase.file.samples;
 
 import org.kevoree.annotation.*;
 import org.kevoree.library.javase.fileSystem.api.*;
+import org.kevoree.library.javase.fileSystem.api.tree.AbstractItem;
+import org.kevoree.library.javase.fileSystem.api.tree.FileItem;
+import org.kevoree.library.javase.fileSystem.api.tree.FolderItem;
 
 import java.io.File;
 import java.util.List;

@@ -1,7 +1,7 @@
 package org.kevoree.library.javase.file.samples;
 
 import org.kevoree.annotation.ComponentType;
-import org.kevoree.library.javase.fileSystem.api.AbstractItem;
+import org.kevoree.library.javase.fileSystem.api.tree.AbstractItem;
 import org.kevoree.library.javase.fileSystem.api.LockTreeFileService;
 
 /**

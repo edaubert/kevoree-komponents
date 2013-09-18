@@ -1,5 +1,7 @@
 package org.kevoree.library.javase.fileSystem.api;
 
+import org.kevoree.library.javase.fileSystem.api.tree.AbstractItem;
+
 /**
  * User: Erwan Daubert - erwan.daubert@gmail.com
  * Date: 12/08/13

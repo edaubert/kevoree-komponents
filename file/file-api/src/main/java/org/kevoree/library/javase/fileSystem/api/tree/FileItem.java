@@ -1,4 +1,4 @@
-package org.kevoree.library.javase.fileSystem.api;
+package org.kevoree.library.javase.fileSystem.api.tree;
 
 
 import java.io.Serializable;

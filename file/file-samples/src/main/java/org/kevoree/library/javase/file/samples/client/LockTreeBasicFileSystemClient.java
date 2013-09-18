@@ -1,4 +1,4 @@
-package org.kevoree.library.javase.file.samples;
+package org.kevoree.library.javase.file.samples.client;
 
 import org.kevoree.annotation.*;
 import org.kevoree.framework.AbstractComponentType;
@@ -22,7 +22,7 @@ import java.util.Set;
         @RequiredPort(name = "files", type = PortType.SERVICE, className = FileService.class, needCheckDependency = true)
 })
 @ComponentType
-public class BasicFileSystemClient extends AbstractComponentType implements FileService {
+public class LockTreeBasicFileSystemClient extends AbstractComponentType implements FileService {
 
     @Start
     public void start() {
@@ -51,41 +51,41 @@ public class BasicFileSystemClient extends AbstractComponentType implements File
                                                         if (delete("/firstFolder/first.txt") && listFromFilter(filters).length == 0) {
                                                             if (move("/dummy.txt", "/firstFolder/dummy.txt") && !delete("/first.txt")) {
                                                                 if (delete("/firstFolder/")) {
-                                                                    Log.info("{}: Test on FileSystem done. Everything seems to be fine", BasicFileSystemClient.this.getName());
+                                                                    Log.info("{}: Test on FileSystem done. Everything seems to be fine", LockTreeBasicFileSystemClient.this.getName());
                                                                 } else {
-                                                                    Log.error("{}: Unable to delete the folder: /firstFolder/", BasicFileSystemClient.this.getName());
+                                                                    Log.error("{}: Unable to delete the folder: /firstFolder/", LockTreeBasicFileSystemClient.this.getName());
                                                                 }
                                                             } else {
-                                                                Log.error("{}: Unable to move the file: /first.txt to /firstFolder/first.txt", BasicFileSystemClient.this.getName());
+                                                                Log.error("{}: Unable to move the file: /first.txt to /firstFolder/first.txt", LockTreeBasicFileSystemClient.this.getName());
                                                             }
                                                         } else {
-                                                            Log.error("{}: Unable to delete the file: /firstFolder/first.txt", BasicFileSystemClient.this.getName());
+                                                            Log.error("{}: Unable to delete the file: /firstFolder/first.txt", LockTreeBasicFileSystemClient.this.getName());
                                                         }
                                                     } else {
-                                                        Log.error("{}: Unable to save the file: /firstFolder/first.txt", BasicFileSystemClient.this.getName());
+                                                        Log.error("{}: Unable to save the file: /firstFolder/first.txt", LockTreeBasicFileSystemClient.this.getName());
                                                     }
                                                 } else {
-                                                    Log.error("{}: Unable to create the folder: /firstFolder/", BasicFileSystemClient.this.getName());
+                                                    Log.error("{}: Unable to create the folder: /firstFolder/", LockTreeBasicFileSystemClient.this.getName());
                                                 }
                                             } else {
-                                                Log.error("{}: Unable to delete the file: /first.txt", BasicFileSystemClient.this.getName());
+                                                Log.error("{}: Unable to delete the file: /first.txt", LockTreeBasicFileSystemClient.this.getName());
                                             }
                                         } else {
-                                            Log.error("{}: Unable to list the files: /dummy.txt and /first.txt", BasicFileSystemClient.this.getName());
+                                            Log.error("{}: Unable to list the files: /dummy.txt and /first.txt", LockTreeBasicFileSystemClient.this.getName());
                                         }
                                     } else {
-                                        Log.error("{}: Unable to create the file: /first.txt", BasicFileSystemClient.this.getName());
+                                        Log.error("{}: Unable to create the file: /first.txt", LockTreeBasicFileSystemClient.this.getName());
                                     }
                                 } catch (UnsupportedEncodingException ignored) {
                                 }
                             } else {
-                                Log.error("{}: Unable to list using filters the file: /dummy.txt", BasicFileSystemClient.this.getName());
+                                Log.error("{}: Unable to list using filters the file: /dummy.txt", LockTreeBasicFileSystemClient.this.getName());
                             }
                         } else {
-                            Log.error("{}: Unable to list the file: /dummy.txt", BasicFileSystemClient.this.getName());
+                            Log.error("{}: Unable to list the file: /dummy.txt", LockTreeBasicFileSystemClient.this.getName());
                         }
                     } else {
-                        Log.error("{}: Unable to create the file: /dummy.txt with \"dummy\" as content", BasicFileSystemClient.this.getName());
+                        Log.error("{}: Unable to create the file: /dummy.txt with \"dummy\" as content", LockTreeBasicFileSystemClient.this.getName());
                     }
                 } else {
                     Log.error("{}: Unable to get a empty list of file");
