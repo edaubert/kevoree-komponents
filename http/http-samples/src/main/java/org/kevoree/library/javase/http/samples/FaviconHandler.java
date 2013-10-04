@@ -29,6 +29,6 @@ public class FaviconHandler extends AbstractHTTPHandler {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Log.debug("doGet in {} for {}", getName(), req.getRequestURI());
-        StaticFileHandlerHelper.checkStaticFile(getDictionary().get("favicon").toString(), this, req, resp);
+        StaticFileHandlerHelper.checkStaticFile(getDictionary().get("favicon").toString(), this, resp);
     }
 }

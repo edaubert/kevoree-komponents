@@ -6,7 +6,7 @@ merge "mvn:org.kevoree.komponents/http-webbit/{project.version}"
 addNode node0 : PJavaSENode {logLevel="DEBUG"}
 addComponent webserver@node0 : WebbitHTTPServer
 
-addComponent favicon@node0 : FaviconHandler { urlPattern='/favicon*', favicon='favicon.png' }
+addComponent favicon@node0 : FaviconHandler { urlPattern='/favicon.*', favicon='favicon.png' }
 addComponent page@node0 : HelloWorldHandler { urlPattern='/'}
 addComponent page1@node0 : StaticFileHandler { urlPattern='/video/', path = '/home/edaubert/Vidéos/', patternToRemove="/video/", contained = 'false', defaultFile = 'We.Bought.A.Zoo.2011.TRUEFRENCH.BDRip.XviD-TiCKETS.CD1.avi'}
 

@@ -64,7 +64,6 @@ public abstract class AbstractHTTPHandler extends AbstractComponentType {
     }
 
     protected String applyPatternToRemove(String uri) {
-
         Pattern pattern = Pattern.compile(patternToRemove);
         Matcher matcher = pattern.matcher(uri);
         return matcher.replaceFirst("");
