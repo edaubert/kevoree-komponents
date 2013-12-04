@@ -18,6 +18,8 @@ import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import org.kevoree.ContainerRoot;
 import org.kevoree.annotation.*;
+import org.kevoree.api.Context;
+import org.kevoree.api.ModelService;
 import org.kevoree.framework.AbstractComponentType;
 import org.kevoree.framework.service.handler.ModelListenerAdapter;
 import org.kevoree.library.javase.javafx.layout.SingleWindowLayout;
@@ -34,23 +36,25 @@ import java.util.List;
  * @version 1.0
  */
 @Library(name = "javafx")
-@DictionaryType({
-        @DictionaryAttribute(name = "singleFrame", defaultValue = "true", optional = true),
-        @DictionaryAttribute(name = "url", defaultValue = "http://localhost:9500/", optional = true)
-})
-@Provides({
-        @ProvidedPort(name = "handle", type = PortType.MESSAGE)
-})
 @ComponentType
-public class JavaFXWebBrowser extends AbstractComponentType {
+public class JavaFXWebBrowser {
+
+    @Param(optional = true, defaultValue = "true")
+    protected boolean singleFrame;
+
+    @Param(optional = true, defaultValue = "http://localhost:9500/")
+    protected String url;
+
+    @KevoreeInject
+    ModelService modelService;
+    @KevoreeInject
+    protected Context cmpContext;
 
     private Stage localWindow;
     private Tab tab;
     //    private BorderPane root;
     private WebView webView;
     private WebEngine webEngine;
-
-    private String url;
 
     private boolean initialized;
     private final List<String> messagesToHandle = new ArrayList<String>();
@@ -61,35 +65,20 @@ public class JavaFXWebBrowser extends AbstractComponentType {
         synchronized (messagesToHandle) {
             initialized = false;
         }
-        url = getDictionary().get("url").toString();
-
-        getModelService().registerModelListener(new ModelListenerAdapter() {
-            @Override
-            public void modelUpdated() {
-            }
-
-            @Override
-            public void preRollback(ContainerRoot containerRoot, ContainerRoot containerRoot2) {
-            }
-
-            @Override
-            public void postRollback(ContainerRoot containerRoot, ContainerRoot containerRoot2) {
-            }
-        });
         SingleWindowLayout.initJavaFX();
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
                 // This method is invoked on JavaFX thread
                 Scene scene = createScene();
-                if (Boolean.valueOf((String) getDictionary().get("singleFrame"))) {
+                if (singleFrame) {
                     tab = new Tab();
-                    tab.setText(getName());
+                    tab.setText(cmpContext.getInstanceName());
                     tab.setContent(scene.getRoot());
                     SingleWindowLayout.getInstance().addTab(tab);
                 } else {
                     localWindow = new Stage();
-                    localWindow.setTitle(getName() + "@@@" + getNodeName());
+                    localWindow.setTitle(cmpContext.getInstanceName() + "@@@" + cmpContext.getNodeName());
                     localWindow.setScene(scene);
 
                     localWindow.show();
@@ -103,7 +92,7 @@ public class JavaFXWebBrowser extends AbstractComponentType {
         synchronized (wait) {
             wait.wait();
         }
-        getModelService().registerModelListener(new ModelListenerAdapter() {
+        modelService.registerModelListener(new ModelListenerAdapter() {
             @Override
             public void modelUpdated() {
 
@@ -131,7 +120,7 @@ public class JavaFXWebBrowser extends AbstractComponentType {
             @Override
             public void run() {
                 // TODO unload javafx stuff
-                if (Boolean.valueOf((String) getDictionary().get("singleFrame"))) {
+                if (singleFrame) {
                     SingleWindowLayout.getInstance().removeTab(tab);
                 } else {
                     localWindow.hide();
@@ -151,7 +140,7 @@ public class JavaFXWebBrowser extends AbstractComponentType {
 
     }
 
-    @Port(name = "handle")
+    @Input(optional = true)
     public void handle(final Object msg) {
         if (msg instanceof String) {
             Platform.runLater(new Runnable() {

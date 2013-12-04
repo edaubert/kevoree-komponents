@@ -1,7 +1,6 @@
 package org.kevoree.library.javase.http.webbit;
 
-import org.kevoree.annotation.*;
-import org.kevoree.framework.MessagePort;
+import org.kevoree.annotation.ComponentType;
 import org.kevoree.library.javase.http.api.AbstractHTTPServer;
 import org.kevoree.library.javase.http.api.HTTPOperationTuple;
 import org.kevoree.log.Log;
@@ -22,21 +21,15 @@ import java.util.concurrent.TimeoutException;
  * @version 1.0
  */
 @ComponentType (description = "Webbit server to server HTTP request. Thhis implementations is based on servlet API. However webbit doesn't provide a way to do chunked response for binary content. That's why this implementation is not able to stream binary content like media.")
-@Requires({
-        @RequiredPort(name = "error", type = PortType.MESSAGE, optional = true/*, messageType = HTTPOperationTuple.class.getName()*/)
-})
-
-/*@Provides({
-        @ProvidedPort(name = "errorResponse", type = PortType.MESSAGE*//*, messageType = HTTPOperationTuple.class.getName()*//*)
+/*@Requires({
+        @RequiredPort(name = "error", type = PortType.MESSAGE, optional = true*//*, messageType = HTTPOperationTuple.class.getName()*//*)
 })*/
 public class WebbitHTTPServer extends AbstractHTTPServer {
-    private int port;
     WebServer server;
     private WebbitHTTPHandler handler;
 
     @Override
     public void start() throws ExecutionException, InterruptedException {
-        port = Integer.parseInt(getDictionary().get("port").toString());
 
         server = WebServers.createWebServer(port);
 //        server.staleConnectionTimeout(Integer.parseInt(getDictionary().get("timeout").toString()));
@@ -50,7 +43,7 @@ public class WebbitHTTPServer extends AbstractHTTPServer {
         port = -1;
         Future future = server.stop();
         try {
-            future.get(Integer.parseInt(getDictionary().get("timeout").toString()), TimeUnit.MILLISECONDS);
+            future.get(timeout, TimeUnit.MILLISECONDS);
         } catch (TimeoutException e) {
             Log.warn("Time out when waiting the stop of the server. Maybe it is blocked!");
         }
@@ -58,10 +51,10 @@ public class WebbitHTTPServer extends AbstractHTTPServer {
 
     @Override
     public void update() throws ExecutionException, InterruptedException {
-        if (port != Integer.parseInt(getDictionary().get("port").toString())) {
+//        if (port != Integer.parseInt(getDictionary().get("port").toString())) {
             stop();
             start();
-        }
+//        }
     }
 
     @Override
@@ -69,14 +62,6 @@ public class WebbitHTTPServer extends AbstractHTTPServer {
     public void response(/*HTTPOperationTuple*/Object param) {
         if (param != null && param instanceof HTTPOperationTuple) {
             handler.response((HTTPOperationTuple) param);
-        }
-    }
-
-    // TODO replace Object with a specific type and rename the parameter
-    @Override
-    public void request(/*HTTPOperationTuple*/Object param) {
-        if (param != null && param instanceof HTTPOperationTuple && isPortBinded("request")) {
-            getPortByName("request", MessagePort.class).process(param);
         }
     }
 

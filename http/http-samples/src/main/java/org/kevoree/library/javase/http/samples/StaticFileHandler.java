@@ -20,42 +20,38 @@ import java.io.IOException;
  */
 @Library(name = "JavaSE")
 @ComponentType
-@DictionaryType({
-        @DictionaryAttribute(name = "path", optional = true, defaultValue = "."),
-        @DictionaryAttribute(name = "contained", defaultValue = "true"),
-        @DictionaryAttribute(name = "defaultFile", defaultValue = "index.html")
-})
 public class StaticFileHandler extends AbstractParentHTTPHandler {
 
+    @Param(optional = true, defaultValue = "true")
     private boolean contained;
-    private String sourceFolder;
+    @Param(optional = true, defaultValue = ".")
+    private String path;
+    @Param(optional = true, defaultValue = "index.html")
     private String defaultFile;
+
 
     @Start
     public void start() throws Exception {
-        contained = getDictionary().get("contained").toString().equalsIgnoreCase("true");
-        sourceFolder = getDictionary().get("path").toString();
-        defaultFile = getDictionary().get("defaultFile").toString();
         super.start();
     }
 
     @Update
     public void update() throws Exception {
-        if (contained != getDictionary().get("contained").equals("true") || !sourceFolder.equals(getDictionary().get("path").toString()) || !defaultFile.equals(getDictionary().get("defaultFile").toString())) {
+//        if (contained != getDictionary().get("contained").equals("true") || !sourceFolder.equals(getDictionary().get("path").toString()) || !defaultFile.equals(getDictionary().get("defaultFile").toString())) {
 //            stop();
             start();
-        }
+//        }
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Log.debug("doGet in {} for {}", getName(), req.getRequestURI());
+        Log.debug("doGet in {} for {}", cmpContext.getInstanceName(), req.getRequestURI());
         if (contained) {
             if (!StaticFileHandlerHelper.checkStaticFile(defaultFile, this, req, resp)) {
                 fileNotFound(req, resp);
             }
         } else {
-            if (!StaticFileHandlerHelper.checkStaticFileFromDir(defaultFile, sourceFolder, this, req, resp) && !StaticFileHandlerHelper.checkStaticFile(defaultFile, this, req, resp)) {
+            if (!StaticFileHandlerHelper.checkStaticFileFromDir(defaultFile, path, this, req, resp) && !StaticFileHandlerHelper.checkStaticFile(defaultFile, this, req, resp)) {
                 fileNotFound(req, resp);
             }
         }

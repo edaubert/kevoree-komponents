@@ -1,8 +1,7 @@
 package org.kevoree.library.javase.http.samples;
 
 import org.kevoree.annotation.ComponentType;
-import org.kevoree.annotation.DictionaryAttribute;
-import org.kevoree.annotation.DictionaryType;
+import org.kevoree.annotation.Param;
 import org.kevoree.library.javase.http.api.AbstractHTTPHandler;
 import org.kevoree.library.javase.http.api.StaticFileHandlerHelper;
 import org.kevoree.log.Log;
@@ -21,14 +20,16 @@ import java.io.IOException;
  * @version 1.0
  */
 @ComponentType
-@DictionaryType({
-        @DictionaryAttribute(name = "favicon", optional = true, defaultValue = "favicon.ico"),
-        @DictionaryAttribute(name = "urlPattern", optional = true, defaultValue = "/favicon.ico")
-})
 public class FaviconHandler extends AbstractHTTPHandler {
+
+    @Param(optional = true, defaultValue = "favicon.png")
+    private String favicon;
+    @Param(optional = true, defaultValue = "/favicon.ico")
+    private String urlPattern;
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Log.debug("doGet in {} for {}", getName(), req.getRequestURI());
-        StaticFileHandlerHelper.checkStaticFile(getDictionary().get("favicon").toString(), this, resp);
+        Log.debug("doGet in {} for {}", cmpContext.getInstanceName(), req.getRequestURI());
+        StaticFileHandlerHelper.checkStaticFile(favicon, this, resp);
     }
 }

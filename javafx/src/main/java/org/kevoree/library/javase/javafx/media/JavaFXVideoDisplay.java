@@ -9,7 +9,8 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import org.kevoree.annotation.*;
-import org.kevoree.framework.AbstractComponentType;
+import org.kevoree.api.Context;
+import org.kevoree.api.ModelService;
 import org.kevoree.library.javase.javafx.layout.SingleWindowLayout;
 import org.kevoree.log.Log;
 
@@ -22,15 +23,8 @@ import org.kevoree.log.Log;
  * @version 1.0
  */
 @Library(name = "javafx")
-@DictionaryType({
-        @DictionaryAttribute(name = "singleFrame", defaultValue = "true", optional = true),
-//        @DictionaryAttribute(name = "url", defaultValue = "http://localhost:9500/", optional = true)
-})
-@Provides({
-        @ProvidedPort(name = "media", type = PortType.MESSAGE)
-})
 @ComponentType
-public class JavaFXVideoDisplay extends AbstractComponentType {
+public class JavaFXVideoDisplay {
 
     private Stage localWindow;
     private Tab tab;
@@ -39,6 +33,15 @@ public class JavaFXVideoDisplay extends AbstractComponentType {
     private Media media;
     private MediaPlayer mediaPlayer;
     private MediaControl mediaControl;
+
+    @Param(optional = true, defaultValue = "true")
+    private boolean singleFrame;
+
+    @KevoreeInject
+    ModelService modelService;
+
+    @KevoreeInject
+    protected Context cmpContext;
 
     // TODO add a list of media to display
     // the media port is only use to add media to this list
@@ -54,9 +57,9 @@ public class JavaFXVideoDisplay extends AbstractComponentType {
             @Override
             public void run() {
                 // This method is invoked on JavaFX thread
-                if (Boolean.valueOf((String) getDictionary().get("singleFrame"))) {
+                if (singleFrame) {
                     tab = new Tab();
-                    tab.setText(getName());
+                    tab.setText(cmpContext.getInstanceName());
                     tab.selectedProperty().addListener(new ChangeListener<Boolean>() {
                         @Override
                         public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean aBoolean2) {
@@ -80,7 +83,7 @@ public class JavaFXVideoDisplay extends AbstractComponentType {
                     });
                 } else {
                     localWindow = new Stage();
-                    localWindow.setTitle(getName() + "@@@" + getNodeName());
+                    localWindow.setTitle(cmpContext.getInstanceName() + "@@@" + cmpContext.getNodeName());
 
                     localWindow.show();
 //                    TODO localFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -124,7 +127,7 @@ public class JavaFXVideoDisplay extends AbstractComponentType {
             @Override
             public void run() {
                 // TODO unload javafx stuff
-                if (Boolean.valueOf((String) getDictionary().get("singleFrame"))) {
+                if (singleFrame) {
                     SingleWindowLayout.getInstance().removeTab(tab);
                 } else {
                     localWindow.hide();
@@ -144,7 +147,7 @@ public class JavaFXVideoDisplay extends AbstractComponentType {
 
     }
 
-    @Port(name = "media")
+    @Input
     public void media(final Object o) {
         Log.warn("URL received: {}", o.toString());
         if (o instanceof String) {
@@ -172,7 +175,7 @@ public class JavaFXVideoDisplay extends AbstractComponentType {
         mediaControl = new MediaControl(mediaPlayer);
         scene = new Scene(mediaControl);
 
-        if (Boolean.valueOf((String) getDictionary().get("singleFrame"))) {
+        if (singleFrame) {
             tab.setContent(mediaControl);
         } else {
             localWindow.setScene(scene);

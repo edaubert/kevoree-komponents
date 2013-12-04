@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.kevoree.komponents</groupId>
         <artifactId>komponents.root</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.1.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -19,8 +19,6 @@
         <module>http-api</module>
         <module>http-samples</module>
         <module>http-webbit</module>
-        <module>http-netty</module>
+        <!--<module>http-netty</module>-->
     </modules>
-    
-
 </project>

@@ -1,6 +1,7 @@
 package org.kevoree.library.javase.file.samples;
 
 import org.kevoree.annotation.*;
+import org.kevoree.api.Context;
 import org.kevoree.framework.AbstractComponentType;
 import org.kevoree.library.javase.fileSystem.api.FileService;
 import org.kevoree.log.Log;
@@ -22,22 +23,25 @@ import java.util.regex.Pattern;
 @Provides({
         @ProvidedPort(name = "files", type = PortType.SERVICE, className = FileService.class)
 })
-@DictionaryType({
-        @DictionaryAttribute(name = "basedir", optional = false)
-})
 @ComponentType
-public class BasicFileSystem extends AbstractComponentType implements FileService {
+public class BasicFileSystem implements FileService {
+
+    @KevoreeInject
+    protected Context cmpContext;
+
+    @Param(optional = false)
+    private String basedir;
 
     //	private String baseURL = "";
     protected File baseFolder = null;
 
     @Start
     public void start() throws Exception {
-        baseFolder = new File(this.getDictionary().get("basedir").toString());
+        baseFolder = new File(basedir);
         if ((!baseFolder.exists() && baseFolder.mkdirs()) || (baseFolder.exists() && baseFolder.isDirectory())) {
             Log.debug("FileSystem initialized with {} as root", baseFolder.getAbsolutePath());
         } else {
-            throw new Exception("Unable to initialize file system " + getName() + " because the basedir attribute define a file instead of a folder.");
+            throw new Exception("Unable to initialize file system " + cmpContext.getInstanceName() + " because the basedir attribute define a file instead of a folder.");
         }
     }
 

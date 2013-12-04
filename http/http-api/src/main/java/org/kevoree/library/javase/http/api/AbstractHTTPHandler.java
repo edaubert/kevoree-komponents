@@ -1,8 +1,8 @@
 package org.kevoree.library.javase.http.api;
 
 import org.kevoree.annotation.*;
-import org.kevoree.framework.AbstractComponentType;
-import org.kevoree.framework.MessagePort;
+import org.kevoree.api.Context;
+import org.kevoree.api.Port;
 import org.kevoree.log.Log;
 
 import javax.servlet.ServletException;
@@ -22,34 +22,36 @@ import java.util.regex.Pattern;
  */
 @Library(name = "web")
 @ComponentType
-@Provides({
-        @ProvidedPort(name = "request", type = PortType.MESSAGE)
-})
-@Requires({
-        @RequiredPort(name = "content", type = PortType.MESSAGE),
-        @RequiredPort(name = "forward", type = PortType.MESSAGE, optional = true)
-})
-@DictionaryType({
-        @DictionaryAttribute(name = "urlPattern", optional = true, defaultValue = "/"),
-        @DictionaryAttribute(name = "patternToRemove", optional = true, defaultValue = "/")
-})
-public abstract class AbstractHTTPHandler extends AbstractComponentType {
+public abstract class AbstractHTTPHandler {
+
+    @Param(optional = true, defaultValue = "/")
+    protected String urlPattern;
+
+    @Param(optional = true, defaultValue = "/")
+    protected String patternToRemove;
+
+    @KevoreeInject
+    protected Context cmpContext;
+
+    @Output(optional = false)
+    protected Port content;
+
+    @Output(optional = true)
+    protected Port forward;
+
     protected static final int NO_RETURN_RESPONSE = 418;
 
     private KevoreeHttpServlet servlet;
     protected String urlPatternRegex;
-    protected String patternToRemove;
 
     @Start
     public void start() throws Exception {
         servlet = new KevoreeHttpServlet();
-        urlPatternRegex = getDictionary().get("urlPattern").toString();
-        patternToRemove = getDictionary().get("patternToRemove").toString();
     }
 
     @Update
     public void update() throws Exception {
-        if (!urlPatternRegex.equals(getDictionary().get("urlPattern").toString()) && !patternToRemove.equals(getDictionary().get("patternToRemove").toString())) {
+        if (!urlPatternRegex.equals(urlPattern) && !patternToRemove.equals(patternToRemove)) {
             stop();
             start();
         }
@@ -79,14 +81,14 @@ public abstract class AbstractHTTPHandler extends AbstractComponentType {
                 uri = "/" + uri;
             }
             request.setRequestURI(uri);
-            if (isPortBinded("forward")) {
+            if (forward != null) {
                 Log.debug("forward request for url = {} with completeURL = {}", uri, request.getRequestURL());
-                getPortByName("forward", MessagePort.class).process(request);
+                forward.call(request);
                 response.setStatus(NO_RETURN_RESPONSE);
             } else {
-                Log.debug("Unable to forward request because the forward port is not bound for {}", getName());
+                Log.debug("Unable to forward request because the forward port is not bound for {}", cmpContext.getInstanceName());
                 try {
-                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Unable to forward request because the forward port is not bound for " + getName() + "@" + getNodeName());
+                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Unable to forward request because the forward port is not bound for " + cmpContext.getInstanceName() + "@" + cmpContext.getNodeName());
                 } catch (IOException e) {
                     Log.error("Unable to send Internal Server Error to notify that the forward port is not bound");
                 }
@@ -95,19 +97,19 @@ public abstract class AbstractHTTPHandler extends AbstractComponentType {
     }
 
     private boolean check(String url) {
-        Log.trace("Checking url in component '{}' with urlPattern '{}' and url '{}'", getName(), urlPatternRegex, url);
+        Log.trace("Checking url in component '{}' with urlPattern '{}' and url '{}'", cmpContext.getInstanceName(), urlPatternRegex, url);
         Pattern pattern = Pattern.compile(urlPatternRegex);
         Matcher m = pattern.matcher(url);
         return m.matches();
     }
 
     // TODO change type and name of the parameter
-    @Port(name = "request")
+    @Input(optional = false)
     public void request(/*HTTPOperationTuple*/Object msg) {
         if (msg != null && msg instanceof HTTPOperationTuple) {
             HttpServletRequest request = ((HTTPOperationTuple) msg).request;
             if (check(request.getPathInfo())) {
-                Log.debug("The url '{}' is accepted by '{}' with urlPattern '{}' ", request.getPathInfo(), getName(), urlPatternRegex);
+                Log.debug("The url '{}' is accepted by '{}' with urlPattern '{}' ", request.getPathInfo(), cmpContext.getInstanceName(), urlPatternRegex);
                 KevoreeHTTPServletResponse response = ((HTTPOperationTuple) msg).response;
                 if (request.getMethod().equalsIgnoreCase("get")) {
                     try {
@@ -182,7 +184,7 @@ public abstract class AbstractHTTPHandler extends AbstractComponentType {
                 }
                 if (response.getStatus() != 418) {
                     ((HTTPOperationTuple) msg).response = response;
-                    this.getPortByName("content", MessagePort.class).process(msg);//SEND MESSAGE
+                    content.call(msg);
                 } else {
                     Log.debug("Status code correspond to tea pot: No response returns!");
                 }

@@ -24,7 +24,7 @@ public class WebbitHTTPHandler implements HttpHandler {
 
     public WebbitHTTPHandler(WebbitHTTPServer server) {
         this.server = server;
-        monitor = new Monitor(Long.parseLong(server.getDictionary().get("timeout").toString()), server);
+        monitor = new Monitor(server.getTimeout(), server);
     }
 
     @Override
@@ -54,50 +54,4 @@ public class WebbitHTTPHandler implements HttpHandler {
         // use the response
         monitor.response(param);
     }
-/*
-    class Monitor {
-        private long timeout;
-        private KevoreeHTTPServletRequest request;
-        private KevoreeHTTPServletResponse response;
-
-        Monitor(long timeout) {
-            this.timeout = timeout;
-        }
-
-        synchronized HTTPOperationTuple request(HTTPOperationTuple param) throws InterruptedException {
-            response = null;
-            request = param.request;
-            server.request(param);
-            wait(timeout);
-            if (response == null) {
-                param.response.setStatus(408);
-            } else {
-                param.response = response;
-            }
-            return param;
-        }
-
-        synchronized void response(HTTPOperationTuple param) {
-            if (param.request == request) {
-                response = param.response;
-                notify();
-            } else {
-                Log.warn("timeout exceeds for request uri: {}", param.request.getRequestURI());
-            }
-        }
-
-        *//*synchronized HTTPOperationTuple error(HTTPOperationTuple param) throws InterruptedException {
-            response = null;
-            server.error(param);
-            wait(timeout);
-            if (response == null) {
-                param.response.setStatus(404);
-            } else {
-                param.response = response;
-            }
-            return param;
-
-        }*//*
-
-    }*/
 }

@@ -1,7 +1,7 @@
 package org.kevoree.library.javase.http.api;
 
 import org.kevoree.annotation.*;
-import org.kevoree.framework.AbstractComponentType;
+import org.kevoree.api.Port;
 
 /**
  * User: Erwan Daubert - erwan.daubert@gmail.com
@@ -13,17 +13,18 @@ import org.kevoree.framework.AbstractComponentType;
  */
 @Library(name = "web")
 @ComponentType
-@DictionaryType({
-        @DictionaryAttribute(name = "port" , defaultValue = "8080"),
-        @DictionaryAttribute(name = "timeout" , defaultValue = "5000", optional = true)
-})
-@Requires({
-        @RequiredPort(name = "request", type = PortType.MESSAGE/*, messageType = HTTPOperationTuple.class.getName()*/)
-})
-@Provides({
-        @ProvidedPort(name = "response", type = PortType.MESSAGE/*, messageType = HTTPOperationTuple.class.getName()*/)
-})
-public abstract class AbstractHTTPServer  extends AbstractComponentType {
+public abstract class AbstractHTTPServer {
+    @Param(optional = true, defaultValue = "8080")
+    protected int port;
+    @Param(optional = true, defaultValue = "5000")
+    protected long timeout;
+    @Output
+    protected Port request;
+
+    public long getTimeout() {
+        return timeout;
+    }
+
     @Start
     abstract public void start() throws Exception;
 
@@ -33,8 +34,12 @@ public abstract class AbstractHTTPServer  extends AbstractComponentType {
     @Update
     abstract public void update() throws Exception;
 
-    @Port(name = "response")
+    @Input(optional = false)
     abstract public void response(/*HTTPOperationTuple*/Object param);
 
-    abstract public void request(/*HTTPOperationTuple*/Object param);
+    public void request(/*HTTPOperationTuple*/Object param) {
+        if (param != null && param instanceof HTTPOperationTuple && request != null) {
+            request.call(param);
+        }
+    }
 }

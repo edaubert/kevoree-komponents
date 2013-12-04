@@ -1,6 +1,8 @@
 package org.kevoree.library.javase.http.samples;
 
 import org.kevoree.annotation.ComponentType;
+import org.kevoree.annotation.KevoreeInject;
+import org.kevoree.api.Context;
 import org.kevoree.library.javase.http.api.AbstractHTTPHandler;
 import org.kevoree.log.Log;
 
@@ -21,6 +23,9 @@ import java.io.PrintWriter;
 @ComponentType
 public class HelloWorldHandler extends AbstractHTTPHandler {
 
+    @KevoreeInject
+    protected Context cmpContext;
+
     private long lastModified;
 
     public HelloWorldHandler() {
@@ -29,7 +34,7 @@ public class HelloWorldHandler extends AbstractHTTPHandler {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Log.debug("doGet in {} for {}", getName(), req.getRequestURI());
+        Log.debug("doGet in {} for {}", cmpContext.getInstanceName(), req.getRequestURI());
         resp.setContentType("text/html");
 
         StringBuilder builder = new StringBuilder();
@@ -39,7 +44,7 @@ public class HelloWorldHandler extends AbstractHTTPHandler {
         builder.append("Hello world !!!");
 
         builder.append("<br/>");
-        builder.append("Hello coming from " + getName() + " on " + getNodeName());
+        builder.append("Hello coming from " + cmpContext.getInstanceName() + " on " + cmpContext.getNodeName());
         builder.append("</body></html>");
 
         out.write(builder.toString());
