@@ -23,7 +23,7 @@ import java.util.Map;
  */
 public abstract class KevoreeHTTPServletRequest implements HttpServletRequest {
 
-    private static final String REPO_URL = "https://bitbucket.org/edaubert/kevoree-komponents";
+    private static final String REPO_URL = "https://github.com/edaubert/kevoree-komponents";
 
     /**
      * Returns the name of the authentication scheme used to protect
