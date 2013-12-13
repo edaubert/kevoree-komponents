@@ -33,4 +33,10 @@ public class WebSocketTuple {
         this.message = message;
     }
 
+    public WebSocketTuple(String uri, long id) {
+        this.broadcast = false;
+        this.id = id;
+        this.uri = uri;
+    }
+
 }

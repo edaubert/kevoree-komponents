@@ -19,39 +19,41 @@ import java.util.regex.Pattern;
 @Library(name = "web")
 @ComponentType
 @Provides({
-        @ProvidedPort(name = "onOpen", type = PortType.MESSAGE),
-        @ProvidedPort(name = "onMessage", type = PortType.MESSAGE),
-        @ProvidedPort(name = "onClose", type = PortType.MESSAGE)
-})
+                  @ProvidedPort(name = "onOpen", type = PortType.MESSAGE),
+                  @ProvidedPort(name = "onMessage", type = PortType.MESSAGE),
+                  @ProvidedPort(name = "onClose", type = PortType.MESSAGE)
+          })
 @Requires({
-        @RequiredPort(name = "send", type = PortType.MESSAGE),
-        @RequiredPort(name = "broadcast", type = PortType.MESSAGE)
-})
+                  @RequiredPort(name = "send", type = PortType.MESSAGE),
+                  @RequiredPort(name = "broadcast", type = PortType.MESSAGE)
+          })
 @DictionaryType({
-        @DictionaryAttribute(name = "urlPattern", optional = true, defaultValue = "/")
-})
+                        @DictionaryAttribute(name = "urlPattern", optional = true, defaultValue = "/")
+                })
 public abstract class AbstractWebSocketHandler extends AbstractComponentType {
 
     protected String urlPatternRegex;
 
     public abstract void onOpen(long id, String uri, String message);
+
     public abstract void onMessage(long id, String uri, String message);
+
     public abstract void onClose(long id, String uri, String message);
 
     @Start
     public void start() {
-        urlPatternRegex = getDictionary().get("urlPattern").toString().replaceAll("\\*{2,}", ".*")/*.replaceAll("[^.]\\*+", "/?[^/]*")*/;
+        urlPatternRegex = getDictionary().get("urlPattern").toString();
     }
 
     @Update
     public void update() {
-        if (!urlPatternRegex.equals(getDictionary().get("urlPattern").toString().replaceAll("\\*{2,}", ".*")/*.replaceAll("[^.]\\*+", "/?[^/]*")*/)) {
+        if (!urlPatternRegex.equals(getDictionary().get("urlPattern").toString())) {
 //            stop();
             start();
         }
     }
 
-    protected String getUrlPatternWithoutRegex() {
+    /*protected String getUrlPatternWithoutRegex() {
         return urlPatternRegex.replaceAll("\\.\\*", "");
     }
 
@@ -64,14 +66,14 @@ public abstract class AbstractWebSocketHandler extends AbstractComponentType {
             urlPattern = urlPattern.replace("{" + m.group(1) + "}", ".*");
         }
 
-        String regex = urlPattern.replace(".", "\\.").replaceAll("\\*{2,}", "(.*)")/*.replaceAll("[^.]\\*+", "(/?[^/]*)")*/;
+        String regex = urlPattern.replace(".", "\\.").replaceAll("\\*{2,}", "(.*)")*//*.replaceAll("[^.]\\*+", "(/?[^/]*)")*//*;
         p = Pattern.compile(regex);
         m = p.matcher(result);
         if (m.find()) {
             result = result.replace(m.group(1), "");
         }
         return result;
-    }
+    }*/
 
     private boolean check(String url) {
         Log.debug("Checking url in component '{}' with urlPattern '{}' and url '{}'", getName(), urlPatternRegex, url);
@@ -83,23 +85,28 @@ public abstract class AbstractWebSocketHandler extends AbstractComponentType {
 
     // TODO change type and name of the parameter
     @Port(name = "onOpen")
-    public void onOpen(Object msg){
-        if (msg instanceof WebSocketTuple && ((WebSocketTuple)msg).uri != null && check(((WebSocketTuple)msg).uri)) {
-            onOpen(((WebSocketTuple)msg).id, ((WebSocketTuple)msg).uri, ((WebSocketTuple)msg).message);
+    public void onOpen(Object msg) {
+        if (msg instanceof WebSocketTuple && ((WebSocketTuple) msg).uri != null && check(((WebSocketTuple) msg).uri)) {
+            Log.debug("The request '{} => {}' is accepted by '{}.onOpen' with urlPattern '{}' ", ((WebSocketTuple) msg).id, ((WebSocketTuple) msg).uri, getName(), urlPatternRegex);
+            onOpen(((WebSocketTuple) msg).id, ((WebSocketTuple) msg).uri, ((WebSocketTuple) msg).message);
         }
     }
+
     // TODO change type and name of the parameter
     @Port(name = "onMessage")
-    public void onMessage(Object msg){
-        if (msg instanceof WebSocketTuple && ((WebSocketTuple)msg).uri != null && check(((WebSocketTuple)msg).uri)) {
-            onMessage(((WebSocketTuple) msg).id, ((WebSocketTuple)msg).uri, ((WebSocketTuple) msg).message);
+    public void onMessage(Object msg) {
+        if (msg instanceof WebSocketTuple && ((WebSocketTuple) msg).uri != null && check(((WebSocketTuple) msg).uri)) {
+            Log.debug("The request '{} => {}/{}' is accepted by '{}.onMessage' with urlPattern '{}' ", ((WebSocketTuple) msg).id, ((WebSocketTuple) msg).uri, ((WebSocketTuple) msg).message, getName(), urlPatternRegex);
+            onMessage(((WebSocketTuple) msg).id, ((WebSocketTuple) msg).uri, ((WebSocketTuple) msg).message);
         }
     }
+
     // TODO change type and name of the parameter
     @Port(name = "onClose")
-    public void onClose(Object msg){
-        if (msg instanceof WebSocketTuple && ((WebSocketTuple)msg).uri != null && check(((WebSocketTuple)msg).uri)) {
-            onClose(((WebSocketTuple) msg).id, ((WebSocketTuple)msg).uri, ((WebSocketTuple) msg).message);
+    public void onClose(Object msg) {
+        if (msg instanceof WebSocketTuple && ((WebSocketTuple) msg).uri != null && check(((WebSocketTuple) msg).uri)) {
+            Log.debug("The request '{} => {}' is accepted by '{}.onClose' with urlPattern '{}' ", ((WebSocketTuple) msg).id, ((WebSocketTuple) msg).uri, getName(), urlPatternRegex);
+            onClose(((WebSocketTuple) msg).id, ((WebSocketTuple) msg).uri, ((WebSocketTuple) msg).message);
         }
     }
 

@@ -58,7 +58,7 @@ public abstract class AbstractWebSocketServer extends AbstractComponentType {
 
     public void onOpen(long id, String uri) {
         if (isPortBinded("onOpen")) {
-            getPortByName("onOpen", MessagePort.class).process(new WebSocketTuple(id, uri));
+            getPortByName("onOpen", MessagePort.class).process(new WebSocketTuple(uri, id));
         }
     }
 
