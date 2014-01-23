@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kevoree Authentication page</title>
+    <link href="styles/bootstrap.min.css" rel="stylesheet">
+
+    <link href="styles/authentication-style.css" rel="stylesheet">
+
+    <script type="text/javascript" src="scripts/jquery.min.js"></script>
+    <script type="text/javascript" src="scripts/bootstrap.min.js"></script>
+    <script type="text/javascript" src="scripts/authentication.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <div class="content">
+        <div class="row">
+            <img src="images/kevoree-gris.png" style="width:100%;display: block"/>
+
+            <div class="login-form">
+                <h2>Login</h2>
+
+                <div id="message"></div>
+                <form action="" id="authentication-form">
+                    <fieldset>
+                        <input type="text" placeholder="Username" id="login" name="login" required>
+                        <input type="password" placeholder="Password" id="password" name="password" required>
+                        <button class="btn btn-primary" type="submit">Sign in</button>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,54 @@
+include mvn:org.kevoree.library.java:org.kevoree.library.java.javaNode:latest
+include mvn:org.kevoree.library.java:org.kevoree.library.java.channels:latest
+include mvn:org.kevoree.komponents:camel-channel-http:latest
+include mvn:org.kevoree.komponents:http-webbit:latest
+include mvn:org.kevoree.komponents:authentication-web:latest
+include mvn:org.kevoree.komponents:authentication-api:latest
+
+add node0 : JavaNode
+add node0.node1 : JavaNode
+add node0.node2 : JavaNode
+
+add node1.webserver : WebbitHTTPServer
+
+//add node1.favicon : FaviconHandler
+//set node1.favicon.urlPattern = "/favicon.*"
+//set node1.favicon.favicon = "favicon.png"
+
+add node1.authentication : AuthenticationPage
+set node1.authentication.urlPattern = "/.*"
+set node1.authentication.contained = "false"
+set node1.authentication.path = "/home/edaubert/workspace/kevoree-various/kevoree-komponents/authentication/authentication-web/src/main/resources/"
+
+add node2.ldapAuthentication : LDAPAuthentication
+set node2.ldapAuthentication.ssl = "true"
+set node2.ldapAuthentication.trustStorePath = "/home/edaubert/workspace/kevoree-various/kevoree-komponents/authentication/authentication-api/inria-ldap-keystore"
+set node2.ldapAuthentication.host = "ldap://ildap1-ren.irisa.fr"
+set node2.ldapAuthentication.context = "com.sun.jndi.ldap.LdapCtxFactory"
+set node2.ldapAuthentication.base = "ou=people,dc=inria,dc=fr"
+set node2.ldapAuthentication.filter = "(&(objectclass=inriaperson)(inriaentrystatus=valid)(ou=UR-Rennes))";//(inriaGroupMemberOf=cn=DIVERSE-ren,ou=groups,dc=inria,dc=fr))"
+set node2.ldapAuthentication.loginKey = "inriaLogin"
+
+add camelService : CamelNettyMessage
+
+add request : AsyncBroadcast
+add response : AsyncBroadcast
+
+//bind node0.favicon.request request
+//bind node0.favicon.content response
+
+bind node1.webserver.request request
+bind node1.webserver.response response
+
+bind node1.authentication.request request
+bind node1.authentication.content response
+
+bind node2.ldapAuthentication.authenticate camelService
+bind node1.authentication.request camelService
+
+set camelService.port/node1 = "10001"
+set camelService.port/node2 = "10002"
+
+//set node0.log = "TRACE"
+set node1.log = "TRACE"
+//set node2.log = "TRACE"
