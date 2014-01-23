@@ -26,7 +26,6 @@ import java.util.concurrent.TimeoutException;
  */
 @ComponentType
 public class WebbitWebSocketServer extends AbstractWebSocketServer {
-    private int port;
     WebServer server;
     private WebbitWebSocketHandler handler;
 
@@ -35,7 +34,6 @@ public class WebbitWebSocketServer extends AbstractWebSocketServer {
 
     @Override
     public void start() throws Exception {
-        port = Integer.parseInt(getDictionary().get("port").toString());
         connectionsFromId = new HashMap<Long, WebSocketConnection>();
         connectionsFromUri = new HashMap<String, List<WebSocketConnection>>();
 
@@ -71,7 +69,7 @@ public class WebbitWebSocketServer extends AbstractWebSocketServer {
         port = -1;
         Future future = server.stop();
         try {
-            future.get(Integer.parseInt(getDictionary().get("timeout").toString()), TimeUnit.MILLISECONDS);
+            future.get(timeout, TimeUnit.MILLISECONDS);
         } catch (TimeoutException e) {
             Log.warn("Time out when waiting the stop of the server. Maybe it is blocked!");
         }
@@ -79,10 +77,10 @@ public class WebbitWebSocketServer extends AbstractWebSocketServer {
 
     @Override
     public void update() throws Exception {
-        if (port != Integer.parseInt(getDictionary().get("port").toString())) {
+//        if (port != Integer.parseInt(getDictionary().get("port").toString())) {
             stop();
             start();
-        }
+//        }
     }
 
     @Override

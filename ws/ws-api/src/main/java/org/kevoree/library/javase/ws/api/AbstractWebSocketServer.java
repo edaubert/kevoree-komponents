@@ -1,8 +1,7 @@
 package org.kevoree.library.javase.ws.api;
 
 import org.kevoree.annotation.*;
-import org.kevoree.framework.AbstractComponentType;
-import org.kevoree.framework.MessagePort;
+import org.kevoree.api.Port;
 
 /**
  * User: Erwan Daubert - erwan.daubert@gmail.com
@@ -14,20 +13,20 @@ import org.kevoree.framework.MessagePort;
  */
 @Library(name = "web")
 @ComponentType
-@DictionaryType({
-        @DictionaryAttribute(name = "port" , defaultValue = "8080"),
-        @DictionaryAttribute(name = "timeout" , defaultValue = "5000", optional = true)
-})
-@Requires({
-        @RequiredPort(name = "onOpen", type = PortType.MESSAGE),
-        @RequiredPort(name = "onMessage", type = PortType.MESSAGE),
-        @RequiredPort(name = "onClose", type = PortType.MESSAGE)
-})
-@Provides({
-        @ProvidedPort(name = "send", type = PortType.MESSAGE),
-        @ProvidedPort(name = "broadcast", type = PortType.MESSAGE)
-})
-public abstract class AbstractWebSocketServer extends AbstractComponentType {
+public abstract class AbstractWebSocketServer {
+
+    @Param(optional = true, defaultValue = "8080")
+    protected int port;
+    @Param(optional = true, defaultValue = "5000")
+    protected long timeout;
+
+    @Output(optional = true)
+    protected Port onOpen;
+    @Output(optional = true)
+    protected Port onMessage;
+    @Output(optional = true)
+    protected Port onClose;
+
     @Start
     abstract public void start() throws Exception;
 
@@ -38,18 +37,19 @@ public abstract class AbstractWebSocketServer extends AbstractComponentType {
     abstract public void update() throws Exception;
 
     abstract public void send(long id, String message);
+
     abstract public void broadcast(String uri, String message);
 
     // TODO change type and name of the parameter
-    @Port(name = "send")
+    @Input(optional = true)
     public void send(Object msg) {
         if (msg instanceof WebSocketTuple) {
-            send(((WebSocketTuple)msg).id, ((WebSocketTuple)msg).message);
+            send(((WebSocketTuple) msg).id, ((WebSocketTuple) msg).message);
         }
     }
 
     // TODO change type and name of the parameter
-    @Port(name = "broadcast")
+    @Input(optional = true)
     public void broadcast(Object msg) {
         if (msg instanceof WebSocketTuple) {
             broadcast(((WebSocketTuple) msg).uri, ((WebSocketTuple) msg).message);
@@ -57,20 +57,23 @@ public abstract class AbstractWebSocketServer extends AbstractComponentType {
     }
 
     public void onOpen(long id, String uri) {
-        if (isPortBinded("onOpen")) {
-            getPortByName("onOpen", MessagePort.class).process(new WebSocketTuple(id, uri));
-        }
+        // FIXME how to test if the port is connected ?
+//        if (isPortBinded("onOpen")) {
+        onOpen.send(new WebSocketTuple(uri, id));
+//        }
     }
 
     public void onMessage(long id, String uri, String message) {
-        if (isPortBinded("onMessage")) {
-            getPortByName("onMessage", MessagePort.class).process(new WebSocketTuple(id, uri, message));
-        }
+        // FIXME how to test if the port is connected ?
+//        if (isPortBinded("onMessage")) {
+        onMessage.send(new WebSocketTuple(id, uri, message));
+//        }
     }
 
     public void onClose(long id, String uri) {
-        if (isPortBinded("onClose")) {
-            getPortByName("onClose", MessagePort.class).process(new WebSocketTuple(id, uri));
-        }
+        // FIXME how to test if the port is connected ?
+//        if (isPortBinded("onClose")) {
+        onClose.send(new WebSocketTuple(id, uri));
+//        }
     }
 }

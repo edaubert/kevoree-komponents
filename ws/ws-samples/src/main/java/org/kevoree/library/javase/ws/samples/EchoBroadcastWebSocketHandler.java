@@ -21,7 +21,7 @@ public class EchoBroadcastWebSocketHandler extends AbstractWebSocketHandler {
 
     @Override
     public void onMessage(long id, String uri, String message) {
-        Log.info("receive a message from {} on {}: {}", id, getName(), message);
+        Log.info("receive a message from {} on {}: {}", id, cmpContext.getInstanceName(), message);
         broadcast(uri, message);
     }
 
