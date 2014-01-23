@@ -12,7 +12,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <kevoree.version>3.0.2-SNAPSHOT</kevoree.version>
+        <kevoree.version>3.1.3</kevoree.version>
+        <kevoree.library.version>3.1.5-SNAPSHOT</kevoree.library.version>
     </properties>
 
     <dependencies>
@@ -34,10 +35,12 @@
     </dependencies>
 
     <modules>
-       <!-- <module>javafx</module>-->
+        <module>javafx</module>
         <module>http</module>
-        <!--<module>ws</module>-->
+        <module>ws</module>
         <!--<module>file</module>-->
+        <module>authentication</module>
+        <module>camel</module>
         <!--<module>jenkins</module>-->
     </modules>
 
