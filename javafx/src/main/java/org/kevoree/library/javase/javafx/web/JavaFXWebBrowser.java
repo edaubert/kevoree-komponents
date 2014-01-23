@@ -16,12 +16,10 @@ import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
-import org.kevoree.ContainerRoot;
 import org.kevoree.annotation.*;
 import org.kevoree.api.Context;
 import org.kevoree.api.ModelService;
-import org.kevoree.framework.AbstractComponentType;
-import org.kevoree.framework.service.handler.ModelListenerAdapter;
+import org.kevoree.api.handler.ModelListenerAdapter;
 import org.kevoree.library.javase.javafx.layout.SingleWindowLayout;
 
 import java.util.ArrayList;
@@ -95,21 +93,12 @@ public class JavaFXWebBrowser {
         modelService.registerModelListener(new ModelListenerAdapter() {
             @Override
             public void modelUpdated() {
-
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
                         webEngine.load(url);
                     }
                 });
-            }
-
-            @Override
-            public void preRollback(ContainerRoot containerRoot, ContainerRoot containerRoot2) {
-            }
-
-            @Override
-            public void postRollback(ContainerRoot containerRoot, ContainerRoot containerRoot2) {
             }
         });
     }

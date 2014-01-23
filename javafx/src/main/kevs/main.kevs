@@ -1,23 +1,25 @@
-addRepo "https://oss.sonatype.org/content/groups/public/"
+repo "https://oss.sonatype.org/content/groups/public/"
 
-merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.fakeDomo/{kevoree.corelibrary.version}'
-merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.camel/{kevoree.corelibrary.version}'
-merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.basicGossiper/{kevoree.corelibrary.version}'
-merge 'mvn:org.kevoree.corelibrary.sky/org.kevoree.library.sky.minicloud/{kevoree.corelibrary.version}'
+include mvn:org.kevoree.library.java:org.kevoree.library.java.javaNode:{kevoree.library.version}
+include mvn:org.kevoree.library.java:org.kevoree.library.java.toys:{kevoree.library.version}
+include mvn:org.kevoree.library.java:org.kevoree.library.java.channels:{kevoree.library.version}
 
-merge 'mvn:org.kevoree.komponents/javafx/{project.version}'
+include mvn:org.kevoree.komponents/javafx/{project.version}
+include mvn:org.kevoree.komponents/camel/{project.version}
 
-addNode node0:MiniCloudNode { logLevel = "DEBUG", coreLogLevel = "DEBUG" }
-addNode node1:JavaSENode { logLevel = "DEBUG", coreLogLevel = "DEBUG" }
-addNode node2:JavaSENode { logLevel = "DEBUG", coreLogLevel = "DEBUG" }
+add node0:JavaNode
+add node0.node1:JavaNode
+add node0.node2:JavaNode
 
-addChild node1@node0
-addChild node2@node0
+set node0.logLevel = "DEBUG"
+set node0.node1.logLevel = "DEBUG"
+set node0.node2.logLevel = "DEBUG"
 
+add node1.fakeConsole : ToyConsole
 
-addComponent FakeConsole@node1 : FakeConsole
+set node1.fakeConsole.showInTab = "true"
 
-addChannel CamelNett100 : CamelNetty
+addChannel CamelNett100 : CamelNettyMessage
 
 bind FakeConsole.textEntered@node1 => CamelNett100
 bind FakeConsole.showText@node1 => CamelNett100
