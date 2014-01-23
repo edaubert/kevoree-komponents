@@ -1,4 +1,7 @@
-package org.kevoree.library.javase.http.api;
+package org.kevoree.library.javase.http.api.commons;
+
+import org.kevoree.library.javase.http.api.page.KevoreeHTTPServletRequest;
+import org.kevoree.library.javase.http.api.page.KevoreeHTTPServletResponse;
 
 /**
  * User: Erwan Daubert - erwan.daubert@gmail.com

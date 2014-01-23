@@ -1,4 +1,4 @@
-package org.kevoree.library.javase.http.api;
+package org.kevoree.library.javase.http.api.page;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletInputStream;

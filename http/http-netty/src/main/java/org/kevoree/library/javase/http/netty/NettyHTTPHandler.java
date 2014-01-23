@@ -65,7 +65,7 @@ public class NettyHTTPHandler extends SimpleChannelInboundHandler<FullHttpReques
             ctx.flush();
             if (!isKeepAlive(httpRequest)) {
                 // Close the connection when the whole content is written out.
-                future.addListener(ChannelFutureListener.CLOSE);
+//                future.addListener(ChannelFutureListener.CLOSE);
             }
         }
         Log.debug("End of handler for {}", httpRequest.getUri());

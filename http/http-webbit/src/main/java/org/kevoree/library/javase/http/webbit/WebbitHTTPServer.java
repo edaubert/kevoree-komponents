@@ -1,8 +1,8 @@
 package org.kevoree.library.javase.http.webbit;
 
 import org.kevoree.annotation.ComponentType;
-import org.kevoree.library.javase.http.api.AbstractHTTPServer;
-import org.kevoree.library.javase.http.api.HTTPOperationTuple;
+import org.kevoree.library.javase.http.api.server.AbstractHTTPServer;
+import org.kevoree.library.javase.http.api.commons.HTTPOperationTuple;
 import org.kevoree.log.Log;
 import org.webbitserver.WebServer;
 import org.webbitserver.WebServers;

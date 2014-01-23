@@ -1,4 +1,4 @@
-package org.kevoree.library.javase.http.api;
+package org.kevoree.library.javase.http.api.helper;
 
 import org.kevoree.log.Log;
 
@@ -22,7 +22,7 @@ public class HTTPHelper {
         try {
             p.load(StaticFileHandlerHelper.class.getClassLoader().getResourceAsStream("mime.properties"));
         } catch (Exception ex) {
-            Log.debug("MIME map can't be loaded:" + ex);
+            Log.debug("MIME map can't be loaded: {}", ex, ex.getMessage());
         }
         return p;
     }

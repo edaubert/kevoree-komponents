@@ -1,4 +1,6 @@
-package org.kevoree.library.javase.http.api;
+package org.kevoree.library.javase.http.api.page;
+
+import org.kevoree.library.javase.http.api.commons.KevoreeConstants;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
@@ -27,7 +29,7 @@ public abstract class KevoreeHTTPServletResponse implements HttpServletResponse 
      */
     @Override
     public void addCookie(Cookie cookie) {
-        throw new UnsupportedOperationException("If you need it, then submit an issue to https://github.com/dukeboard/kevoree");
+        throw new UnsupportedOperationException("If you need it, then submit an issue to " + KevoreeConstants.REPO_URL);
     }
 
     /**
@@ -40,7 +42,7 @@ public abstract class KevoreeHTTPServletResponse implements HttpServletResponse 
      */
     @Override
     public boolean containsHeader(String name) {
-        throw new UnsupportedOperationException("If you need it, then submit an issue to https://github.com/dukeboard/kevoree");
+        throw new UnsupportedOperationException("If you need it, then submit an issue to " + KevoreeConstants.REPO_URL);
     }
 
     /**
@@ -62,7 +64,7 @@ public abstract class KevoreeHTTPServletResponse implements HttpServletResponse 
      */
     @Override
     public String encodeURL(String url) {
-        throw new UnsupportedOperationException("If you need it, then submit an issue to https://github.com/dukeboard/kevoree");
+        throw new UnsupportedOperationException("If you need it, then submit an issue to " + KevoreeConstants.REPO_URL);
     }
 
     /**
@@ -88,7 +90,7 @@ public abstract class KevoreeHTTPServletResponse implements HttpServletResponse 
      */
     @Override
     public String encodeRedirectURL(String url) {
-        throw new UnsupportedOperationException("If you need it, then submit an issue to https://github.com/dukeboard/kevoree");
+        throw new UnsupportedOperationException("If you need it, then submit an issue to " + KevoreeConstants.REPO_URL);
     }
 
     /**
@@ -136,7 +138,7 @@ public abstract class KevoreeHTTPServletResponse implements HttpServletResponse 
      */
     @Override
     public void sendError(int sc, String msg) throws IOException {
-        throw new UnsupportedOperationException("If you need it, then submit an issue to https://github.com/dukeboard/kevoree");
+        throw new UnsupportedOperationException("If you need it, then submit an issue to " + KevoreeConstants.REPO_URL);
     }
 
     /**
@@ -154,7 +156,7 @@ public abstract class KevoreeHTTPServletResponse implements HttpServletResponse 
      */
     @Override
     public void sendError(int sc) throws IOException {
-        throw new UnsupportedOperationException("If you need it, then submit an issue to https://github.com/dukeboard/kevoree");
+        throw new UnsupportedOperationException("If you need it, then submit an issue to " + KevoreeConstants.REPO_URL);
     }
 
     /**
@@ -178,7 +180,7 @@ public abstract class KevoreeHTTPServletResponse implements HttpServletResponse 
      */
     @Override
     public void sendRedirect(String location) throws IOException {
-        throw new UnsupportedOperationException("If you need it, then submit an issue to https://github.com/dukeboard/kevoree");
+        throw new UnsupportedOperationException("If you need it, then submit an issue to " + KevoreeConstants.REPO_URL);
     }
 
     /**
@@ -196,7 +198,7 @@ public abstract class KevoreeHTTPServletResponse implements HttpServletResponse 
      */
     @Override
     public void setDateHeader(String name, long date) {
-        throw new UnsupportedOperationException("If you need it, then submit an issue to https://github.com/dukeboard/kevoree");
+        throw new UnsupportedOperationException("If you need it, then submit an issue to " + KevoreeConstants.REPO_URL);
     }
 
     /**
@@ -211,7 +213,7 @@ public abstract class KevoreeHTTPServletResponse implements HttpServletResponse 
      */
     @Override
     public void addDateHeader(String name, long date) {
-        throw new UnsupportedOperationException("If you need it, then submit an issue to https://github.com/dukeboard/kevoree");
+        throw new UnsupportedOperationException("If you need it, then submit an issue to " + KevoreeConstants.REPO_URL);
     }
 
     /**
@@ -230,7 +232,7 @@ public abstract class KevoreeHTTPServletResponse implements HttpServletResponse 
      */
     @Override
     public void setHeader(String name, String value) {
-        throw new UnsupportedOperationException("If you need it, then submit an issue to https://github.com/dukeboard/kevoree");
+        throw new UnsupportedOperationException("If you need it, then submit an issue to " + KevoreeConstants.REPO_URL);
     }
 
     /**
@@ -245,7 +247,7 @@ public abstract class KevoreeHTTPServletResponse implements HttpServletResponse 
      */
     @Override
     public void addHeader(String name, String value) {
-        throw new UnsupportedOperationException("If you need it, then submit an issue to https://github.com/dukeboard/kevoree");
+        throw new UnsupportedOperationException("If you need it, then submit an issue to " + KevoreeConstants.REPO_URL);
     }
 
     /**
@@ -262,7 +264,7 @@ public abstract class KevoreeHTTPServletResponse implements HttpServletResponse 
      */
     @Override
     public void setIntHeader(String name, int value) {
-        throw new UnsupportedOperationException("If you need it, then submit an issue to https://github.com/dukeboard/kevoree");
+        throw new UnsupportedOperationException("If you need it, then submit an issue to " + KevoreeConstants.REPO_URL);
     }
 
     /**
@@ -276,7 +278,7 @@ public abstract class KevoreeHTTPServletResponse implements HttpServletResponse 
      */
     @Override
     public void addIntHeader(String name, int value) {
-        throw new UnsupportedOperationException("If you need it, then submit an issue to https://github.com/dukeboard/kevoree");
+        throw new UnsupportedOperationException("If you need it, then submit an issue to " + KevoreeConstants.REPO_URL);
     }
 
     /**
@@ -294,7 +296,7 @@ public abstract class KevoreeHTTPServletResponse implements HttpServletResponse 
      */
     @Override
     public void setStatus(int sc) {
-        throw new UnsupportedOperationException("If you need it, then submit an issue to https://github.com/dukeboard/kevoree");
+        throw new UnsupportedOperationException("If you need it, then submit an issue to " + KevoreeConstants.REPO_URL);
     }
 
     /**
@@ -332,7 +334,7 @@ public abstract class KevoreeHTTPServletResponse implements HttpServletResponse 
      */
     @Override
     public String getCharacterEncoding() {
-        throw new UnsupportedOperationException("If you need it, then submit an issue to https://github.com/dukeboard/kevoree");
+        throw new UnsupportedOperationException("If you need it, then submit an issue to " + KevoreeConstants.REPO_URL);
     }
 
     /**
@@ -356,7 +358,7 @@ public abstract class KevoreeHTTPServletResponse implements HttpServletResponse 
      */
     @Override
     public String getContentType() {
-        throw new UnsupportedOperationException("If you need it, then submit an issue to https://github.com/dukeboard/kevoree");
+        throw new UnsupportedOperationException("If you need it, then submit an issue to " + KevoreeConstants.REPO_URL);
     }
 
     /**
@@ -377,7 +379,7 @@ public abstract class KevoreeHTTPServletResponse implements HttpServletResponse 
      */
     @Override
     public ServletOutputStream getOutputStream() throws IOException {
-        throw new UnsupportedOperationException("If you need it, then submit an issue to https://github.com/dukeboard/kevoree");
+        throw new UnsupportedOperationException("If you need it, then submit an issue to " + KevoreeConstants.REPO_URL);
     }
 
     /**
@@ -407,7 +409,7 @@ public abstract class KevoreeHTTPServletResponse implements HttpServletResponse 
      */
     @Override
     public PrintWriter getWriter() throws IOException {
-        throw new UnsupportedOperationException("If you need it, then submit an issue to https://github.com/dukeboard/kevoree");
+        throw new UnsupportedOperationException("If you need it, then submit an issue to " + KevoreeConstants.REPO_URL);
     }
 
     /**
@@ -445,7 +447,7 @@ public abstract class KevoreeHTTPServletResponse implements HttpServletResponse 
      */
     @Override
     public void setCharacterEncoding(String charset) {
-        throw new UnsupportedOperationException("If you need it, then submit an issue to https://github.com/dukeboard/kevoree");
+        throw new UnsupportedOperationException("If you need it, then submit an issue to " + KevoreeConstants.REPO_URL);
     }
 
     /**
@@ -458,7 +460,7 @@ public abstract class KevoreeHTTPServletResponse implements HttpServletResponse 
      */
     @Override
     public void setContentLength(int len) {
-        throw new UnsupportedOperationException("If you need it, then submit an issue to https://github.com/dukeboard/kevoree");
+        throw new UnsupportedOperationException("If you need it, then submit an issue to " + KevoreeConstants.REPO_URL);
     }
 
     /**
@@ -489,7 +491,7 @@ public abstract class KevoreeHTTPServletResponse implements HttpServletResponse 
      */
     @Override
     public void setContentType(String type) {
-        throw new UnsupportedOperationException("If you need it, then submit an issue to https://github.com/dukeboard/kevoree");
+        throw new UnsupportedOperationException("If you need it, then submit an issue to " + KevoreeConstants.REPO_URL);
     }
 
     /**
@@ -519,7 +521,7 @@ public abstract class KevoreeHTTPServletResponse implements HttpServletResponse 
      */
     @Override
     public void setBufferSize(int size) {
-        throw new UnsupportedOperationException("If you need it, then submit an issue to https://github.com/dukeboard/kevoree");
+        throw new UnsupportedOperationException("If you need it, then submit an issue to " + KevoreeConstants.REPO_URL);
     }
 
     /**
@@ -534,7 +536,7 @@ public abstract class KevoreeHTTPServletResponse implements HttpServletResponse 
      */
     @Override
     public int getBufferSize() {
-        throw new UnsupportedOperationException("If you need it, then submit an issue to https://github.com/dukeboard/kevoree");
+        throw new UnsupportedOperationException("If you need it, then submit an issue to " + KevoreeConstants.REPO_URL);
     }
 
     /**
@@ -549,7 +551,7 @@ public abstract class KevoreeHTTPServletResponse implements HttpServletResponse 
      */
     @Override
     public void flushBuffer() throws IOException {
-        throw new UnsupportedOperationException("If you need it, then submit an issue to https://github.com/dukeboard/kevoree");
+        throw new UnsupportedOperationException("If you need it, then submit an issue to " + KevoreeConstants.REPO_URL);
     }
 
     /**
@@ -566,7 +568,7 @@ public abstract class KevoreeHTTPServletResponse implements HttpServletResponse 
      */
     @Override
     public void resetBuffer() {
-        throw new UnsupportedOperationException("If you need it, then submit an issue to https://github.com/dukeboard/kevoree");
+        throw new UnsupportedOperationException("If you need it, then submit an issue to " + KevoreeConstants.REPO_URL);
     }
 
     /**
@@ -582,7 +584,7 @@ public abstract class KevoreeHTTPServletResponse implements HttpServletResponse 
      */
     @Override
     public boolean isCommitted() {
-        throw new UnsupportedOperationException("If you need it, then submit an issue to https://github.com/dukeboard/kevoree");
+        throw new UnsupportedOperationException("If you need it, then submit an issue to " + KevoreeConstants.REPO_URL);
     }
 
     /**
@@ -599,7 +601,7 @@ public abstract class KevoreeHTTPServletResponse implements HttpServletResponse 
      */
     @Override
     public void reset() {
-        throw new UnsupportedOperationException("If you need it, then submit an issue to https://github.com/dukeboard/kevoree");
+        throw new UnsupportedOperationException("If you need it, then submit an issue to " + KevoreeConstants.REPO_URL);
     }
 
     /**
@@ -639,7 +641,7 @@ public abstract class KevoreeHTTPServletResponse implements HttpServletResponse 
      */
     @Override
     public void setLocale(Locale loc) {
-        throw new UnsupportedOperationException("If you need it, then submit an issue to https://github.com/dukeboard/kevoree");
+        throw new UnsupportedOperationException("If you need it, then submit an issue to " + KevoreeConstants.REPO_URL);
     }
 
     /**
@@ -653,6 +655,6 @@ public abstract class KevoreeHTTPServletResponse implements HttpServletResponse 
      */
     @Override
     public Locale getLocale() {
-        throw new UnsupportedOperationException("If you need it, then submit an issue to https://github.com/dukeboard/kevoree");
+        throw new UnsupportedOperationException("If you need it, then submit an issue to " + KevoreeConstants.REPO_URL);
     }
 }

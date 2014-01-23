@@ -1,6 +1,6 @@
 package org.kevoree.library.javase.http.webbit;
 
-import org.kevoree.library.javase.http.api.KevoreeHTTPServletResponse;
+import org.kevoree.library.javase.http.api.page.KevoreeHTTPServletResponse;
 import org.webbitserver.HttpResponse;
 
 import javax.servlet.ServletOutputStream;
@@ -17,7 +17,7 @@ import java.nio.charset.Charset;
  * @author Erwan Daubert
  * @version 1.0
  */
-public class WebbitKevoteeHTTPServletResponse extends KevoreeHTTPServletResponse {
+public class WebbitKevoreeHTTPServletResponse extends KevoreeHTTPServletResponse {
 
     private HttpResponse httpResponse;
     private WebbitKevoreeServletOutputStream outputStream;
@@ -41,7 +41,7 @@ public class WebbitKevoteeHTTPServletResponse extends KevoreeHTTPServletResponse
         }
     }
 
-    public WebbitKevoteeHTTPServletResponse(HttpResponse httpResponse) {
+    public WebbitKevoreeHTTPServletResponse(HttpResponse httpResponse) {
         this.httpResponse = httpResponse;
         outputStream = new WebbitKevoreeServletOutputStream(httpResponse);
     }

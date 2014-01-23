@@ -1,9 +1,9 @@
-package org.kevoree.library.javase.http.samples;
+package org.kevoree.library.javase.http.samples.pages;
 
 import org.kevoree.annotation.ComponentType;
 import org.kevoree.annotation.KevoreeInject;
 import org.kevoree.api.Context;
-import org.kevoree.library.javase.http.api.AbstractHTTPHandler;
+import org.kevoree.library.javase.http.api.page.AbstractHTTPHandler;
 import org.kevoree.log.Log;
 
 import javax.servlet.ServletException;

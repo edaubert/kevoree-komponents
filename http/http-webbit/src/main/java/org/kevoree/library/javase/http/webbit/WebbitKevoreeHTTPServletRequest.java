@@ -1,6 +1,6 @@
 package org.kevoree.library.javase.http.webbit;
 
-import org.kevoree.library.javase.http.api.KevoreeHTTPServletRequest;
+import org.kevoree.library.javase.http.api.page.KevoreeHTTPServletRequest;
 import org.webbitserver.HttpRequest;
 import org.webbitserver.WebServer;
 
@@ -19,9 +19,12 @@ public class WebbitKevoreeHTTPServletRequest extends KevoreeHTTPServletRequest {
     private HttpRequest httpRequest;
     private WebServer server;
 
+    private Map<String, Object> attributes;
+
     public WebbitKevoreeHTTPServletRequest(HttpRequest httpRequest, WebServer server) {
         this.httpRequest = httpRequest;
         this.server = server;
+        this.attributes = new HashMap<String, Object>();
     }
 
     @Override
@@ -105,5 +108,27 @@ public class WebbitKevoreeHTTPServletRequest extends KevoreeHTTPServletRequest {
     @Override
     public Enumeration getLocales() {
         return Collections.enumeration(Arrays.asList(Locale.getAvailableLocales()));
+    }
+
+    @Override
+    public Object getAttribute(String name) {
+        return attributes.get(name);
+    }
+
+    @Override
+    public Enumeration getAttributeNames() {
+        return Collections.enumeration(attributes.keySet());
+    }
+
+    @Override
+    public void setAttribute(String name, Object o) {
+        attributes.put(name, o);
+    }
+
+    @Override
+    public void removeAttribute(String name) {
+        if (attributes.containsKey(name)) {
+            attributes.remove(name);
+        }
     }
 }

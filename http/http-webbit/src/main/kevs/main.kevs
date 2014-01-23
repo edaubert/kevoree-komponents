@@ -4,6 +4,8 @@ include mvn:org.kevoree.komponents:http-webbit:latest
 include mvn:org.kevoree.library.java:org.kevoree.library.java.channels:latest
 
 add node0 : JavaNode
+set node0.log = "DEBUG"
+
 add node0.webserver : WebbitHTTPServer
 
 add node0.favicon : FaviconHandler
@@ -14,14 +16,14 @@ add node0.page : HelloWorldHandler
 set node0.page.urlPattern = "/hello"
 
 add node0.page1 : StaticFileHandler
-set node0.page1.path = "/edaubert/workspace/web/wysihtml5/examples/"
+set node0.page1.path = "/home/edaubert/workspace/web/wysihtml5/examples/"
 set node0.page1.urlPattern = "/"
 set node0.page1.patternToRemove = "/"
 set node0.page1.contained = "false"
 set node0.page1.defaultFile = "advanced.html"
 
-add request : SyncBroadcast
-add response : SyncBroadcast
+add request : AsyncBroadcast
+add response : AsyncBroadcast
 
 bind node0.webserver.request request
 bind node0.webserver.response response

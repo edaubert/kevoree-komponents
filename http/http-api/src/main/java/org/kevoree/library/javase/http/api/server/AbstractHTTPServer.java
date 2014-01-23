@@ -1,7 +1,8 @@
-package org.kevoree.library.javase.http.api;
+package org.kevoree.library.javase.http.api.server;
 
 import org.kevoree.annotation.*;
 import org.kevoree.api.Port;
+import org.kevoree.library.javase.http.api.commons.HTTPOperationTuple;
 
 /**
  * User: Erwan Daubert - erwan.daubert@gmail.com
@@ -21,6 +22,9 @@ public abstract class AbstractHTTPServer {
     @Output
     protected Port request;
 
+    @Output
+    protected Port session;
+
     public long getTimeout() {
         return timeout;
     }
@@ -39,7 +43,7 @@ public abstract class AbstractHTTPServer {
 
     public void request(/*HTTPOperationTuple*/Object param) {
         if (param != null && param instanceof HTTPOperationTuple && request != null) {
-            request.call(param);
+            request.send(param);
         }
     }
 }

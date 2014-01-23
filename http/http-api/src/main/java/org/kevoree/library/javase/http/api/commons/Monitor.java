@@ -1,5 +1,8 @@
-package org.kevoree.library.javase.http.api;
+package org.kevoree.library.javase.http.api.commons;
 
+import org.kevoree.library.javase.http.api.page.KevoreeHTTPServletRequest;
+import org.kevoree.library.javase.http.api.page.KevoreeHTTPServletResponse;
+import org.kevoree.library.javase.http.api.server.AbstractHTTPServer;
 import org.kevoree.log.Log;
 
 /**
@@ -23,10 +26,16 @@ class Monitor {
         this.server = server;
     }
 
-    public synchronized HTTPOperationTuple request(HTTPOperationTuple param) throws InterruptedException {
+    public synchronized HTTPOperationTuple request(final HTTPOperationTuple param) throws InterruptedException {
         response = null;
         request = param.request;
-        server.request(param);
+        new Thread() {
+            @Override
+            public void run() {
+                // This thread avoid the synchronous call from the port (if the channel is a synchronous one)
+                server.request(param);
+            }
+        }.start();
         wait(timeout);
         if (response == null) {
             param.response.setStatus(408);
@@ -41,21 +50,7 @@ class Monitor {
             response = param.response;
             notify();
         } else {
-            Log.warn("timeout exceeds for request uri: {}", param.request.getRequestURI());
+            Log.warn("Timeout exceeds for request uri: {}", param.request.getRequestURI());
         }
     }
-
-        /*synchronized HTTPOperationTuple error(HTTPOperationTuple param) throws InterruptedException {
-            response = null;
-            server.error(param);
-            wait(timeout);
-            if (response == null) {
-                param.response.setStatus(404);
-            } else {
-                param.response = response;
-            }
-            return param;
-
-        }*/
-
 }

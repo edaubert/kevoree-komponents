@@ -1,14 +1,16 @@
-package org.kevoree.library.javase.http.api;
+package org.kevoree.library.javase.http.api.page;
 
 import org.kevoree.annotation.*;
 import org.kevoree.api.Context;
 import org.kevoree.api.Port;
+import org.kevoree.library.javase.http.api.commons.*;
 import org.kevoree.log.Log;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,8 +22,8 @@ import java.util.regex.Pattern;
  * @author Erwan Daubert
  * @version 1.0
  */
-@Library(name = "web")
 @ComponentType
+@Library(name = "web")
 public abstract class AbstractHTTPHandler {
 
     @Param(optional = true, defaultValue = "/")
@@ -42,7 +44,8 @@ public abstract class AbstractHTTPHandler {
     protected static final int NO_RETURN_RESPONSE = 418;
 
     private KevoreeHttpServlet servlet;
-    protected String urlPatternRegex;
+
+    private final static String DEFAULT_SC_INTERNAL_ERROR_MESSAGE = "<html><body><h1>Internal Error !</h1><b>Please contact the administrator of the server</b></body></html>";
 
     @Start
     public void start() throws Exception {
@@ -51,10 +54,8 @@ public abstract class AbstractHTTPHandler {
 
     @Update
     public void update() throws Exception {
-        if (!urlPatternRegex.equals(urlPattern) && !patternToRemove.equals(patternToRemove)) {
             stop();
             start();
-        }
     }
 
     @Stop
@@ -65,7 +66,7 @@ public abstract class AbstractHTTPHandler {
         }
     }
 
-    protected String applyPatternToRemove(String uri) {
+    public String applyPatternToRemove(String uri) {
         Pattern pattern = Pattern.compile(patternToRemove);
         Matcher matcher = pattern.matcher(uri);
         return matcher.replaceFirst("");
@@ -83,7 +84,7 @@ public abstract class AbstractHTTPHandler {
             request.setRequestURI(uri);
             if (forward != null) {
                 Log.debug("forward request for url = {} with completeURL = {}", uri, request.getRequestURL());
-                forward.call(request);
+                forward.send(request);
                 response.setStatus(NO_RETURN_RESPONSE);
             } else {
                 Log.debug("Unable to forward request because the forward port is not bound for {}", cmpContext.getInstanceName());
@@ -97,8 +98,8 @@ public abstract class AbstractHTTPHandler {
     }
 
     private boolean check(String url) {
-        Log.trace("Checking url in component '{}' with urlPattern '{}' and url '{}'", cmpContext.getInstanceName(), urlPatternRegex, url);
-        Pattern pattern = Pattern.compile(urlPatternRegex);
+        Log.trace("Checking url in component '{}' with urlPattern '{}' and url '{}'", cmpContext.getInstanceName(), urlPattern, url);
+        Pattern pattern = Pattern.compile(urlPattern);
         Matcher m = pattern.matcher(url);
         return m.matches();
     }
@@ -109,7 +110,7 @@ public abstract class AbstractHTTPHandler {
         if (msg != null && msg instanceof HTTPOperationTuple) {
             HttpServletRequest request = ((HTTPOperationTuple) msg).request;
             if (check(request.getPathInfo())) {
-                Log.debug("The url '{}' is accepted by '{}' with urlPattern '{}' ", request.getPathInfo(), cmpContext.getInstanceName(), urlPatternRegex);
+                Log.debug("The url '{}' is accepted by '{}' with urlPattern '{}' ", request.getPathInfo(), cmpContext.getInstanceName(), urlPattern);
                 KevoreeHTTPServletResponse response = ((HTTPOperationTuple) msg).response;
                 if (request.getMethod().equalsIgnoreCase("get")) {
                     try {
@@ -183,8 +184,15 @@ public abstract class AbstractHTTPHandler {
                     }
                 }
                 if (response.getStatus() != 418) {
-                    ((HTTPOperationTuple) msg).response = response;
-                    content.call(msg);
+                    if (response.getStatus() == HttpServletResponse.SC_INTERNAL_SERVER_ERROR) {
+                        try {
+                            PrintWriter writer = response.getWriter();
+                            writer.write(DEFAULT_SC_INTERNAL_ERROR_MESSAGE);
+                            writer.flush();
+                            writer.close();
+                        } catch (IOException ignored) {}
+                    }
+                    content.send(msg);
                 } else {
                     Log.debug("Status code correspond to tea pot: No response returns!");
                 }

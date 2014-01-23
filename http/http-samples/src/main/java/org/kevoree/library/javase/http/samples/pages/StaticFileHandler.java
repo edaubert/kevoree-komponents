@@ -1,8 +1,8 @@
-package org.kevoree.library.javase.http.samples;
+package org.kevoree.library.javase.http.samples.pages;
 
 import org.kevoree.annotation.*;
-import org.kevoree.library.javase.http.api.AbstractParentHTTPHandler;
-import org.kevoree.library.javase.http.api.StaticFileHandlerHelper;
+import org.kevoree.library.javase.http.api.page.AbstractParentHTTPHandler;
+import org.kevoree.library.javase.http.api.helper.StaticFileHandlerHelper;
 import org.kevoree.log.Log;
 
 import javax.servlet.ServletException;
@@ -28,20 +28,6 @@ public class StaticFileHandler extends AbstractParentHTTPHandler {
     private String path;
     @Param(optional = true, defaultValue = "index.html")
     private String defaultFile;
-
-
-    @Start
-    public void start() throws Exception {
-        super.start();
-    }
-
-    @Update
-    public void update() throws Exception {
-//        if (contained != getDictionary().get("contained").equals("true") || !sourceFolder.equals(getDictionary().get("path").toString()) || !defaultFile.equals(getDictionary().get("defaultFile").toString())) {
-//            stop();
-            start();
-//        }
-    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
