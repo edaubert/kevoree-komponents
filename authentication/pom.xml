@@ -18,7 +18,6 @@
     <modules>
         <module>authentication-api</module>
         <module>authentication-web</module>
-        <module>authentication-cas</module>
     </modules>
 
 </project>
