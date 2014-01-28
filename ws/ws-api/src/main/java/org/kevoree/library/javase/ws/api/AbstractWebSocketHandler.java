@@ -78,7 +78,7 @@ public abstract class AbstractWebSocketHandler {
     public void broadcast(String uri, String message) {
         // FIXME how to test if the port is connected ?
 //        if (isPortBinded("broadcast") && uri != null && check(uri)) {
-            send.send(new WebSocketTuple(uri, message));
+            broadcast.send(new WebSocketTuple(uri, message));
 //        }
     }
 }
