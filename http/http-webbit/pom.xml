@@ -17,8 +17,8 @@
         <dependency>
             <groupId>org.webbitserver</groupId>
             <artifactId>webbit</artifactId>
-            <!--<version>0.4.15</version>-->
-            <version>0.4.16-SNAPSHOT</version>
+            <version>0.4.15</version>
+            <!--<version>0.4.16-SNAPSHOT</version>-->
         </dependency>
         <dependency>
             <groupId>org.kevoree.komponents</groupId>
