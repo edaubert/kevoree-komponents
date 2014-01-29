@@ -40,7 +40,6 @@ public class WebbitHTTPServer extends AbstractHTTPServer {
 
     @Override
     public void stop() throws InterruptedException, ExecutionException {
-        port = -1;
         Future future = server.stop();
         try {
             future.get(timeout, TimeUnit.MILLISECONDS);
