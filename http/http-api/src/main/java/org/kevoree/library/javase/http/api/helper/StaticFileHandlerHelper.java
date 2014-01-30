@@ -118,8 +118,6 @@ public class StaticFileHandlerHelper {
             if (!HTTPHelper.isRaw(filePath)) {
                 StringBuilder contentBuilder = new StringBuilder(outputStream.toString("UTF-8"));
                 manageTemplates(contentBuilder, templates);
-
-                System.out.println(contentBuilder.toString());
                 outputStream.close();
                 outputStream = new ByteArrayOutputStream();
                 outputStream.write(contentBuilder.toString().getBytes());
@@ -149,8 +147,6 @@ public class StaticFileHandlerHelper {
             if (!HTTPHelper.isRaw(filePath)) {
                 StringBuilder contentBuilder = new StringBuilder(outputStream.toString("UTF-8"));
                 manageTemplates(contentBuilder, templates);
-
-                System.out.println(contentBuilder.toString());
                 outputStream.close();
                 outputStream = new ByteArrayOutputStream();
                 outputStream.write(contentBuilder.toString().getBytes());
