@@ -97,7 +97,6 @@ public class StaticFileHandlerHelper {
         int index;
         for (String key : templates.keySet()) {
             String template = '{' + key + '}';
-            System.err.println(templates.get(key));
             index = 0;
             index = contentBuilder.indexOf(template, index);
             while (index != -1) {
