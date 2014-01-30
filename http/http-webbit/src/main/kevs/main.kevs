@@ -2,9 +2,9 @@ repo "https://repo1.maven.org/maven2"
 repo "https://oss.sonatype.org/content/groups/public/"
 
 include mvn:org.kevoree.library.java:org.kevoree.library.java.javaNode:latest
+include mvn:org.kevoree.library.java:org.kevoree.library.java.channels:latest
 include mvn:org.kevoree.komponents:http-samples:latest
 include mvn:org.kevoree.komponents:http-webbit:latest
-include mvn:org.kevoree.library.java:org.kevoree.library.java.channels:latest
 
 add node0 : JavaNode
 set node0.log = "DEBUG"
@@ -19,11 +19,28 @@ add node0.page : HelloWorldHandler
 set node0.page.urlPattern = "/hello"
 
 add node0.page1 : StaticFileHandler
-set node0.page1.path = "/home/jed/clone/tempgauge"
-set node0.page1.urlPattern = "/"
-set node0.page1.patternToRemove = "/"
+//set node0.page1.path = "/home/jed/clone/tempgauge"
+set node0.page1.path = "/home/edaubert/workspace/web/wysihtml5/examples/"
+set node0.page1.urlPattern = "/examples/"
+set node0.page1.patternToRemove = "/examples/"
 set node0.page1.contained = "false"
 
+
+add node0.page1_2 : StaticFileHandler
+//set node0.page1_2.path = "/home/jed/clone/tempgauge"
+set node0.page1_2.path = "/home/edaubert/workspace/web/wysihtml5/"
+set node0.page1_2.urlPattern = "/(parser_rules|dist)/"
+set node0.page1_2.patternToRemove = "/"
+set node0.page1_2.contained = "false"
+
+
+add node0.page2 : SimpleTemplatingStaticFileHandler
+//set node0.page2.path = "/home/jed/clone/tempgauge"
+set node0.page2.path = "/home/edaubert/workspace/web/wysihtml5/examples-template/"
+set node0.page2.urlPattern = "/template"
+set node0.page2.patternToRemove = "/template"
+set node0.page2.contained = "false"
+set node0.page2.templates = "page.title=Test de Template,h1.title=Titre de H1 définie par template"
 
 add request : AsyncBroadcast
 add response : AsyncBroadcast
@@ -36,6 +53,12 @@ bind node0.page.content response
 
 bind node0.page1.request request
 bind node0.page1.content response
+
+bind node0.page1_2.request request
+bind node0.page1_2.content response
+
+bind node0.page2.request request
+bind node0.page2.content response
 
 bind node0.favicon.request request
 bind node0.favicon.content response

@@ -23,11 +23,11 @@ import java.io.IOException;
 public class StaticFileHandler extends AbstractParentHTTPHandler {
 
     @Param(optional = true, defaultValue = "true")
-    private boolean contained;
+    protected boolean contained;
     @Param(optional = true, defaultValue = ".")
-    private String path;
+    protected String path;
     @Param(optional = true, defaultValue = "index.html")
-    private String defaultFile;
+    protected String defaultFile;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -43,7 +43,7 @@ public class StaticFileHandler extends AbstractParentHTTPHandler {
         }
     }
 
-    private void fileNotFound(HttpServletRequest req, HttpServletResponse resp) {
+    protected void fileNotFound(HttpServletRequest req, HttpServletResponse resp) {
         resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
     }
 
