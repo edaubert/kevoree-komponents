@@ -31,11 +31,13 @@ public class SimpleTemplatingStaticFileHandler extends StaticFileHandler {
     @Start
     public void start() throws Exception {
         templatesMap = new HashMap<String, String>();
-        String[] templatesDef = templates.split(",");
-        for (String templateDef : templatesDef) {
-            String[] templateTuple = templateDef.split("=");
-            if (templateTuple.length == 2) {
-                templatesMap.put(templateTuple[0], templateTuple[1]);
+        if (templates != null && "".equals(templates)) {
+            String[] templatesDef = templates.split(",");
+            for (String templateDef : templatesDef) {
+                String[] templateTuple = templateDef.split("=");
+                if (templateTuple.length == 2) {
+                    templatesMap.put(templateTuple[0], templateTuple[1]);
+                }
             }
         }
         super.start();
