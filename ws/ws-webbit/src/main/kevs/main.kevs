@@ -1,38 +1,45 @@
-merge "mvn:org.kevoree.corelibrary.sky/org.kevoree.library.sky.api/{kevoree.corelibrary.version}"
-merge "mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/{kevoree.corelibrary.version}"
-merge "mvn:org.kevoree.komponents/ws-samples/{project.version}"
-merge "mvn:org.kevoree.komponents/ws-webbit/{project.version}"
+repo "https://repo1.maven.org/maven2"
+repo "https://oss.sonatype.org/content/groups/public/"
 
-addNode node0 : PJavaSENode {logLevel="DEBUG"}
-addComponent webserver@node0 : WebbitWebSocketServer
+include mvn:org.kevoree.library.java:org.kevoree.library.java.javaNode:latest
+include mvn:org.kevoree.library.java:org.kevoree.library.java.channels:latest
+include mvn:org.kevoree.komponents:ws-samples:latest
+include mvn:org.kevoree.komponents:ws-webbit:latest
 
-addComponent page@node0 : EchoWebSocketHandler { urlPattern='/echo'}
-addComponent page1@node0 : EchoBroadcastWebSocketHandler { urlPattern='/broadcast'}
+add node0 : JavaNode
+set node0.log = "DEBUG"
 
-addChannel onOpen : defMSG
-addChannel onMessage : defMSG
-addChannel onClose : defMSG
-addChannel send : defMSG
-addChannel broadcast : defMSG
+add node0.webserver : WebbitWebSocketServer
 
-bind webserver.onOpen@node0 => onOpen
-bind webserver.onMessage@node0 => onMessage
-bind webserver.onClose@node0 => onClose
+add node0.page : EchoWebSocketHandler
+set node0.page.urlPattern = '/echo'
+add node0.page1 : EchoBroadcastWebSocketHandler
+set node0.page1.urlPattern = '/broadcast'
 
-bind webserver.send@node0 => send
-bind webserver.broadcast@node0 => broadcast
+add onOpen : AsyncBroadcast
+add onMessage : AsyncBroadcast
+add onClose : AsyncBroadcast
+add send : AsyncBroadcast
+add broadcast : AsyncBroadcast
 
-bind page.onOpen@node0 => onOpen
-bind page.onMessage@node0 => onMessage
-bind page.onClose@node0 => onClose
+bind node0.webserver.onOpen onOpen
+bind node0.webserver.onMessage onMessage
+bind node0.webserver.onClose onClose
 
-bind page.send@node0 => send
-bind page.broadcast@node0 => broadcast
+bind node0.webserver.send send
+bind node0.webserver.broadcast broadcast
+
+bind node0.page.onOpen onOpen
+bind node0.page.onMessage onMessage
+bind node0.page.onClose onClose
+
+bind node0.page.send send
+bind node0.page.broadcast broadcast
 
 
-bind page1.onOpen@node0 => onOpen
-bind page1.onMessage@node0 => onMessage
-bind page1.onClose@node0 => onClose
+bind node0.page1.onOpen onOpen
+bind node0.page1.onMessage onMessage
+bind node0.page1.onClose onClose
 
-bind page1.send@node0 => send
-bind page1.broadcast@node0 => broadcast
+bind node0.page1.send send
+bind node0.page1.broadcast broadcast
