@@ -40,7 +40,7 @@
         <module>http</module>
         <module>ws</module>
         <module>authentication</module>
-        <module>camel</module>
+        <!--<module>camel</module>-->
     </modules>
 
     <build>
