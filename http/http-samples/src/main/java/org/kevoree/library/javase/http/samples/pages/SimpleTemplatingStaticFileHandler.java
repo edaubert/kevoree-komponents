@@ -3,7 +3,6 @@ package org.kevoree.library.javase.http.samples.pages;
 import org.kevoree.annotation.ComponentType;
 import org.kevoree.annotation.Param;
 import org.kevoree.annotation.Start;
-import org.kevoree.annotation.Update;
 import org.kevoree.library.javase.http.api.helper.StaticFileHandlerHelper;
 import org.kevoree.log.Log;
 
@@ -29,13 +28,21 @@ public class SimpleTemplatingStaticFileHandler extends StaticFileHandler {
 
     private Map<String, String> templatesMap;
 
-    private void populateTemplates() {
+    public void setTemplates(String templates) {
+        if (templatesMap == null) {
+            templatesMap = new HashMap<String, String>();
+        }
+        this.templates = templates;
         if (templates != null && !"".equals(templates)) {
             String[] templatesDef = templates.split(",");
             for (String templateDef : templatesDef) {
                 String[] templateTuple = templateDef.split("=");
+                Log.trace("Add template: {}", templateDef);
                 if (templateTuple.length == 2) {
                     templatesMap.put(templateTuple[0], templateTuple[1]);
+                } else if (templateTuple.length == 1) {
+                    // this allow empty value for template
+                    templatesMap.put(templateTuple[0], "");
                 }
             }
         }
@@ -43,14 +50,7 @@ public class SimpleTemplatingStaticFileHandler extends StaticFileHandler {
 
     @Start
     public void start() throws Exception {
-        templatesMap = new HashMap<String, String>();
-        populateTemplates();
         super.start();
-    }
-
-    @Update
-    public void update() {
-        populateTemplates();
     }
 
     @Override
