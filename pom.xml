@@ -12,8 +12,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <kevoree.version>3.2.2</kevoree.version>
-        <kevoree.library.version>3.1.5</kevoree.library.version>
+        <kevoree.version>3.2.4-SNAPSHOT</kevoree.version>
+        <kevoree.library.version>3.1.6-SNAPSHOT</kevoree.library.version>
     </properties>
 
     <dependencies>
@@ -35,13 +35,12 @@
     </dependencies>
 
     <modules>
-        <module>javafx</module>
+        <!--<module>javafx</module>-->
+        <!--<module>file</module>-->
         <module>http</module>
         <module>ws</module>
-        <!--<module>file</module>-->
         <module>authentication</module>
-        <!--<module>camel</module>-->
-        <!--<module>jenkins</module>-->
+        <module>camel</module>
     </modules>
 
     <build>
@@ -78,6 +77,16 @@
             <id>kevoree-oss</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
+        <repository>
+            <id>reacloud-releases</id>
+            <name>reaCloud-releases</name>
+            <url>http://maven.reacloud.com/repository/reacloud/release/</url>
+        </repository>
+        <repository>
+            <id>reacloud-snapshots</id>
+            <name>ReaCloud-snapshots</name>
+            <url>http://maven.reacloud.com/repository/reacloud/snapshots/</url>
+        </repository>
     </repositories>
 
     <pluginRepositories>
@@ -89,12 +98,14 @@
 
     <distributionManagement>
         <repository>
-            <id>maven2.kevoree.release</id>
-            <url>http://maven.kevoree.org/archiva/repository/release</url>
+            <id>reacloud</id>
+            <name>reaCloud-releases</name>
+            <url>http://maven.reacloud.com/repository/reacloud/release/</url>
         </repository>
         <snapshotRepository>
-            <id>maven2.kevoree.snapshots</id>
-            <url>http://maven.kevoree.org/archiva/repository/snapshots/</url>
+            <id>reacloud</id>
+            <name>ReaCloud-snapshots</name>
+            <url>http://maven.reacloud.com/repository/reacloud/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 
