@@ -124,11 +124,6 @@ public class JavaFXWebBrowser {
         }
     }
 
-    @Update
-    public void update() {
-
-    }
-
     @Input(optional = true)
     public void handle(final Object msg) {
         if (msg instanceof String) {

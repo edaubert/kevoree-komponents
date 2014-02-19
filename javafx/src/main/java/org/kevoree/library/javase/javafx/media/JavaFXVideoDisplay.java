@@ -142,11 +142,6 @@ public class JavaFXVideoDisplay {
         }
     }
 
-    @Update
-    public void update() {
-
-    }
-
     @Input
     public void media(final Object o) {
         Log.warn("URL received: {}", o.toString());
