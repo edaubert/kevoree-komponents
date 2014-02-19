@@ -69,7 +69,7 @@ public class StaticFileHandlerHelper {
             resp.addHeader("Content-Type", (HTTPHelper.getHttpHeaderFromURL(filePath)));
             return true;
         } catch (Exception e) {
-            Log.error("Unable to read the file: {}", e, baseDir + File.separator + filePath);
+            Log.trace("Unable to read the file: {}", e, baseDir + File.separator + filePath);
             return false;
         }
     }
@@ -87,7 +87,7 @@ public class StaticFileHandlerHelper {
             resp.addHeader("Content-Type", (HTTPHelper.getHttpHeaderFromURL(filePath)));
             return true;
         } catch (Exception e) {
-            Log.error("Unable to read the file: {}", e, filePath);
+            Log.trace("Unable to read the file: {}", e, filePath);
             return false;
         }
     }
@@ -129,7 +129,7 @@ public class StaticFileHandlerHelper {
             resp.addHeader("Content-Type", (HTTPHelper.getHttpHeaderFromURL(filePath)));
             return true;
         } catch (Exception e) {
-            Log.error("Unable to read the file: {}", e, baseDir + File.separator + filePath);
+            Log.trace("Unable to read the file: {}", e, baseDir + File.separator + filePath);
             return false;
         }
     }
@@ -158,7 +158,7 @@ public class StaticFileHandlerHelper {
             resp.addHeader("Content-Type", (HTTPHelper.getHttpHeaderFromURL(filePath)));
             return true;
         } catch (Exception e) {
-            Log.error("Unable to read the file: {}", e, filePath);
+            Log.trace("Unable to read the file: {}", e, filePath);
             return false;
         }
     }
