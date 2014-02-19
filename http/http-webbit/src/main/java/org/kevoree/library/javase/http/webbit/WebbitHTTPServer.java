@@ -48,13 +48,7 @@ public class WebbitHTTPServer extends AbstractHTTPServer {
         }
     }
 
-    @Override
-    public void update() throws ExecutionException, InterruptedException {
-//        if (port != Integer.parseInt(getDictionary().get("port").toString())) {
-            stop();
-            start();
-//        }
-    }
+
 
     @Override
     // TODO replace Object with a specific type and rename the parameter

@@ -76,14 +76,6 @@ public class WebbitWebSocketServer extends AbstractWebSocketServer {
     }
 
     @Override
-    public void update() throws Exception {
-//        if (port != Integer.parseInt(getDictionary().get("port").toString())) {
-            stop();
-            start();
-//        }
-    }
-
-    @Override
     public void send(long id, String message) {
         if (connectionsFromId.containsKey(id)) {
             connectionsFromId.get(id).send(message);

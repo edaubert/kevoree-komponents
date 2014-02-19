@@ -25,6 +25,22 @@ public abstract class AbstractHTTPServer {
     @Output
     protected Port session;
 
+    public void setPort(int port) throws Exception {
+        if (this.port != port) {
+            this.port = port;
+            stop();
+            start();
+        }
+    }
+
+    public void setTimeout(long timeout) throws Exception {
+        if (this.timeout != timeout) {
+        this.timeout = timeout;
+            stop();
+            start();
+        }
+    }
+
     public long getTimeout() {
         return timeout;
     }
@@ -34,9 +50,6 @@ public abstract class AbstractHTTPServer {
 
     @Stop
     abstract public void stop() throws Exception;
-
-    @Update
-    abstract public void update() throws Exception;
 
     @Input(optional = false)
     abstract public void response(/*HTTPOperationTuple*/Object param);

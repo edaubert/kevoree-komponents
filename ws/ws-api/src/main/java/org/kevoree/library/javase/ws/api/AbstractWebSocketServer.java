@@ -27,14 +27,27 @@ public abstract class AbstractWebSocketServer {
     @Output(optional = true)
     protected Port onClose;
 
+    public void setPort(int port) throws Exception {
+        if (this.port != port) {
+            this.port = port;
+            stop();
+            start();
+        }
+    }
+
+    public void setTimeout(long timeout) throws Exception {
+        if (this.timeout != timeout) {
+            this.timeout = timeout;
+            stop();
+            start();
+        }
+    }
+
     @Start
     abstract public void start() throws Exception;
 
     @Stop
     abstract public void stop() throws Exception;
-
-    @Update
-    abstract public void update() throws Exception;
 
     abstract public void send(long id, String message);
 
