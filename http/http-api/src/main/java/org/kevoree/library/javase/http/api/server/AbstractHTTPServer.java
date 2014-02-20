@@ -26,8 +26,9 @@ public abstract class AbstractHTTPServer {
     protected Port session;
 
     public void setPort(int port) throws Exception {
-        if (this.port != port) {
-            this.port = port;
+        int oldPort = this.port;
+        this.port = port;
+        if (oldPort != 0 && oldPort != port) {
             stop();
             start();
         }

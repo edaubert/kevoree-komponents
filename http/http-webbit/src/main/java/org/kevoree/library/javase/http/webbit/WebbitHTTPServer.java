@@ -1,8 +1,10 @@
 package org.kevoree.library.javase.http.webbit;
 
 import org.kevoree.annotation.ComponentType;
-import org.kevoree.library.javase.http.api.server.AbstractHTTPServer;
+import org.kevoree.annotation.KevoreeInject;
+import org.kevoree.api.Context;
 import org.kevoree.library.javase.http.api.commons.HTTPOperationTuple;
+import org.kevoree.library.javase.http.api.server.AbstractHTTPServer;
 import org.kevoree.log.Log;
 import org.webbitserver.WebServer;
 import org.webbitserver.WebServers;
@@ -21,12 +23,12 @@ import java.util.concurrent.TimeoutException;
  * @version 1.0
  */
 @ComponentType (description = "Webbit server to server HTTP request. Thhis implementations is based on servlet API. However webbit doesn't provide a way to do chunked response for binary content. That's why this implementation is not able to stream binary content like media.")
-/*@Requires({
-        @RequiredPort(name = "error", type = PortType.MESSAGE, optional = true*//*, messageType = HTTPOperationTuple.class.getName()*//*)
-})*/
 public class WebbitHTTPServer extends AbstractHTTPServer {
     WebServer server;
     private WebbitHTTPHandler handler;
+
+    @KevoreeInject
+    private Context context;
 
     @Override
     public void start() throws ExecutionException, InterruptedException {
@@ -36,15 +38,19 @@ public class WebbitHTTPServer extends AbstractHTTPServer {
         handler = new WebbitHTTPHandler(this);
         server.add(handler);
         server.start().get();
+        Log.info("{} is starting on {}", context.getInstanceName(), port);
     }
 
     @Override
     public void stop() throws InterruptedException, ExecutionException {
+        if (server != null) {
         Future future = server.stop();
         try {
             future.get(timeout, TimeUnit.MILLISECONDS);
+            Log.info("{} is stopped on {}", context.getInstanceName(), port);
         } catch (TimeoutException e) {
             Log.warn("Time out when waiting the stop of the server. Maybe it is blocked!");
+        }
         }
     }
 
