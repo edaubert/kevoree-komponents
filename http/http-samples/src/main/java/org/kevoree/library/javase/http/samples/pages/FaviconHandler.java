@@ -2,8 +2,8 @@ package org.kevoree.library.javase.http.samples.pages;
 
 import org.kevoree.annotation.ComponentType;
 import org.kevoree.annotation.Param;
-import org.kevoree.library.javase.http.api.page.AbstractHTTPHandler;
 import org.kevoree.library.javase.http.api.helper.StaticFileHandlerHelper;
+import org.kevoree.library.javase.http.api.page.AbstractHTTPHandler;
 import org.kevoree.log.Log;
 
 import javax.servlet.ServletException;
@@ -24,8 +24,12 @@ public class FaviconHandler extends AbstractHTTPHandler {
 
     @Param(optional = true, defaultValue = "favicon.png")
     private String favicon;
-    @Param(optional = true, defaultValue = "/favicon.ico")
-    private String urlPattern;
+
+
+    /*@Param(optional = true, defaultValue = "/favicon.ico")
+    public void setUrlPattern(String urlPattern) {
+        this.urlPattern = urlPattern;
+    }*/
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

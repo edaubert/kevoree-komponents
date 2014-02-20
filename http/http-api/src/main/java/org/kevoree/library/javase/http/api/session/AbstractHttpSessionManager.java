@@ -14,7 +14,7 @@ import javax.servlet.http.HttpSession;
  * @version 1.0
  */
 @ComponentType
-public abstract class HttpSessionManager {
+public abstract class AbstractHttpSessionManager {
 
 
     @Input

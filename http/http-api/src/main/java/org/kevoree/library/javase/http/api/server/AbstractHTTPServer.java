@@ -35,8 +35,9 @@ public abstract class AbstractHTTPServer {
     }
 
     public void setTimeout(long timeout) throws Exception {
-        if (this.timeout != timeout) {
+        long oldTimeout = this.timeout;
         this.timeout = timeout;
+        if (oldTimeout != 0l && oldTimeout != timeout) {
             stop();
             start();
         }

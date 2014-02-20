@@ -15,7 +15,15 @@ import java.util.Enumeration;
  * @author Erwan Daubert
  * @version 1.0
  */
-public class KevoreeHttpSession implements HttpSession {
+public abstract class KevoreeHttpSession implements HttpSession {
+
+    /**
+     * Return if the session is invalidated or not (wuith throwing IllegalStateException
+     * This method is defined for the implementation of @link{org.kevoree.library.javase.http.api.session.AbstractHttpSessionManager}
+     * @return true if the session is already invalidated, false otherwise
+     */
+    public abstract boolean isInvalidated();
+
     /**
      * Returns the time when this session was created, measured
      * in milliseconds since midnight January 1, 1970 GMT.

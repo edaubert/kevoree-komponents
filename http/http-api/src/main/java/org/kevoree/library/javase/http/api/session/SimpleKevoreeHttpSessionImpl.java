@@ -38,7 +38,13 @@ public class SimpleKevoreeHttpSessionImpl extends KevoreeHttpSession {
         lastAccessedTime = creationTime;
         invalidated = false;
         isNew = true;
-        attributes = new HashMap<String, Object>();
+        attributes = Collections.synchronizedMap(new HashMap<String, Object>());
+    }
+
+    private void preProcess() {
+        checkInactiveInterval();
+        checkInvalidated();
+        updateIsNew();
     }
 
     private void checkInvalidated() {
@@ -48,10 +54,22 @@ public class SimpleKevoreeHttpSessionImpl extends KevoreeHttpSession {
     }
 
     private void updateIsNew() {
-        // FIXME how this method must be used ?
         isNew = false;
     }
 
+    private void checkInactiveInterval() {
+        if (maxInactiveInterval != -1) {
+            if (lastAccessedTime + maxInactiveInterval < System.currentTimeMillis()) {
+                invalidated = true;
+            }
+        }
+    }
+
+    @Override
+    public boolean isInvalidated() {
+        checkInactiveInterval();
+        return invalidated;
+    }
 
     /**
      * Returns the time when this session was created, measured
@@ -64,7 +82,7 @@ public class SimpleKevoreeHttpSessionImpl extends KevoreeHttpSession {
      */
     @Override
     public long getCreationTime() {
-        checkInvalidated();
+        preProcess();
         return creationTime;
     }
 
@@ -79,7 +97,7 @@ public class SimpleKevoreeHttpSessionImpl extends KevoreeHttpSession {
      */
     @Override
     public String getId() {
-        checkInvalidated();
+        preProcess();
         return id;
     }
 
@@ -100,8 +118,8 @@ public class SimpleKevoreeHttpSessionImpl extends KevoreeHttpSession {
      */
     @Override
     public long getLastAccessedTime() {
-        checkInvalidated();
-        return super.getLastAccessedTime();
+        preProcess();
+        return lastAccessedTime;
     }
 
     /**
@@ -112,7 +130,7 @@ public class SimpleKevoreeHttpSessionImpl extends KevoreeHttpSession {
      */
     @Override
     public ServletContext getServletContext() {
-        checkInvalidated();
+        preProcess();
         return super.getServletContext();
     }
 
@@ -125,7 +143,7 @@ public class SimpleKevoreeHttpSessionImpl extends KevoreeHttpSession {
      */
     @Override
     public void setMaxInactiveInterval(int interval) {
-        checkInvalidated();
+        preProcess();
         this.maxInactiveInterval = interval;
     }
 
@@ -143,7 +161,7 @@ public class SimpleKevoreeHttpSessionImpl extends KevoreeHttpSession {
      */
     @Override
     public int getMaxInactiveInterval() {
-        checkInvalidated();
+        preProcess();
         return maxInactiveInterval;
     }
 
@@ -154,7 +172,7 @@ public class SimpleKevoreeHttpSessionImpl extends KevoreeHttpSession {
      */
     @Override
     public HttpSessionContext getSessionContext() {
-        checkInvalidated();
+        preProcess();
         throw new UnsupportedOperationException("This method is deprecated and there is no plan to implement it");
     }
 
@@ -169,7 +187,7 @@ public class SimpleKevoreeHttpSessionImpl extends KevoreeHttpSession {
      */
     @Override
     public Object getAttribute(String name) {
-        checkInvalidated();
+        preProcess();
         return attributes.get(name);
     }
 
@@ -183,7 +201,7 @@ public class SimpleKevoreeHttpSessionImpl extends KevoreeHttpSession {
      */
     @Override
     public Object getValue(String name) {
-        checkInvalidated();
+        preProcess();
         throw new UnsupportedOperationException("This method is deprecated and there is no plan to implement it. Please use getAttribute instead");
     }
 
@@ -198,7 +216,7 @@ public class SimpleKevoreeHttpSessionImpl extends KevoreeHttpSession {
      */
     @Override
     public Enumeration getAttributeNames() {
-        checkInvalidated();
+        preProcess();
         return Collections.enumeration(attributes.keySet());
     }
 
@@ -212,7 +230,7 @@ public class SimpleKevoreeHttpSessionImpl extends KevoreeHttpSession {
      */
     @Override
     public String[] getValueNames() {
-        checkInvalidated();
+        preProcess();
         throw new UnsupportedOperationException("This method is deprecated and there is no plan to implement it. Please use getAttributeNames instead");
     }
 
@@ -241,10 +259,11 @@ public class SimpleKevoreeHttpSessionImpl extends KevoreeHttpSession {
      */
     @Override
     public void setAttribute(String name, Object value) {
-        checkInvalidated();
+        preProcess();
         attributes.put(name, value);
+        // TODO HttpSessionAttributeListener
         if (value instanceof HttpSessionBindingListener) {
-//            ((HttpSessionBindingListener)value).valueBound();
+            ((HttpSessionBindingListener)value).valueBound(new KevoreeHttpSessionBindingEvent(this, name, value));
             Log.warn("Currently this API doesn't manage Attribute Listener");
         }
     }
@@ -259,7 +278,7 @@ public class SimpleKevoreeHttpSessionImpl extends KevoreeHttpSession {
      */
     @Override
     public void putValue(String name, Object value) {
-        checkInvalidated();
+        preProcess();
         throw new UnsupportedOperationException("This method is deprecated and there is no plan to implement it. Please use setAttribute instead");
     }
 
@@ -280,11 +299,11 @@ public class SimpleKevoreeHttpSessionImpl extends KevoreeHttpSession {
      */
     @Override
     public void removeAttribute(String name) {
-        checkInvalidated();
-        // TODO HttpSessionBindingListener
+        preProcess();
+        // TODO HttpSessionAttributeListener
         Object value = attributes.remove(name);
         if (value instanceof HttpSessionBindingListener) {
-//            ((HttpSessionBindingListener)value).valueUnbound();
+            ((HttpSessionBindingListener)value).valueUnbound(new KevoreeHttpSessionBindingEvent(this, name, value));
             Log.warn("Currently this API doesn't manage Attribute Listener");
         }
     }
@@ -298,7 +317,7 @@ public class SimpleKevoreeHttpSessionImpl extends KevoreeHttpSession {
      */
     @Override
     public void removeValue(String name) {
-        checkInvalidated();
+        preProcess();
         throw new UnsupportedOperationException("This method is deprecated and there is no plan to implement it. Please use removeAttribute instead");
     }
 
@@ -310,7 +329,7 @@ public class SimpleKevoreeHttpSessionImpl extends KevoreeHttpSession {
      */
     @Override
     public void invalidate() {
-        checkInvalidated();
+        preProcess();
         attributes.clear();
         invalidated = true;
     }

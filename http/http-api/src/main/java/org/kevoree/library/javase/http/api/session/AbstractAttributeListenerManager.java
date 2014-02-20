@@ -1,7 +1,6 @@
 package org.kevoree.library.javase.http.api.session;
 
-import javax.servlet.http.HttpSessionAttributeListener;
-import java.util.List;
+import org.kevoree.annotation.ComponentType;
 
 /**
  * User: Erwan Daubert - erwan.daubert@gmail.com
@@ -11,6 +10,6 @@ import java.util.List;
  * @author Erwan Daubert
  * @version 1.0
  */
-public class AttributeListenerManager {
-    private List<HttpSessionAttributeListener> attributeListeners;
+@ComponentType
+public abstract class AbstractAttributeListenerManager {
 }

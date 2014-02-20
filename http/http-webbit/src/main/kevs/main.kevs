@@ -3,6 +3,8 @@ repo "https://oss.sonatype.org/content/groups/public/"
 
 include mvn:org.kevoree.library.java:org.kevoree.library.java.javaNode:latest
 include mvn:org.kevoree.library.java:org.kevoree.library.java.channels:latest
+
+include mvn:org.kevoree.komponents:camel-channel-http:latest
 include mvn:org.kevoree.komponents:http-samples:latest
 include mvn:org.kevoree.komponents:http-webbit:latest
 
@@ -10,6 +12,7 @@ add node0 : JavaNode
 set node0.log = "DEBUG"
 
 add node0.webserver : WebbitHTTPServer
+set node0.webserver.port = '8181'
 
 add node0.favicon : FaviconHandler
 set node0.favicon.urlPattern = "/favicon.*"
@@ -21,8 +24,8 @@ set node0.page.urlPattern = "/hello"
 add node0.page1 : StaticFileHandler
 //set node0.page1.path = "/home/jed/clone/tempgauge"
 set node0.page1.path = "/home/edaubert/workspace/web/wysihtml5/examples/"
-set node0.page1.urlPattern = "/examples/"
-set node0.page1.patternToRemove = "/examples/"
+set node0.page1.urlPattern = "/examples"
+set node0.page1.patternToRemove = "/examples"
 set node0.page1.contained = "false"
 
 
