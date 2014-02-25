@@ -1,0 +1,45 @@
+repo "https://repo1.maven.org/maven2"
+repo "https://oss.sonatype.org/content/groups/public/"
+
+include mvn:org.kevoree.library.java:org.kevoree.library.java.javaNode:latest
+include mvn:org.kevoree.library.java:org.kevoree.library.java.channels:latest
+include mvn:org.kevoree.komponents:ws-samples:latest
+include mvn:org.kevoree.komponents:ws-java-websocket:latest
+
+add node0 : JavaNode
+set node0.log = "DEBUG"
+
+add node0.webserver : JavaWebsocketServer
+
+add node0.page : EchoWebSocketHandler
+set node0.page.urlPattern = '/echo'
+add node0.page1 : EchoBroadcastWebSocketHandler
+set node0.page1.urlPattern = '/broadcast'
+
+add onOpen : AsyncBroadcast
+add onMessage : AsyncBroadcast
+add onClose : AsyncBroadcast
+add send : AsyncBroadcast
+add broadcast : AsyncBroadcast
+
+bind node0.webserver.onOpen onOpen
+bind node0.webserver.onMessage onMessage
+bind node0.webserver.onClose onClose
+
+bind node0.webserver.send send
+bind node0.webserver.broadcast broadcast
+
+bind node0.page.onOpen onOpen
+bind node0.page.onMessage onMessage
+bind node0.page.onClose onClose
+
+bind node0.page.send send
+bind node0.page.broadcast broadcast
+
+
+bind node0.page1.onOpen onOpen
+bind node0.page1.onMessage onMessage
+bind node0.page1.onClose onClose
+
+bind node0.page1.send send
+bind node0.page1.broadcast broadcast

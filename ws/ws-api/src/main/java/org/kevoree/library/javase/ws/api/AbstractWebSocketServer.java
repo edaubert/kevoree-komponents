@@ -70,23 +70,14 @@ public abstract class AbstractWebSocketServer {
     }
 
     public void onOpen(long id, String uri) {
-        // FIXME how to test if the port is connected ?
-//        if (isPortBinded("onOpen")) {
         onOpen.send(new WebSocketTuple(uri, id));
-//        }
     }
 
     public void onMessage(long id, String uri, String message) {
-        // FIXME how to test if the port is connected ?
-//        if (isPortBinded("onMessage")) {
         onMessage.send(new WebSocketTuple(id, uri, message));
-//        }
     }
 
     public void onClose(long id, String uri) {
-        // FIXME how to test if the port is connected ?
-//        if (isPortBinded("onClose")) {
         onClose.send(new WebSocketTuple(id, uri));
-//        }
     }
 }

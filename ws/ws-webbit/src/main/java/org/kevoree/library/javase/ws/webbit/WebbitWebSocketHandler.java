@@ -1,5 +1,6 @@
 package org.kevoree.library.javase.ws.webbit;
 
+import org.kevoree.library.javase.ws.api.constants.Constants;
 import org.kevoree.log.Log;
 import org.webbitserver.WebSocketConnection;
 import org.webbitserver.WebSocketHandler;
@@ -13,7 +14,6 @@ import org.webbitserver.WebSocketHandler;
  * @version 1.0
  */
 public class WebbitWebSocketHandler implements WebSocketHandler {
-    private static final String REPO_URL = "https://github.com/edaubert/kevoree-komponents";
     private WebbitWebSocketServer server;
 
     public WebbitWebSocketHandler(WebbitWebSocketServer server) {
@@ -42,16 +42,16 @@ public class WebbitWebSocketHandler implements WebSocketHandler {
 
     @Override
     public void onMessage(WebSocketConnection connection, byte[] msg) throws Throwable {
-        throw new Exception("Method 'onMessage(WebSocketConnection, byte[])' is not currently managed. Please submit an issue to " + REPO_URL);
+        throw new Exception("Method 'onMessage(WebSocketConnection, byte[])' is not currently managed. Please submit an issue to " + Constants.REPO_URL);
     }
 
     @Override
     public void onPing(WebSocketConnection connection, byte[] msg) throws Throwable {
-        throw new Exception("Method 'onMessage(WebSocketConnection, byte[])' is not currently managed. Please submit an issue to " + REPO_URL);
+        throw new Exception("Method 'onMessage(WebSocketConnection, byte[])' is not currently managed. Please submit an issue to " + Constants.REPO_URL);
     }
 
     @Override
     public void onPong(WebSocketConnection connection, byte[] msg) throws Throwable {
-        throw new Exception("Method 'onMessage(WebSocketConnection, byte[])' is not currently managed. Please submit an issue to " + REPO_URL);
+        throw new Exception("Method 'onMessage(WebSocketConnection, byte[])' is not currently managed. Please submit an issue to " + Constants.REPO_URL);
     }
 }

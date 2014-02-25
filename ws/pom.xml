@@ -19,5 +19,6 @@
         <module>ws-api</module>
         <module>ws-samples</module>
         <module>ws-webbit</module>
+        <module>ws-java-websocket</module>
     </modules>
 </project>
