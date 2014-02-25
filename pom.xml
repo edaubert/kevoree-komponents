@@ -12,8 +12,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <kevoree.version>3.2.4-SNAPSHOT</kevoree.version>
-        <kevoree.library.version>3.1.6-SNAPSHOT</kevoree.library.version>
+        <kevoree.version>3.4.1</kevoree.version>
+        <kevoree.library.version>3.4.1</kevoree.library.version>
     </properties>
 
     <dependencies>
@@ -77,16 +77,6 @@
             <id>kevoree-oss</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
-        <repository>
-            <id>reacloud-releases</id>
-            <name>reaCloud-releases</name>
-            <url>http://maven.reacloud.com/repository/reacloud/release/</url>
-        </repository>
-        <repository>
-            <id>reacloud-snapshots</id>
-            <name>ReaCloud-snapshots</name>
-            <url>http://maven.reacloud.com/repository/reacloud/snapshots/</url>
-        </repository>
     </repositories>
 
     <pluginRepositories>
@@ -98,14 +88,12 @@
 
     <distributionManagement>
         <repository>
-            <id>reacloud</id>
-            <name>reaCloud-releases</name>
-            <url>http://maven.reacloud.com/repository/reacloud/release/</url>
+            <id>kevoree.oss.release</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
         </repository>
         <snapshotRepository>
-            <id>reacloud</id>
-            <name>ReaCloud-snapshots</name>
-            <url>http://maven.reacloud.com/repository/reacloud/snapshots/</url>
+            <id>kevoree.oss.snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
 
