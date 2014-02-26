@@ -11,6 +11,7 @@ import org.kevoree.library.javase.http.api.page.KevoreeHTTPServletResponse;
 import org.kevoree.log.Log;
 
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONNECTION;
+import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_LENGTH;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
 import static io.netty.handler.codec.http.HttpHeaders.isKeepAlive;
 import static io.netty.handler.codec.http.HttpResponseStatus.*;
@@ -50,6 +51,10 @@ public class NettyHTTPHandler extends SimpleChannelInboundHandler<FullHttpReques
             Log.info("Status of the response: {} for request uri: {}", httpResponse.getStatus(), request.getRequestURI());
 
             ((NettyKevoteeHTTPServletResponse)response).end();
+
+            if (httpResponse.headers().get(CONTENT_LENGTH) == null) {
+                httpResponse.headers().set(CONTENT_LENGTH, httpResponse.content().readableBytes());
+            }
 
             if (!isKeepAlive(httpRequest)) {
                 // Close the connection when the whole content is written out.
