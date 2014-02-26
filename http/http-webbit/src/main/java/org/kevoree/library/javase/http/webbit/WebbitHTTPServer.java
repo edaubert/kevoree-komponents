@@ -1,8 +1,6 @@
 package org.kevoree.library.javase.http.webbit;
 
 import org.kevoree.annotation.ComponentType;
-import org.kevoree.annotation.KevoreeInject;
-import org.kevoree.api.Context;
 import org.kevoree.library.javase.http.api.commons.HTTPOperationTuple;
 import org.kevoree.library.javase.http.api.server.AbstractHTTPServer;
 import org.kevoree.log.Log;
@@ -26,9 +24,6 @@ import java.util.concurrent.TimeoutException;
 public class WebbitHTTPServer extends AbstractHTTPServer {
     WebServer server;
     private WebbitHTTPHandler handler;
-
-    @KevoreeInject
-    private Context context;
 
     @Override
     public void start() throws ExecutionException, InterruptedException {
@@ -54,8 +49,6 @@ public class WebbitHTTPServer extends AbstractHTTPServer {
         }
     }
 
-
-
     @Override
     // TODO replace Object with a specific type and rename the parameter
     public void response(/*HTTPOperationTuple*/Object param) {
@@ -63,19 +56,4 @@ public class WebbitHTTPServer extends AbstractHTTPServer {
             handler.response((HTTPOperationTuple) param);
         }
     }
-
-    /*// TODO replace Object with a specific type and rename the parameter
-    void error(*//*HTTPOperationTuple*//*Object param) {
-        if (param != null && param instanceof HTTPOperationTuple && isPortBinded("error")) {
-            getPortByName("error", MessagePort.class).process(param);
-        }
-    }*/
-
-    /*@Port(name = "errorResponse")
-    // TODO replace Object with a specific type and rename the parameter
-    public void errorResponse(*//*HTTPOperationTuple*//*Object param) {
-        if (param != null && param instanceof HTTPOperationTuple) {
-            handler.response((HTTPOperationTuple) param);
-        }
-    }*/
 }
