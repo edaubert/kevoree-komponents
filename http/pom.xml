@@ -19,6 +19,6 @@
         <module>http-api</module>
         <module>http-samples</module>
         <module>http-webbit</module>
-        <!--<module>http-netty</module>-->
+        <module>http-netty</module>
     </modules>
 </project>

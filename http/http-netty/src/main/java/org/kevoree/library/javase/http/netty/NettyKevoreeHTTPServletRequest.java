@@ -2,9 +2,12 @@ package org.kevoree.library.javase.http.netty;
 
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpHeaders;
-import org.kevoree.library.javase.http.api.KevoreeHTTPServletRequest;
+import org.kevoree.library.javase.http.api.page.KevoreeHTTPServletRequest;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Locale;
 
 /**
  * User: Erwan Daubert - erwan.daubert@gmail.com
@@ -26,7 +29,7 @@ public class NettyKevoreeHTTPServletRequest extends KevoreeHTTPServletRequest {
 
     @Override
     public int getLocalPort() {
-        return Integer.parseInt(server.getDictionary().get("port").toString());
+        return server.getPort();
     }
 
     @Override

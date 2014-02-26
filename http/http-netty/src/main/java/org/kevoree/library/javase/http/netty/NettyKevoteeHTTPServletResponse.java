@@ -3,7 +3,7 @@ package org.kevoree.library.javase.http.netty;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
-import org.kevoree.library.javase.http.api.KevoreeHTTPServletResponse;
+import org.kevoree.library.javase.http.api.page.KevoreeHTTPServletResponse;
 
 import javax.servlet.ServletOutputStream;
 import java.io.IOException;
@@ -34,7 +34,7 @@ public class NettyKevoteeHTTPServletResponse extends KevoreeHTTPServletResponse 
 
         public void setChunked(boolean isChunked) {
             this.isChunked = isChunked;
-            new Thread(new Runnable() {
+            /*new Thread(new Runnable() {
                 @Override
                 public void run() {
                     while (NettyKevoreeServletOutputStream.this.isChunked) {
@@ -49,7 +49,7 @@ public class NettyKevoteeHTTPServletResponse extends KevoreeHTTPServletResponse 
                     }
                     // TODO close the chunk
                 }
-            }).start();
+            }).start();*/
         }
 
         @Override

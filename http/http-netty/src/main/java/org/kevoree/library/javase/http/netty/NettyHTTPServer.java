@@ -1,7 +1,10 @@
 package org.kevoree.library.javase.http.netty;
 
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.*;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelPipeline;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -11,12 +14,8 @@ import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.util.concurrent.GenericFutureListener;
 import org.kevoree.annotation.ComponentType;
-import org.kevoree.annotation.PortType;
-import org.kevoree.annotation.RequiredPort;
-import org.kevoree.annotation.Requires;
-import org.kevoree.framework.MessagePort;
-import org.kevoree.library.javase.http.api.AbstractHTTPServer;
-import org.kevoree.library.javase.http.api.HTTPOperationTuple;
+import org.kevoree.library.javase.http.api.commons.HTTPOperationTuple;
+import org.kevoree.library.javase.http.api.server.AbstractHTTPServer;
 import org.kevoree.log.Log;
 
 /**
@@ -28,17 +27,7 @@ import org.kevoree.log.Log;
  * @version 1.0
  */
 @ComponentType
-@Requires({
-        @RequiredPort(name = "error", type = PortType.MESSAGE, optional = true/*, messageType = HTTPOperationTuple.class.getName()*/)
-})
-/*@DictionaryType({
-        @DictionaryAttribute(name = "ssl", defaultValue = "false", vals = {"true", "false"})
-})*/
-/*@Provides({
-        @ProvidedPort(name = "errorResponse", type = PortType.MESSAGE*//*, messageType = HTTPOperationTuple.class.getName()*//*)
-})*/
 public class NettyHTTPServer extends AbstractHTTPServer {
-    private int port;
     //    private boolean ssl;
     private ChannelFuture channelFuture;
     private NettyHTTPHandler handler;
@@ -51,7 +40,6 @@ public class NettyHTTPServer extends AbstractHTTPServer {
 
     @Override
     public void start() throws Exception {
-        port = Integer.parseInt(getDictionary().get("port").toString());
 //        ssl = getDictionary().get("ssl") != null && "true".equalsIgnoreCase(getDictionary().get("ssl").toString());
 
         handler = new NettyHTTPHandler(this);
@@ -93,14 +81,14 @@ public class NettyHTTPServer extends AbstractHTTPServer {
         channelFuture = bootstrap.bind(port);
         channelFuture.sync();
         if (!channelFuture.isDone() || !channelFuture.isSuccess() || !channelFuture.channel().isActive()) {
-            throw new Exception("Unable to start server " + getName() + ": Timeout when wait for connection");
+            throw new Exception("Unable to start server " + context.getInstanceName() + ": Timeout when wait for connection");
         } else {
             //to be notify when the channel is close and restart it as needed
             if (listener == null) {
                 listener = new RestartListener();
                 channelFuture.channel().closeFuture().addListener(listener);
             }
-            Log.debug("Server {} is now started at", getName(), channelFuture.channel().localAddress().toString());
+            Log.debug("Server {} is now started at", context.getInstanceName(), channelFuture.channel().localAddress().toString());
         }
     }
 
@@ -120,15 +108,6 @@ public class NettyHTTPServer extends AbstractHTTPServer {
     }
 
     @Override
-    public void update() throws Exception {
-        if (Integer.parseInt(getDictionary().get("port").toString()) != port) {
-            Log.debug("Updating server {}", getName());
-            stop();
-            start();
-        }
-    }
-
-    @Override
     // TODO replace Object with a specific type and rename the parameter
     public void response(Object param) {
         if (param != null && param instanceof HTTPOperationTuple) {
@@ -136,19 +115,11 @@ public class NettyHTTPServer extends AbstractHTTPServer {
         }
     }
 
-    // TODO replace Object with a specific type and rename the parameter
-    @Override
-    public void request(/*HTTPOperationTuple*/Object param) {
-        if (param != null && param instanceof HTTPOperationTuple && isPortBinded("request")) {
-            getPortByName("request", MessagePort.class).process(param);
-        }
-    }
-
     private class RestartListener implements GenericFutureListener<ChannelFuture> {
 
         @Override
         public void operationComplete(ChannelFuture future) throws Exception {
-            Log.warn("Server {} has been stopped while Kevoree think is always running. Restarting it", getName());
+            Log.warn("Server {} has been stopped while Kevoree think is always running. Restarting it", context.getInstanceName());
             internalStart();
         }
     }

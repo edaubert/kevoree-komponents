@@ -2,22 +2,18 @@ package org.kevoree.library.javase.http.netty;
 
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
-import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
-import org.kevoree.library.javase.http.api.HTTPOperationTuple;
-import org.kevoree.library.javase.http.api.KevoreeHTTPServletRequest;
-import org.kevoree.library.javase.http.api.KevoreeHTTPServletResponse;
-import org.kevoree.library.javase.http.api.Monitor;
+import org.kevoree.library.javase.http.api.commons.HTTPOperationTuple;
+import org.kevoree.library.javase.http.api.commons.Monitor;
+import org.kevoree.library.javase.http.api.page.KevoreeHTTPServletRequest;
+import org.kevoree.library.javase.http.api.page.KevoreeHTTPServletResponse;
 import org.kevoree.log.Log;
 
+import static io.netty.handler.codec.http.HttpHeaders.Names.CONNECTION;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
 import static io.netty.handler.codec.http.HttpHeaders.isKeepAlive;
-import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
-import static io.netty.handler.codec.http.HttpResponseStatus.INTERNAL_SERVER_ERROR;
-import static io.netty.handler.codec.http.HttpResponseStatus.OK;
+import static io.netty.handler.codec.http.HttpResponseStatus.*;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 /**
@@ -49,24 +45,20 @@ public class NettyHTTPHandler extends SimpleChannelInboundHandler<FullHttpReques
 
             KevoreeHTTPServletRequest request = new NettyKevoreeHTTPServletRequest(httpRequest, server);
             KevoreeHTTPServletResponse response = new NettyKevoteeHTTPServletResponse(ctx, httpResponse);
-            Monitor monitor = new Monitor(Long.parseLong(server.getDictionary().get("timeout").toString()), server);
+            Monitor monitor = new Monitor(server.getTimeout(), server);
             HTTPOperationTuple result = monitor.request(new HTTPOperationTuple(request, response, monitor));
             Log.info("Status of the response: {} for request uri: {}", httpResponse.getStatus(), request.getRequestURI());
 
-        /*if (httpResponse.getStatus() < 200 || (httpResponse.getStatus() >= 300 && httpResponse.getStatus() < 500)) {
-            if (server.isPortBinded("error")) {
-                monitor.error(result);
-            } else {
-                Log.info("There is no management of client error status code");
-            }
-        }*/
             ((NettyKevoteeHTTPServletResponse)response).end();
-            ChannelFuture future =  ctx.write(httpResponse);
-            ctx.flush();
+
             if (!isKeepAlive(httpRequest)) {
                 // Close the connection when the whole content is written out.
-//                future.addListener(ChannelFutureListener.CLOSE);
+                ctx.write(httpResponse).addListener(ChannelFutureListener.CLOSE);
+            } else {
+                httpResponse.headers().set(CONNECTION, HttpHeaders.Values.KEEP_ALIVE);
+                ctx.write(httpResponse);
             }
+            ctx.flush();
         }
         Log.debug("End of handler for {}", httpRequest.getUri());
     }
@@ -85,6 +77,7 @@ public class NettyHTTPHandler extends SimpleChannelInboundHandler<FullHttpReques
         cause.printStackTrace();
         if (ctx.channel().isActive()) {
             sendError(ctx, INTERNAL_SERVER_ERROR);
+            ctx.close();
         }
     }
 
