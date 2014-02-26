@@ -1,6 +1,7 @@
 package org.kevoree.library.javase.http.api.server;
 
 import org.kevoree.annotation.*;
+import org.kevoree.api.Context;
 import org.kevoree.api.Port;
 import org.kevoree.library.javase.http.api.commons.HTTPOperationTuple;
 
@@ -21,9 +22,15 @@ public abstract class AbstractHTTPServer {
     protected long timeout;
     @Output
     protected Port request;
-
     @Output
     protected Port session;
+
+    @KevoreeInject
+    protected Context context;
+
+    public int getPort() {
+        return port;
+    }
 
     public void setPort(int port) throws Exception {
         int oldPort = this.port;
