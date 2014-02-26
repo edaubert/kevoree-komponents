@@ -2,8 +2,9 @@ package org.kevoree.library.javase.http.api.helper;
 
 import org.kevoree.log.Log;
 
-import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Properties;
 
 /**
@@ -27,12 +28,23 @@ public class HTTPHelper {
         return p;
     }
 
+    /**
+     *
+     * @param url the URL from which we want to know if the response contains raw data
+     *            Non RAW data is <code>js, html, css and jnlp</code> file
+     * @return true if the content will be raw data, false otherwise
+     */
     public static boolean isRaw(String url) {
         Log.debug("look extension file to know if the file '{}' is a raw file", url);
         return !(url.endsWith(".js") || url.endsWith(".html") || url.endsWith(".css") || url.endsWith(".jnlp"));
     }
 
-    public static String getHttpHeaderFromURL(String url) {
+    /**
+     *
+     * @param url the URL from which we want to find the MIME-TYPE
+     * @return a MIME-TYPE coming a predefined ones
+     */
+    public static String getMimeTypeFromURL(String url) {
         int dp = url.lastIndexOf('.');
         if (dp > 0) {
             return mime.getProperty(url.substring(dp + 1).toUpperCase());
@@ -40,8 +52,15 @@ public class HTTPHelper {
         return "text/html";
     }
 
-    public static byte[] convertStream(InputStream in) throws Exception {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+    /**
+     *
+     * @param in the {@link java.io.InputStream} from the content is read
+     * @param out the {@link java.io.OutputStream} where the content is written
+     * @return the length of the data written on <code>out</code>
+     * @throws IOException if read or write goes wrong
+     */
+    public static int convertStream(InputStream in, OutputStream out) throws IOException {
+        int total = 0;
         byte[] buffer = new byte[1024];
         int l;
         do {
@@ -49,7 +68,8 @@ public class HTTPHelper {
             if (l > 0) {
                 out.write(buffer, 0, l);
             }
+            total += l;
         } while (l > 0);
-        return out.toByteArray();
+        return total;
     }
 }

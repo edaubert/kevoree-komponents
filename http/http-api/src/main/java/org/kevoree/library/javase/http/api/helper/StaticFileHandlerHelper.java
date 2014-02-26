@@ -36,25 +36,27 @@ public class StaticFileHandlerHelper {
         return filePath;
     }
 
-    private static void readFileFromDir(String filePath, String baseDir, OutputStream stream) throws Exception {
+    private static int readFileFromDir(String filePath, String baseDir, OutputStream stream) throws Exception {
         filePath = filePath.replace("/", File.separator);
         Log.debug("Request received to get file {}", baseDir + File.separator + filePath);
         File in = new File(baseDir + File.separator + filePath);
         if (in.exists() && in.isFile()) {
             FileInputStream ins = new FileInputStream(in);
-            stream.write(HTTPHelper.convertStream(ins));
+            int length = HTTPHelper.convertStream(ins, stream);
             stream.flush();
-
+            return length;
         } else {
             throw new Exception("Unable to get File: " + in.getAbsolutePath());
         }
     }
 
-    private static void readFile(String filePath, AbstractHTTPHandler origin, OutputStream stream) throws Exception {
+    private static int readFile(String filePath, AbstractHTTPHandler origin, OutputStream stream) throws Exception {
         Log.debug("Request received to get file {}", filePath);
         InputStream in = origin.getClass().getClassLoader().getResourceAsStream(filePath);
-        stream.write(HTTPHelper.convertStream(in));
+        int length = HTTPHelper.convertStream(in, stream);
+//        stream.write(bytes);
         stream.flush();
+        return length;
     }
 
     public static boolean checkStaticFileFromDir(String defaultFile, String baseDir, AbstractHTTPHandler origin, HttpServletRequest req, HttpServletResponse resp) {
@@ -64,9 +66,10 @@ public class StaticFileHandlerHelper {
     public static boolean checkStaticFileFromDir(String filePath, String baseDir, HttpServletResponse resp) {
         try {
             OutputStream outputStream = resp.getOutputStream();
-            readFileFromDir(filePath, baseDir, outputStream);
+            int length = readFileFromDir(filePath, baseDir, outputStream);
             outputStream.flush();
-            resp.addHeader("Content-Type", (HTTPHelper.getHttpHeaderFromURL(filePath)));
+            resp.addHeader("Content-Type", (HTTPHelper.getMimeTypeFromURL(filePath)));
+            resp.addHeader("Content-Length", length + "");
             return true;
         } catch (Exception e) {
             Log.trace("Unable to read the file: {}", e, baseDir + File.separator + filePath);
@@ -82,9 +85,10 @@ public class StaticFileHandlerHelper {
     public static boolean checkStaticFile(String filePath, AbstractHTTPHandler origin, HttpServletResponse resp) {
         try {
             OutputStream outputStream = resp.getOutputStream();
-            readFile(filePath, origin, outputStream);
+            int length = readFile(filePath, origin, outputStream);
             outputStream.flush();
-            resp.addHeader("Content-Type", (HTTPHelper.getHttpHeaderFromURL(filePath)));
+            resp.addHeader("Content-Type", (HTTPHelper.getMimeTypeFromURL(filePath)));
+            resp.addHeader("Content-Length", length + "");
             return true;
         } catch (Exception e) {
             Log.trace("Unable to read the file: {}", e, filePath);
@@ -126,7 +130,7 @@ public class StaticFileHandlerHelper {
             OutputStream stream = resp.getOutputStream();
             stream.write(outputStream.toByteArray());
             stream.flush();
-            resp.addHeader("Content-Type", (HTTPHelper.getHttpHeaderFromURL(filePath)));
+            resp.addHeader("Content-Type", (HTTPHelper.getMimeTypeFromURL(filePath)));
             return true;
         } catch (Exception e) {
             Log.trace("Unable to read the file: {}", e, baseDir + File.separator + filePath);
@@ -155,7 +159,7 @@ public class StaticFileHandlerHelper {
             OutputStream stream = resp.getOutputStream();
             stream.write(outputStream.toByteArray());
             stream.flush();
-            resp.addHeader("Content-Type", (HTTPHelper.getHttpHeaderFromURL(filePath)));
+            resp.addHeader("Content-Type", (HTTPHelper.getMimeTypeFromURL(filePath)));
             return true;
         } catch (Exception e) {
             Log.trace("Unable to read the file: {}", e, filePath);
