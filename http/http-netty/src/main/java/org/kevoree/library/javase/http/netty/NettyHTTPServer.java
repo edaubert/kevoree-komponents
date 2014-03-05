@@ -48,27 +48,27 @@ public class NettyHTTPServer extends AbstractHTTPServer {
         workerGroup = new NioEventLoopGroup();
         bootstrap = new ServerBootstrap();
         bootstrap.group(bossGroup, workerGroup)
-                .channel(NioServerSocketChannel.class)
-                .childHandler(new ChannelInitializer<SocketChannel>() {
-                    @Override
-                    public void initChannel(SocketChannel ch) throws Exception {
-                        // Create a default pipeline implementation.
-                        ChannelPipeline pipeline = ch.pipeline();
+                 .channel(NioServerSocketChannel.class)
+                 .childHandler(new ChannelInitializer<SocketChannel>() {
+                     @Override
+                     public void initChannel(SocketChannel ch) throws Exception {
+                         // Create a default pipeline implementation.
+                         ChannelPipeline pipeline = ch.pipeline();
 
-                        // Uncomment the following line if you want HTTPS
+                         // Uncomment the following line if you want HTTPS
                             /*if (ssl) {
                                 SSLEngine engine = SecureChatSslContextFactory.getServerContext().createSSLEngine();
                                 engine.setUseClientMode(false);
                                 pipeline.addLast("ssl", new SslHandler(engine));
                             }*/
 
-                        pipeline.addLast("decoder", new HttpRequestDecoder());
-                        pipeline.addLast("aggregator", new HttpObjectAggregator(1048576));
-                        pipeline.addLast("encoder", new HttpResponseEncoder());
-                        pipeline.addLast("chunkedWriter", new ChunkedWriteHandler());
-                        pipeline.addLast("handler", handler);
-                    }
-                });
+                         pipeline.addLast("decoder", new HttpRequestDecoder());
+                         pipeline.addLast("aggregator", new HttpObjectAggregator(1048576));
+                         pipeline.addLast("encoder", new HttpResponseEncoder());
+                         pipeline.addLast("chunkedWriter", new ChunkedWriteHandler());
+                         pipeline.addLast("handler", handler);
+                     }
+                 });
 //                    .option(ChannelOption.SO_BACKLOG, 128)
 //                    .childOption(ChannelOption.SO_KEEPALIVE, true);
 
@@ -101,8 +101,12 @@ public class NettyHTTPServer extends AbstractHTTPServer {
             channelFuture.channel().close().sync();
         } finally {
             // Shut down all event loops to terminate all threads.
-            bossGroup.shutdownGracefully().await();
-            workerGroup.shutdownGracefully().await();
+            if (bossGroup != null) {
+                bossGroup.shutdownGracefully().await();
+            }
+            if (workerGroup != null) {
+                workerGroup.shutdownGracefully().await();
+            }
             channelFuture = null;
         }
     }
