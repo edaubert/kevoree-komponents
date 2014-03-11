@@ -47,7 +47,10 @@ public class HTTPHelper {
     public static String getMimeTypeFromURL(String url) {
         int dp = url.lastIndexOf('.');
         if (dp > 0) {
-            return mime.getProperty(url.substring(dp + 1).toUpperCase());
+            String mimeType = mime.getProperty(url.substring(dp + 1).toUpperCase());
+            if (mimeType != null) {
+                return mimeType;
+            }
         }
         return "text/html";
     }
