@@ -29,7 +29,6 @@ public class HTTPHelper {
     }
 
     /**
-     *
      * @param url the URL from which we want to know if the response contains raw data
      *            Non RAW data is <code>js, html, css and jnlp</code> file
      * @return true if the content will be raw data, false otherwise
@@ -40,7 +39,6 @@ public class HTTPHelper {
     }
 
     /**
-     *
      * @param url the URL from which we want to find the MIME-TYPE
      * @return a MIME-TYPE coming a predefined ones
      */
@@ -56,8 +54,7 @@ public class HTTPHelper {
     }
 
     /**
-     *
-     * @param in the {@link java.io.InputStream} from the content is read
+     * @param in  the {@link java.io.InputStream} from the content is read
      * @param out the {@link java.io.OutputStream} where the content is written
      * @return the length of the data written on <code>out</code>
      * @throws IOException if read or write goes wrong
@@ -65,14 +62,13 @@ public class HTTPHelper {
     public static int convertStream(InputStream in, OutputStream out) throws IOException {
         int total = 0;
         byte[] buffer = new byte[1024];
-        int l;
-        do {
-            l = (in.read(buffer));
-            if (l > 0) {
-                out.write(buffer, 0, l);
-            }
+        int l = in.read(buffer);
+        while (l != -1) {
+            out.write(buffer, 0, l);
             total += l;
-        } while (l > 0);
+            l = in.read(buffer);
+        }
+        out.flush();
         return total;
     }
 }
