@@ -44,6 +44,7 @@ public class StaticFileHandlerHelper {
             FileInputStream ins = new FileInputStream(in);
             int length = HTTPHelper.convertStream(ins, stream);
             stream.flush();
+            ins.close();
             return length;
         } else {
             throw new Exception("Unable to get File: " + in.getAbsolutePath());
@@ -56,6 +57,7 @@ public class StaticFileHandlerHelper {
         int length = HTTPHelper.convertStream(in, stream);
 //        stream.write(bytes);
         stream.flush();
+        in.close();
         return length;
     }
 
