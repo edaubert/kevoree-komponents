@@ -24,9 +24,9 @@ import java.util.Map;
 @ComponentType
 public class SimpleTemplatingStaticFileHandler extends StaticFileHandler {
     @Param(optional = true)
-    private String templates;
+    protected String templates;
 
-    private Map<String, String> templatesMap;
+    protected Map<String, String> templatesMap;
 
     public void setTemplates(String templates) {
         if (templatesMap == null) {
