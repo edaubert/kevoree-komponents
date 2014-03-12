@@ -42,7 +42,6 @@ public class JavaWebsocketServer extends AbstractWebSocketServer {
     @Override
     public void send(long id, String message) {
         if (connectionsFromId.containsKey(id)) {
-            System.err.println("WTF");
             connectionsFromId.get(id).getWebSocket().send(message);
         }
     }
