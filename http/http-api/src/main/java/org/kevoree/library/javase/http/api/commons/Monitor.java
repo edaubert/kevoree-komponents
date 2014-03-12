@@ -13,8 +13,7 @@ import org.kevoree.log.Log;
  * @author Erwan Daubert
  * @version 1.0
  */
-public
-class Monitor {
+public class Monitor {
     private long timeout;
     private KevoreeHTTPServletRequest request;
     private KevoreeHTTPServletResponse response;

@@ -24,7 +24,6 @@ import java.util.Map;
  * @version 1.0
  */
 public abstract class KevoreeHTTPServletRequest implements HttpServletRequest {
-
     /**
      * Returns the name of the authentication scheme used to protect
      * the servlet. All servlet containers support basic, form and client
