@@ -23,5 +23,5 @@ public abstract class AuthenticationServer {
         }
     }
 
-    abstract boolean authenticate(String login, String credentials);
+    public abstract boolean authenticate(String login, String credentials);
 }

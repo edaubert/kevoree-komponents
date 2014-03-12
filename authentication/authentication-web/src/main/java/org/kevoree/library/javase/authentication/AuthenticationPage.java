@@ -70,11 +70,11 @@ public class AuthenticationPage extends StaticFileHandler {
     @Override
     protected void doPost(final HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        final CallbackAuthentication callback = new CallbackAuthentication(req.getAttribute("login").toString());
+        final CallbackAuthentication callback = new CallbackAuthentication(req.getParameter("login").toString());
         new Thread() {
             @Override
             public void run() {
-                authenticate.call(new SecurityInformation(req.getAttribute("login").toString(), req.getAttribute("password").toString()), callback);
+                authenticate.call(new SecurityInformation(req.getParameter("login").toString(), req.getParameter("password").toString()), callback);
             }
         }.start();
         if (callback.get(4000)) {

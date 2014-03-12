@@ -1,12 +1,17 @@
-package org.kevoree.library.javase.authentication;
+package org.kevoree.library.java.authentication.samples;
 
-import org.kevoree.annotation.*;
+import org.kevoree.annotation.ComponentType;
+import org.kevoree.annotation.Param;
+import org.kevoree.library.javase.authentication.AuthenticationServer;
 import org.kevoree.log.Log;
 
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
-import javax.naming.directory.*;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.InitialDirContext;
+import javax.naming.directory.SearchControls;
+import javax.naming.directory.SearchResult;
 import java.util.Hashtable;
 
 /**
@@ -35,10 +40,10 @@ public class LDAPAuthentication extends AuthenticationServer {
     @Param(optional = true)
     protected String trustStorePath;
 
-    @Start
+    /*@Start
     @Stop
     public void dummy() {
-    }
+    }*/
 
 
     private String getUUID(String login) throws NamingException {
@@ -60,6 +65,7 @@ public class LDAPAuthentication extends AuthenticationServer {
         return result;
     }
 
+    @Override
     public boolean authenticate(String login, String password) {
         try {
             Hashtable<String, String> env = new Hashtable<String, String>();

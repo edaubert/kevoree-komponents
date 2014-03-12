@@ -11,7 +11,7 @@ jQuery(document).ready(function () {
         e.preventDefault();
         console.log("trying to authenticate...");
         var formData = jQuery(this).serialize();
-        formData.password = make_base_auth()
+        formData.password = make_base_auth(formData.login, formData.password);
 
         jQuery('#message').empty();
 

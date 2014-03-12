@@ -18,6 +18,7 @@
     <modules>
         <module>authentication-api</module>
         <module>authentication-web</module>
+        <module>authentication-samples</module>
     </modules>
 
 </project>

@@ -1,4 +1,6 @@
-package org.kevoree.library.javase.authentication;
+package org.kevoree.library.java.authentication.samples;
+
+import org.kevoree.library.javase.authentication.SecurityInformation;
 
 /**
  * User: Erwan Daubert - erwan.daubert@gmail.com
