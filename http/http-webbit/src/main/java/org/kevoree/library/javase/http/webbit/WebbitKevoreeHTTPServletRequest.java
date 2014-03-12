@@ -19,12 +19,16 @@ public class WebbitKevoreeHTTPServletRequest extends KevoreeHTTPServletRequest {
     private HttpRequest httpRequest;
     private WebServer server;
 
-    private Map<String, Object> attributes;
+    private Map<String, String[]> parameters;
 
     public WebbitKevoreeHTTPServletRequest(HttpRequest httpRequest, WebServer server) {
         this.httpRequest = httpRequest;
         this.server = server;
-        this.attributes = new HashMap<String, Object>();
+        parameters = new HashMap<String, String[]>(httpRequest.postParamKeys().size());
+        for (String name : httpRequest.postParamKeys()) {
+            parameters.put(name, getParameterValues(name));
+        }
+        parameters = Collections.unmodifiableMap(parameters);
     }
 
     @Override
@@ -111,24 +115,32 @@ public class WebbitKevoreeHTTPServletRequest extends KevoreeHTTPServletRequest {
     }
 
     @Override
-    public Object getAttribute(String name) {
-        return attributes.get(name);
-    }
-
-    @Override
-    public Enumeration getAttributeNames() {
-        return Collections.enumeration(attributes.keySet());
-    }
-
-    @Override
-    public void setAttribute(String name, Object o) {
-        attributes.put(name, o);
-    }
-
-    @Override
-    public void removeAttribute(String name) {
-        if (attributes.containsKey(name)) {
-            attributes.remove(name);
+    public String getRequestedSessionId() {
+        if (httpRequest.cookie("sessionid") != null) {
+            return httpRequest.cookie("sessionid").getValue();
+        } else {
+            return null;
         }
+    }
+
+
+    @Override
+    public Map getParameterMap() {
+        return parameters;
+    }
+
+    @Override
+    public String[] getParameterValues(String name) {
+        return parameters.get(name);
+    }
+
+    @Override
+    public Enumeration getParameterNames() {
+        return Collections.enumeration(httpRequest.postParamKeys());
+    }
+
+    @Override
+    public String getParameter(String name) {
+        return httpRequest.postParam(name);
     }
 }
