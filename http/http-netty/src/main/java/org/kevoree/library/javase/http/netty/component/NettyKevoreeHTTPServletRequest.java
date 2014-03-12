@@ -1,13 +1,13 @@
-package org.kevoree.library.javase.http.netty;
+package org.kevoree.library.javase.http.netty.component;
 
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpHeaders;
+import io.netty.handler.codec.http.QueryStringDecoder;
 import org.kevoree.library.javase.http.api.page.KevoreeHTTPServletRequest;
+import org.kevoree.library.javase.http.netty.helpers.Reader;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Locale;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * User: Erwan Daubert - erwan.daubert@gmail.com
@@ -22,9 +22,24 @@ public class NettyKevoreeHTTPServletRequest extends KevoreeHTTPServletRequest {
     private FullHttpRequest httpRequest;
     private NettyHTTPServer server;
 
+    private Map<String, String[]> parameters;
+
     public NettyKevoreeHTTPServletRequest(FullHttpRequest httpRequest, NettyHTTPServer server) {
         this.httpRequest = httpRequest;
         this.server = server;
+        try {
+            String content = new String(Reader.readContent(httpRequest.content()), "UTF-8");
+            QueryStringDecoder decoder = new QueryStringDecoder(content, false);
+            parameters = new HashMap<String, String[]>(decoder.parameters().size());
+            for (String name : decoder.parameters().keySet()) {
+                String[] values = new String[decoder.parameters().get(name).size()];
+                decoder.parameters().get(name).toArray(values);
+                parameters.put(name, values);
+            }
+            parameters = Collections.unmodifiableMap(parameters);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -89,6 +104,8 @@ public class NettyKevoreeHTTPServletRequest extends KevoreeHTTPServletRequest {
     @Override
     public StringBuffer getRequestURL() {
 //        return new StringBuffer(server.getUri().toASCIIString());
+        // FIXME
+//        httpRequest.
         return new StringBuffer();
     }
 
@@ -105,5 +122,36 @@ public class NettyKevoreeHTTPServletRequest extends KevoreeHTTPServletRequest {
     @Override
     public Enumeration getLocales() {
         return Collections.enumeration(Arrays.asList(Locale.getAvailableLocales()));
+    }
+
+    @Override
+    public String getRequestedSessionId() {
+        String[] cookies = httpRequest.headers().get("Cookie").split(";");
+        for (String cookie : cookies) {
+            if (cookie.toLowerCase().startsWith("sessionid")) {
+                return cookie.substring(("sessionid").length()).replaceFirst("=", "").trim();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Map getParameterMap() {
+        return parameters;
+    }
+
+    @Override
+    public String[] getParameterValues(String name) {
+        return parameters.get(name);
+    }
+
+    @Override
+    public Enumeration getParameterNames() {
+        return Collections.enumeration(parameters.keySet());
+    }
+
+    @Override
+    public String getParameter(String name) {
+        return parameters.get(name)[0];
     }
 }

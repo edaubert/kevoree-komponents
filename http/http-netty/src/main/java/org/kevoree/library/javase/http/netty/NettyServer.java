@@ -13,24 +13,18 @@ import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.util.concurrent.GenericFutureListener;
-import org.kevoree.annotation.ComponentType;
-import org.kevoree.library.javase.http.api.commons.HTTPOperationTuple;
-import org.kevoree.library.javase.http.api.server.AbstractHTTPServer;
 import org.kevoree.log.Log;
 
 /**
  * User: Erwan Daubert - erwan.daubert@gmail.com
- * Date: 27/08/13
- * Time: 16:13
+ * Date: 05/03/14
+ * Time: 17:56
  *
  * @author Erwan Daubert
  * @version 1.0
  */
-@ComponentType
-public class NettyHTTPServer extends AbstractHTTPServer {
-    //    private boolean ssl;
+public class NettyServer {
     private ChannelFuture channelFuture;
-    private NettyHTTPHandler handler;
 
     private ServerBootstrap bootstrap;
     private EventLoopGroup bossGroup;
@@ -38,11 +32,13 @@ public class NettyHTTPServer extends AbstractHTTPServer {
 
     private RestartListener listener;
 
-    @Override
-    public void start() throws Exception {
-//        ssl = getDictionary().get("ssl") != null && "true".equalsIgnoreCase(getDictionary().get("ssl").toString());
+    private String instanceName;
 
-        handler = new NettyHTTPHandler(this);
+    public NettyServer(String instanceName) {
+        this.instanceName = instanceName;
+    }
+
+    public void start(int port, final NettyHandler handler) throws Exception {
 
         bossGroup = new NioEventLoopGroup();
         workerGroup = new NioEventLoopGroup();
@@ -73,27 +69,25 @@ public class NettyHTTPServer extends AbstractHTTPServer {
 //                    .childOption(ChannelOption.SO_KEEPALIVE, true);
 
         // Bind and start to accept incoming connections.
-        internalStart();
-
+        internalStart(port);
     }
 
-    private void internalStart() throws Exception {
+    private void internalStart(int port) throws Exception {
         channelFuture = bootstrap.bind(port);
         channelFuture.sync();
         if (!channelFuture.isDone() || !channelFuture.isSuccess() || !channelFuture.channel().isActive()) {
-            throw new Exception("Unable to start server " + context.getInstanceName() + ": Timeout when wait for connection");
+            throw new Exception("Unable to start server " +instanceName + ": Timeout while waiting for connection");
         } else {
             //to be notify when the channel is close and restart it as needed
             if (listener == null) {
-                listener = new RestartListener();
+                listener = new RestartListener(port);
                 channelFuture.channel().closeFuture().addListener(listener);
             }
-            Log.debug("Server {} is now started at", context.getInstanceName(), channelFuture.channel().localAddress().toString());
+            Log.debug("Server {} is now started at {}", instanceName, channelFuture.channel().localAddress().toString());
         }
     }
 
-    @Override
-    public void stop() throws Exception {
+    public void stop() throws InterruptedException {
         try {
             channelFuture.channel().closeFuture().removeListener(listener);
             listener = null;
@@ -111,20 +105,18 @@ public class NettyHTTPServer extends AbstractHTTPServer {
         }
     }
 
-    @Override
-    // TODO replace Object with a specific type and rename the parameter
-    public void response(Object param) {
-        if (param != null && param instanceof HTTPOperationTuple) {
-            handler.response((HTTPOperationTuple) param);
-        }
-    }
-
     private class RestartListener implements GenericFutureListener<ChannelFuture> {
+
+        int port;
+
+        private RestartListener(int port) {
+            this.port = port;
+        }
 
         @Override
         public void operationComplete(ChannelFuture future) throws Exception {
-            Log.warn("Server {} has been stopped while Kevoree think is always running. Restarting it", context.getInstanceName());
-            internalStart();
+            Log.warn("Server {} has been stopped while Kevoree think is always running. Restarting it", instanceName);
+            internalStart(port);
         }
     }
 }

@@ -9,7 +9,8 @@ include mvn:org.kevoree.komponents:http-samples:latest
 include mvn:org.kevoree.komponents:http-netty:latest
 
 add node0 : JavaNode
-set node0.log = "DEBUG"
+set node0.log = "info"
+network node0.ip.lo 127.0.0.1
 
 add node0.webserver : NettyHTTPServer
 set node0.webserver.port = '8181'
@@ -23,11 +24,11 @@ set node0.page.urlPattern = "/hello"
 
 add node0.page1 : StaticFileHandler
 //set node0.page1.path = "/home/jed/clone/tempgauge"
-set node0.page1.path = "/home/edaubert/workspace/web/wysihtml5/examples/"
-set node0.page1.urlPattern = "/examples"
-set node0.page1.patternToRemove = "/examples"
+set node0.page1.path = "/home/edaubert/workspace/reaSenSE/reasense/com.reacloud.library.java.wsn.frontend/src/main/resources"
+set node0.page1.urlPattern = "/"
+set node0.page1.patternToRemove = "/"
 set node0.page1.contained = "false"
-
+set node0.page1.useCache = "false"
 
 add node0.page1_2 : StaticFileHandler
 //set node0.page1_2.path = "/home/jed/clone/tempgauge"

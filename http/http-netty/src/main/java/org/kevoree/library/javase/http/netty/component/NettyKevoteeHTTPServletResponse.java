@@ -1,4 +1,4 @@
-package org.kevoree.library.javase.http.netty;
+package org.kevoree.library.javase.http.netty.component;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpResponse;

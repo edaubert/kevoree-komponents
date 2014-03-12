@@ -1,0 +1,29 @@
+repo "https://repo1.maven.org/maven2"
+repo "https://oss.sonatype.org/content/groups/public/"
+
+include mvn:org.kevoree.library.java:org.kevoree.library.java.javaNode:latest
+include mvn:org.kevoree.library.java:org.kevoree.library.java.channels:latest
+include mvn:org.kevoree.library.java:org.kevoree.library.java.ws:latest
+
+include mvn:org.kevoree.komponents:camel-channel-http:latest
+include mvn:org.kevoree.komponents:http-samples:latest
+include mvn:org.kevoree.komponents:http-netty:latest
+
+add node0 : JavaNode
+set node0.log = "DEBUG"
+network node0.ip.lo 127.0.0.1
+
+add node0.child0 : JavaNode
+set child0.log = "DEBUG"
+network child0.ip.lo 127.0.0.1
+
+
+add sync : WSGroup
+attach node0 sync
+set sync.port/node0 = '9000'
+
+add group : BroadcastNettyHttpGroup
+attach node0 group
+set group.port/node0 = '9001'
+attach child0 group
+set group.port/child0 = '9002'
