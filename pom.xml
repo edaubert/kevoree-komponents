@@ -5,9 +5,9 @@
     <groupId>org.kevoree.komponents</groupId>
     <artifactId>komponents.root</artifactId>
     <packaging>pom</packaging>
-    
+
     <name>Komponents</name>
-    
+
     <version>1.1.0-SNAPSHOT</version>
 
     <properties>
@@ -35,12 +35,10 @@
     </dependencies>
 
     <modules>
-        <!--<module>javafx</module>-->
-        <!--<module>file</module>-->
         <module>http</module>
         <module>ws</module>
         <module>authentication</module>
-        <!--<module>camel</module>-->
+        <module>camel</module>
         <module>helpers</module>
     </modules>
 
@@ -70,6 +68,49 @@
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
+            <!-- Maven Source plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.1.2</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Maven License plugin -->
+            <!--<plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>1.6</version>
+                <configuration>
+                    <verbose>false</verbose>
+                    <addSvnKeyWords>true</addSvnKeyWords>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>licence-header</id>
+                        <goals>
+                            <goal>update-file-header</goal>
+                        </goals>
+                        <phase>process-sources</phase>
+                        <configuration>
+                            <licenseName>lgpl_v3</licenseName>
+                            <organizationName>org.kevoree</organizationName>
+                            <inceptionYear>2014</inceptionYear>
+                            <includes>
+                                <include>*.java</include>
+                                <include>*.kt</include>
+                                <include>*.scala</include>
+                            </includes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>-->
         </plugins>
     </build>
 
@@ -98,4 +139,32 @@
         </snapshotRepository>
     </distributionManagement>
 
+    <developers>
+        <developer>
+            <name>Erwan Daubert</name>
+            <id>erwan.daubert</id>
+            <email>erwan.daubert@gmail.com</email>
+            <roles>
+                <role>admin</role>
+                <role>developer</role>
+            </roles>
+            <timezone>+2</timezone>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git@github.com:edaubert/kevoree-komponents.git</connection>
+        <developerConnection>scm:git:git@github.com:edaubert/kevoree-komponents.git</developerConnection>
+        <url>https://github.com/edaubert/kevoree-komponents</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <licenses>
+        <license>
+            <name>
+                GNU Library or Lesser General Public License (LGPL)
+            </name>
+            <url>http://www.gnu.org/licenses/lgpl.html</url>
+        </license>
+    </licenses>
 </project>
