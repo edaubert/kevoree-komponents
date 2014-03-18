@@ -54,7 +54,7 @@ public class HttpSessionManagerEternal extends AbstractHttpSessionManager {
 
     @Override
     public HttpSession getHTTPSession(String id) {
-        // FIXME how to ensure consistency if multiple services (potentially host in different nodes) request the same session ?
+        // FIXME how to ensure consistency if multiple services (potentially hosted in different nodes) request the same session ?
         KevoreeHttpSession session = sessions.get(id);
         if (session.isInvalidated()) {
             removeHTTPSession(id);
