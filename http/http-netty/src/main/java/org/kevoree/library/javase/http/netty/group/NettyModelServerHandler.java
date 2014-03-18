@@ -1,6 +1,7 @@
 package org.kevoree.library.javase.http.netty.group;
 
 import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.*;
 import org.kevoree.ContainerRoot;
@@ -31,6 +32,7 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  * @author Erwan Daubert
  * @version 1.0
  */
+@ChannelHandler.Sharable
 public class NettyModelServerHandler extends NettyServerHandler {
 
     private ModelService modelService;

@@ -1,0 +1,36 @@
+repo "https://repo1.maven.org/maven2"
+repo "https://oss.sonatype.org/content/groups/public/"
+
+include mvn:org.kevoree.library.java:org.kevoree.library.java.javaNode:release
+include mvn:org.kevoree.library.java:org.kevoree.library.java.channels:release
+include mvn:org.kevoree.library.java:org.kevoree.library.java.ws:release
+include mvn:org.kevoree.library.java:org.kevoree.library.java.toys:release
+
+include mvn:org.kevoree.komponents:http-netty:latest
+
+add node0 : JavaNode
+set node0.log = "trace"
+network node0.ip.lo 127.0.0.1
+
+add node0.child0 : JavaNode
+set child0.log = "trace"
+network child0.ip.lo 127.0.0.1
+
+
+add sync : WSGroup
+attach node0 sync
+set sync.port/node0 = '9000'
+
+add hub : BroadcastNettyHttpChannelMessage
+
+
+add node0.tconsole : ToyConsole
+bind node0.tconsole.showText hub
+bind node0.tconsole.textEntered hub
+
+add child0.tconsole2 : ToyConsole
+bind child0.tconsole2.showText hub
+bind child0.tconsole2.textEntered hub
+
+set hub.port/node0 = '10100'
+set hub.port/child0 = '10101'

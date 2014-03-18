@@ -77,18 +77,11 @@ public class NettyClient {
 
     public synchronized NettyClientOutput sendRequest(String host, int port, String uri, InputStream content) {
         try {
+            // TODO manage ssl and gzip
             Channel channel = bootstrap.connect(host, port).sync().channel();
-            FullHttpRequest request =
-                    new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, uri);
-            HttpHeaders headers = request.headers();
-            headers.set(HttpHeaders.Names.HOST, host);
-            headers.set(HttpHeaders.Names.CONNECTION, HttpHeaders.Values.CLOSE);
+            FullHttpRequest request = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, uri);
 //            headers.set(HttpHeaders.Names.ACCEPT_ENCODING, HttpHeaders.Values.GZIP.toString() + ','
 //                    + HttpHeaders.Values.DEFLATE.toString());
-
-            headers.set(HttpHeaders.Names.ACCEPT_CHARSET, "UTF-8");
-//            headers.set(HttpHeaders.Names.REFERER, uri);
-            headers.set(HttpHeaders.Names.USER_AGENT, "Kevoree-Komponents HTTP over Netty");
 
             handler.processRequest(host, port, uri, content, request);
             channel.writeAndFlush(request).sync();
@@ -102,52 +95,5 @@ public class NettyClient {
             e.printStackTrace();
         }
         return null;
-        /*try {
-            URL url = new URL(urlString);
-            // TODO manage ssl
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoInput(true);
-            connection.setDoOutput(true);
-            connection.setConnectTimeout(timeout);
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-
-            ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
-            byte[] bytes = new byte[2048];
-            int length = content.read(bytes);
-            int contentLength = length;
-            while (length != -1) {
-                byteArrayStream.write(bytes, 0, length);
-                length = content.read(bytes);
-                contentLength += length;
-            }
-
-            connection.setRequestProperty("Content-Length", "" + contentLength);
-            OutputStream wr = connection.getOutputStream();
-            wr.write(byteArrayStream.toByteArray());
-            wr.flush();
-
-            System.err.println(connection.getResponseCode());
-
-            if (HttpResponseStatus.OK.code() == connection.getResponseCode()) {
-                InputStream rd = connection.getInputStream();
-                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                length = content.read(bytes);
-                while (length != -1) {
-                    byteArrayOutputStream.write(bytes, 0, length);
-                    length = rd.read(bytes);
-                }
-                wr.close();
-                rd.close();
-                connection.disconnect();
-                System.err.println(new String(byteArrayOutputStream.toByteArray(), "UTF-8"));
-                return new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
-            }
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;*/
     }
 }

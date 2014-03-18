@@ -1,5 +1,6 @@
 package org.kevoree.library.javase.http.netty;
 
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.FullHttpRequest;
@@ -18,6 +19,7 @@ import java.io.InputStream;
  * @author Erwan Daubert
  * @version 1.0
  */
+@ChannelHandler.Sharable
 public abstract class NettyClientHandler extends SimpleChannelInboundHandler<FullHttpResponse> {
 
     private NettyClientOutput output;
@@ -37,6 +39,7 @@ public abstract class NettyClientHandler extends SimpleChannelInboundHandler<Ful
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         cause.printStackTrace();
+        ctx.channel().close();
     }
 
 

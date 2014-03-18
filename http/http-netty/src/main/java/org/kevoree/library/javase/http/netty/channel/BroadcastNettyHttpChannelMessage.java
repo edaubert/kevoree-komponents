@@ -38,11 +38,17 @@ public class BroadcastNettyHttpChannelMessage extends AbstractNettyChannel {
                 }
             }
         }
+        dispatchLocal(payload);
+    }
+
+    @Override
+    public Object dispatchLocal(Object payload) {
         for (Port p : channelContext.getLocalPorts()) {
             org.kevoree.Port port = modelService.getCurrentModel().getModel().findByPath(p.getPath(), org.kevoree.Port.class);
             if (port != null && ((ComponentInstance) port.eContainer()).getProvided().contains(port)) {
                 p.send(payload);
             }
         }
+        return null;
     }
 }

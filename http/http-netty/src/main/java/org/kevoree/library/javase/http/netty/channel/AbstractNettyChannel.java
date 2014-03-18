@@ -3,21 +3,20 @@ package org.kevoree.library.javase.http.netty.channel;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.serialization.ObjectEncoder;
 import org.kevoree.ContainerNode;
 import org.kevoree.ContainerRoot;
 import org.kevoree.annotation.*;
 import org.kevoree.api.*;
 import org.kevoree.komponents.helpers.ModelManipulation;
+import org.kevoree.library.javase.http.netty.NettyClient;
+import org.kevoree.library.javase.http.netty.NettyClientHandler;
+import org.kevoree.library.javase.http.netty.NettyClientOutput;
 import org.kevoree.library.javase.http.netty.NettyServer;
 import org.kevoree.library.javase.http.netty.helpers.Reader;
 import org.kevoree.log.Log;
 
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 
@@ -47,10 +46,12 @@ public abstract class AbstractNettyChannel implements ChannelDispatch {
     protected ChannelContext channelContext;
 
     //    private boolean ssl;
-    private NettyDataHandler handler;
+    private NettyDataServerHandler handler;
     private NettyServer server;
+    private NettyClientHandler clientHandler;
+    private NettyClient client;
 
-    private ObjectEncoderImpl encoder;
+    private DataCodec codec;
 
     public String getInstanceName() {
         return context.getInstanceName();
@@ -58,11 +59,16 @@ public abstract class AbstractNettyChannel implements ChannelDispatch {
 
     @Start
     public void start() throws Exception {
-        encoder = new ObjectEncoderImpl();
         // TODO manage ssl
-        handler = new NettyDataHandler(modelService, bootstrapService, context.getNodeName(), this);
+        codec = new DataCodec(modelService, bootstrapService, context.getInstanceName(), this);
+
+        handler = new NettyDataServerHandler(modelService, bootstrapService, context.getNodeName(), this);
         server = new NettyServer(context.getInstanceName());
         server.start(port, handler, new HashMap<String, ChannelHandler>());
+
+        clientHandler = new NettyDataClientHandler();
+        client = new NettyClient();
+        client.start(clientHandler, new HashMap<String, ChannelHandler>());
     }
 
     @Stop
@@ -70,29 +76,22 @@ public abstract class AbstractNettyChannel implements ChannelDispatch {
         if (server != null) {
             server.stop();
         }
+        if (client != null) {
+            client.stop();
+        }
     }
+
+    public abstract Object dispatchLocal(Object payload);
 
     public InputStream sendData(Object payload, ContainerNode node) {
 
+        ByteBuf buf = Unpooled.buffer();
         byte[] bytes;
-        if (payload instanceof String) {
-            try {
-                bytes = ((String) payload).getBytes("UTF-8");
-            } catch (UnsupportedEncodingException ignored) {
-                ignored.printStackTrace();
-                return null;
-            }
-        } else if (payload instanceof Serializable) {
-            try {
-                ByteBuf buf = Unpooled.buffer();
-                encoder.encode(null, (Serializable) payload, buf);
-                bytes = Reader.readContent(buf);
-            } catch (Exception ignored) {
-                ignored.printStackTrace();
-                return null;
-            }
-        } else {
-            Log.warn("Unable to manage payload from type {} on {}", payload.getClass(), context.getInstanceName());
+        try {
+            codec.encode(payload, buf);
+            bytes = Reader.readContent(buf);
+        } catch (Exception ignored) {
+            ignored.printStackTrace();
             return null;
         }
 
@@ -111,68 +110,16 @@ public abstract class AbstractNettyChannel implements ChannelDispatch {
             }
             for (String ip : ips) {
                 Log.info("Trying to send data on {}", "http://" + ip + ":" + port + "/");
-                InputStream stream = sendRequest("http://" + ip + ":" + port + "/", new ByteArrayInputStream(bytes));
-                if (stream != null) {
-                    return stream;
+                NettyClientOutput output = client.sendRequest(ip, port, "/", new ByteArrayInputStream(bytes));
+                if (output != null && output.getContent() != null) {
+                    return output.getContent();
                 }
             }
             Log.warn("Unable to send data from {} to {} with {}", context.getNodeName(), node.getName(), context.getInstanceName());
             return null;
         } else {
-            Log.warn("Something unexpected happens while trying to send data from {} to {} with {}", context.getNodeName(), node.getName(), context.getInstanceName());
+            Log.warn("Unable to send data from {} to {} with {}", context.getNodeName(), node.getName(), context.getInstanceName());
             return null;
-        }
-    }
-
-    private InputStream sendRequest(String urlString, InputStream content) {
-        try {
-            URL url = new URL(urlString);
-            // TODO manage ssl
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoInput(true);
-            connection.setDoOutput(true);
-            connection.setConnectTimeout(timeout);
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-
-            ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
-            byte[] bytes = new byte[2048];
-            int length = content.read(bytes);
-            int contentLength = length;
-            while (length != -1) {
-                byteArrayStream.write(bytes, 0, length);
-                length = content.read(bytes);
-                contentLength += length;
-            }
-
-            connection.setRequestProperty("Content-Length", "" + contentLength);
-            OutputStream wr = connection.getOutputStream();
-            wr.write(byteArrayStream.toByteArray());
-            wr.flush();
-
-            InputStream rd = connection.getInputStream();
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            length = content.read(bytes);
-            while (length != -1) {
-                byteArrayOutputStream.write(bytes, 0, length);
-                length = rd.read(bytes);
-            }
-            wr.close();
-            rd.close();
-            connection.disconnect();
-            return new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    class ObjectEncoderImpl extends ObjectEncoder {
-        @Override
-        protected void encode(ChannelHandlerContext ctx, Serializable msg, ByteBuf out) throws Exception {
-            super.encode(ctx, msg, out);
         }
     }
 }

@@ -40,8 +40,9 @@
                 <version>${kevoree.version}</version>
                 <extensions>true</extensions>
                 <configuration>
-                    <!--<model>${project.basedir}/src/main/kevs/main.kevs</model>-->
-                    <model>${project.basedir}/src/main/kevs/group.kevs</model>
+                    <!--<model>${project.basedir}/src/main/kevs/web.kevs</model>-->
+                    <!--<model>${project.basedir}/src/main/kevs/group.kevs</model>-->
+                    <model>${project.basedir}/src/main/kevs/channel.kevs</model>
                 </configuration>
             </plugin>
         </plugins>

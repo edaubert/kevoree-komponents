@@ -140,7 +140,7 @@ public abstract class AbstractNettyHttpGroup implements ModelListener {
                     e.printStackTrace();
                 }
             }
-            Log.trace("After trying to send the model on node {}, none of the tries succeed", node.getName());
+            Log.debug("After trying to send the model on node {}, none of the tries succeed", node.getName());
             return false;
         }
         Log.debug("Unable to send a model to a NULL node");
