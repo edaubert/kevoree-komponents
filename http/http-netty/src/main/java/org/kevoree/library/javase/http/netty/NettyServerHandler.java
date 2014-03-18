@@ -25,7 +25,7 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  * @version 1.0
  */
 @ChannelHandler.Sharable
-public abstract class NettyHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
+public abstract class NettyServerHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {

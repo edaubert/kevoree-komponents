@@ -1,10 +1,7 @@
 package org.kevoree.library.javase.http.netty;
 
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -14,6 +11,8 @@ import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.util.concurrent.GenericFutureListener;
 import org.kevoree.log.Log;
+
+import java.util.Map;
 
 /**
  * User: Erwan Daubert - erwan.daubert@gmail.com
@@ -38,7 +37,7 @@ public class NettyServer {
         this.instanceName = instanceName;
     }
 
-    public void start(int port, final NettyHandler handler) throws Exception {
+    public void start(int port, final NettyServerHandler handler, final Map<String, ChannelHandler> extraHandlers) throws Exception {
 
         bossGroup = new NioEventLoopGroup();
         workerGroup = new NioEventLoopGroup();
@@ -51,7 +50,7 @@ public class NettyServer {
                          // Create a default pipeline implementation.
                          ChannelPipeline pipeline = ch.pipeline();
 
-                         // Uncomment the following line if you want HTTPS
+                         // TODO Uncomment the following line if you want HTTPS
                             /*if (ssl) {
                                 SSLEngine engine = SecureChatSslContextFactory.getServerContext().createSSLEngine();
                                 engine.setUseClientMode(false);
@@ -62,6 +61,11 @@ public class NettyServer {
                          pipeline.addLast("aggregator", new HttpObjectAggregator(1048576));
                          pipeline.addLast("encoder", new HttpResponseEncoder());
                          pipeline.addLast("chunkedWriter", new ChunkedWriteHandler());
+
+                         for (String name : extraHandlers.keySet()) {
+                             pipeline.addLast(name, extraHandlers.get(name));
+                         }
+
                          pipeline.addLast("handler", handler);
                      }
                  });

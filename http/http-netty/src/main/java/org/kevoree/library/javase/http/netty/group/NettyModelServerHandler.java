@@ -1,14 +1,12 @@
 package org.kevoree.library.javase.http.netty.group;
 
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.*;
-import io.netty.util.CharsetUtil;
 import org.kevoree.ContainerRoot;
 import org.kevoree.api.ModelService;
 import org.kevoree.api.handler.UUIDModel;
-import org.kevoree.library.javase.http.netty.NettyHandler;
+import org.kevoree.library.javase.http.netty.NettyServerHandler;
 import org.kevoree.library.javase.http.netty.helpers.Reader;
 import org.kevoree.loader.JSONModelLoader;
 import org.kevoree.log.Log;
@@ -18,6 +16,7 @@ import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.UUID;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_LENGTH;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
@@ -32,7 +31,7 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  * @author Erwan Daubert
  * @version 1.0
  */
-public class NettyModelHandler extends NettyHandler {
+public class NettyModelServerHandler extends NettyServerHandler {
 
     private ModelService modelService;
     private JSONModelSerializer serializer;
@@ -40,19 +39,26 @@ public class NettyModelHandler extends NettyHandler {
 
     private AbstractNettyHttpGroup group;
 
+    private ContinueResponseSender continueResponseSender;
+
+    private ScheduledThreadPoolExecutor executor;
+
     private long timeout;
 
-    public NettyModelHandler(AbstractNettyHttpGroup group, ModelService modelService, long timeout) {
+    public NettyModelServerHandler(AbstractNettyHttpGroup group, ModelService modelService, long timeout) {
         this.group = group;
         this.modelService = modelService;
         this.timeout = timeout;
         serializer = new JSONModelSerializer();
         loader = new JSONModelLoader();
+        continueResponseSender = new ContinueResponseSender();
+        executor = new ScheduledThreadPoolExecutor(1);
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, FullHttpRequest fullHttpRequest) throws Exception {
         if (!fullHttpRequest.getDecoderResult().isSuccess()) {
+            Log.warn("Request receive has not been decoded...");
             sendError(channelHandlerContext, HttpResponseStatus.BAD_REQUEST);
         } else {
             if (fullHttpRequest.getUri().equalsIgnoreCase("/pull")
@@ -100,13 +106,19 @@ public class NettyModelHandler extends NettyHandler {
 
                 ContainerRoot model = (ContainerRoot) loader.loadModelFromString(decoder.parameters().get("model").get(0)).get(0);
 
+                continueResponseSender.setRunning(true);
+                continueResponseSender.setChannelHandlerContext(channelHandlerContext);
+
+                executor.execute(continueResponseSender);
 
                 boolean succeed = group.updateModel(model, uuid);
 
+                continueResponseSender.setRunning(false);
+
                 if (succeed) {
                     FullHttpResponse response = new DefaultFullHttpResponse(
-                            HTTP_1_1, OK, Unpooled.copiedBuffer("DONE", CharsetUtil.UTF_8));
-                    response.headers().set(CONTENT_TYPE, "text/plain; charset=UTF-8");
+                            HTTP_1_1, OK);
+                    response.headers().set(CONTENT_LENGTH, response.content().readableBytes());
 
                     // Close the connection as soon as the error message is sent.
                     channelHandlerContext.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
@@ -118,6 +130,34 @@ public class NettyModelHandler extends NettyHandler {
                 Log.debug("Request receive but not managed: {}", fullHttpRequest.getUri());
 
                 sendError(channelHandlerContext, NOT_FOUND);
+            }
+        }
+    }
+
+    class ContinueResponseSender implements Runnable {
+
+        private boolean running;
+        private ChannelHandlerContext channelHandlerContext;
+
+        public synchronized void setChannelHandlerContext(ChannelHandlerContext channelHandlerContext) {
+            this.channelHandlerContext = channelHandlerContext;
+        }
+
+        public synchronized void setRunning(boolean running) {
+            this.running = running;
+        }
+
+        @Override
+        public synchronized void run() {
+            while (running) {
+                try {
+                    wait(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                FullHttpResponse response = new DefaultFullHttpResponse(
+                        HTTP_1_1, CONTINUE);
+                channelHandlerContext.writeAndFlush(response);
             }
         }
     }

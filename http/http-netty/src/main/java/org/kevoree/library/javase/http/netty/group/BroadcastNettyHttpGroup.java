@@ -48,8 +48,10 @@ public class BroadcastNettyHttpGroup extends AbstractNettyHttpGroup {
             Group modelElement = findModelElement();
             if (modelElement != null) {
                 for (ContainerNode subNode : modelElement.getSubNodes()) {
-                    if (!sendModelToNode(uuidModel, subNode)) {
-                        Log.warn("Unable to send the model to {}", subNode.getName());
+                    if (!subNode.getName().equals(context.getNodeName())) {
+                        if (!sendModelToNode(uuidModel, subNode)) {
+                            Log.warn("Unable to send the model to {}", subNode.getName());
+                        }
                     }
                 }
             }
@@ -80,6 +82,7 @@ public class BroadcastNettyHttpGroup extends AbstractNettyHttpGroup {
         boolean succeed = monitor.waitFor();
 
         modelService.registerModelListener(this);
+        System.err.println(succeed);
         return succeed;
     }
 

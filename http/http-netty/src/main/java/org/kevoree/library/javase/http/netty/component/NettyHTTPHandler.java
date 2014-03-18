@@ -11,13 +11,14 @@ import org.kevoree.library.javase.http.api.commons.HTTPOperationTuple;
 import org.kevoree.library.javase.http.api.commons.Monitor;
 import org.kevoree.library.javase.http.api.page.KevoreeHTTPServletRequest;
 import org.kevoree.library.javase.http.api.page.KevoreeHTTPServletResponse;
-import org.kevoree.library.javase.http.netty.NettyHandler;
+import org.kevoree.library.javase.http.netty.NettyServerHandler;
 import org.kevoree.log.Log;
 
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONNECTION;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_LENGTH;
 import static io.netty.handler.codec.http.HttpHeaders.isKeepAlive;
-import static io.netty.handler.codec.http.HttpResponseStatus.*;
+import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
+import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 /**
@@ -29,7 +30,7 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  * @version 1.0
  */
 @ChannelHandler.Sharable
-public class NettyHTTPHandler extends NettyHandler {
+public class NettyHTTPHandler extends NettyServerHandler {
     private NettyHTTPServer server;
 
     public NettyHTTPHandler(NettyHTTPServer server) {

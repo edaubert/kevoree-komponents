@@ -1,22 +1,29 @@
 package org.kevoree.library.javase.http.netty.group;
 
-import org.kevoree.*;
-import org.kevoree.annotation.GroupType;
+import io.netty.channel.ChannelHandler;
+import io.netty.handler.codec.http.HttpResponseStatus;
+import org.kevoree.ContainerNode;
+import org.kevoree.ContainerRoot;
+import org.kevoree.Group;
 import org.kevoree.annotation.*;
 import org.kevoree.api.Context;
 import org.kevoree.api.ModelService;
 import org.kevoree.api.handler.ModelListener;
 import org.kevoree.api.handler.UUIDModel;
+import org.kevoree.komponents.helpers.ModelManipulation;
+import org.kevoree.library.javase.http.netty.NettyClient;
+import org.kevoree.library.javase.http.netty.NettyClientHandler;
+import org.kevoree.library.javase.http.netty.NettyClientOutput;
 import org.kevoree.library.javase.http.netty.NettyServer;
 import org.kevoree.loader.JSONModelLoader;
 import org.kevoree.log.Log;
 import org.kevoree.serializer.JSONModelSerializer;
 
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,8 +47,11 @@ public abstract class AbstractNettyHttpGroup implements ModelListener {
     protected Context context;
 
     //    private boolean ssl;
-    private NettyModelHandler handler;
+    private NettyModelServerHandler serverHandler;
     private NettyServer server;
+    private NettyClientHandler clientHandler;
+    private NettyClient client;
+
     private JSONModelSerializer serializer;
     private JSONModelLoader loader;
 
@@ -50,9 +60,14 @@ public abstract class AbstractNettyHttpGroup implements ModelListener {
     @Start
     public void start() throws Exception {
         // TODO manage ssl
-        handler = new NettyModelHandler(this, modelService, timeout);
+        serverHandler = new NettyModelServerHandler(this, modelService, timeout);
         server = new NettyServer(context.getInstanceName());
-        server.start(port, handler);
+        server.start(port, serverHandler, new HashMap<String, ChannelHandler>());
+
+        clientHandler = new NettyModelClientHandler();
+        client = new NettyClient();
+        client.start(clientHandler, new HashMap<String, ChannelHandler>());
+
         serializer = new JSONModelSerializer();
         loader = new JSONModelLoader();
         modelService.registerModelListener(this);
@@ -69,21 +84,24 @@ public abstract class AbstractNettyHttpGroup implements ModelListener {
     public ContainerRoot getModelFromNode(ContainerNode node) {
         if (node != null) {
             // get ips
-            List<String> ips = getIpsForNode(node);
+            List<String> ips = ModelManipulation.getIps((ContainerRoot) node.eContainer(), node.getName(), false);
             // get port
-            int port = getPortForNode(node);
-            boolean received = false;
-            InputStream stream = null;
+            int port = 9000;
+            try {
+                port = Integer.parseInt(ModelManipulation.getFragmentDictionaryValue(((ContainerRoot) node.eContainer()).findGroupsByID(context.getInstanceName()), "port", node.getName()));
+            } catch (NumberFormatException ignored) {
+                ignored.printStackTrace();
+            }
+            NettyClientOutput output = null;
             for (String ip : ips) {
                 // TODO uuid is not use
-                stream = sendRequest("http://" + ip + ":" + port + "/pull", new ByteArrayInputStream(new byte[0]));
-                if (stream != null) {
-                    received = true;
+                output = client.sendRequest(ip, port, "/pull", new ByteArrayInputStream(new byte[0]));
+                if (output != null) {
                     break;
                 }
             }
-            if (received && stream != null) {
-                return (ContainerRoot) loader.loadModelFromStream(stream).get(0);
+            if (output != null) {
+                return (ContainerRoot) loader.loadModelFromStream(output.getContent()).get(0);
             }
         }
         return null;
@@ -92,10 +110,16 @@ public abstract class AbstractNettyHttpGroup implements ModelListener {
     public boolean sendModelToNode(UUIDModel uuidModel, ContainerNode node) {
         if (node != null) {
             // get ips
-            List<String> ips = getIpsForNode(node);
+            List<String> ips = ModelManipulation.getIps(uuidModel.getModel(), node.getName(), false);
             // get port
-            int port = getPortForNode(node);
-            InputStream stream;
+            int port = 9000;
+            try {
+                port = Integer.parseInt(ModelManipulation.getFragmentDictionaryValue(uuidModel.getModel().findGroupsByID(context.getInstanceName()), "port", node.getName()));
+            } catch (NumberFormatException ignored) {
+                ignored.printStackTrace();
+            }
+            Log.trace("Port for sending model to {} is {}", node.getName(), port);
+            NettyClientOutput output;
             for (String ip : ips) {
                 try {
                     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -106,10 +130,9 @@ public abstract class AbstractNettyHttpGroup implements ModelListener {
                     serializer.serializeToStream(uuidModel.getModel(), outputStream);
                     outputStream.flush();
 
-                    stream = sendRequest("http://" + ip + ":" + port + "/push", new ByteArrayInputStream(outputStream.toByteArray()));
-                    if (stream != null) {
-                        String result = readStream(stream);
-                        if (result.equalsIgnoreCase("done")) {
+                    output = client.sendRequest(ip, port, "/push", new ByteArrayInputStream(outputStream.toByteArray()));
+                    if (output != null) {
+                        if (output.getResponseCode() == HttpResponseStatus.OK.code()) {
                             return true;
                         }
                     }
@@ -117,8 +140,10 @@ public abstract class AbstractNettyHttpGroup implements ModelListener {
                     e.printStackTrace();
                 }
             }
+            Log.trace("After trying to send the model on node {}, none of the tries succeed", node.getName());
             return false;
         }
+        Log.debug("Unable to send a model to a NULL node");
         return false;
     }
 
@@ -146,87 +171,7 @@ public abstract class AbstractNettyHttpGroup implements ModelListener {
         return new String(outputStream.toByteArray(), "UTF-8");
     }
 
-    private List<String> getIpsForNode(ContainerNode n) {
-        List<String> ips = new ArrayList<String>();
-        if (n != null) {
-            for (NetworkInfo ni : n.getNetworkInformation()) {
-                if ("ip".equalsIgnoreCase(ni.getName())) {
-                    for (NetworkProperty np : ni.getValues()) {
-                        ips.add(np.getValue());
-                    }
-                } else {
-                    for (NetworkProperty np : ni.getValues()) {
-                        if ("ip".equalsIgnoreCase(np.getName())) {
-                            ips.add(np.getValue());
-                        }
-                    }
-                }
-            }
-        }
-        return ips;
-    }
 
-    private int getPortForNode(ContainerNode n) {
-        Group modelElement = findModelElement();
-        if (modelElement != null) {
-            FragmentDictionary fragmentDictionary = modelElement.findFragmentDictionaryByID(n.getName());
-            if (fragmentDictionary != null) {
-                DictionaryValue portValue = fragmentDictionary.findValuesByID("port");
-                if (portValue != null) {
-                    try {
-                        return Integer.parseInt(portValue.getValue());
-                    } catch (NumberFormatException ignore) {
-                    }
-                }
-            }
-        }
-        return 9000;
-    }
-
-    private InputStream sendRequest(String urlString, InputStream content) {
-        try {
-            URL url = new URL(urlString);
-            // TODO manage ssl
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoInput(true);
-            connection.setDoOutput(true);
-            connection.setConnectTimeout(timeout);
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-
-            ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
-            byte[] bytes = new byte[2048];
-            int length = content.read(bytes);
-            int contentLength = length;
-            while (length != -1) {
-                byteArrayStream.write(bytes, 0, length);
-                length = content.read(bytes);
-                contentLength += length;
-            }
-
-            connection.setRequestProperty("Content-Length", "" + contentLength);
-            OutputStream wr = connection.getOutputStream();
-            wr.write(byteArrayStream.toByteArray());
-            wr.flush();
-
-            InputStream rd = connection.getInputStream();
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            length = content.read(bytes);
-            while (length != -1) {
-                byteArrayOutputStream.write(bytes, 0, length);
-                length = rd.read(bytes);
-            }
-            wr.close();
-            rd.close();
-            connection.disconnect();
-            return new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
     /*private def sendModel (password: String, sshKey: String, address: String, model: ContainerRoot): Boolean = {
         val bodyBuilder = new StringBuilder
