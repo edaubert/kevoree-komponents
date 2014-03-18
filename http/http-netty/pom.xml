@@ -24,6 +24,11 @@
             <artifactId>http-api</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.kevoree.komponents</groupId>
+            <artifactId>helpers</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -35,8 +40,8 @@
                 <version>${kevoree.version}</version>
                 <extensions>true</extensions>
                 <configuration>
-                    <model>${project.basedir}/src/main/kevs/main.kevs</model>
-                    <!--<model>${project.basedir}/src/main/kevs/group.kevs</model>-->
+                    <!--<model>${project.basedir}/src/main/kevs/main.kevs</model>-->
+                    <model>${project.basedir}/src/main/kevs/group.kevs</model>
                 </configuration>
             </plugin>
         </plugins>
