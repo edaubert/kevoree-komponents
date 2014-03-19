@@ -35,11 +35,11 @@ public class DataCodec {
         Object content = null;
         int type = in.readByte();
         if (type == 1) {
-            byte[] bytes = new byte[in.readableBytes() - 1];
+            byte[] bytes = new byte[in.readableBytes()];
             in.readBytes(bytes, 0, bytes.length);
             content = new String(bytes, "UTF-8");
         } else if (type == 0) {
-            content = decoder.decode(ctx, in.copy(1, in.readableBytes() -1));
+            content = decoder.decode(ctx, in.copy(1, in.readableBytes()));
         } else {
             Log.warn("Unable to decode the receive data");
         }

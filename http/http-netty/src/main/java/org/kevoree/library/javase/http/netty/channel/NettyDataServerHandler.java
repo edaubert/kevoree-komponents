@@ -47,8 +47,6 @@ public class NettyDataServerHandler extends NettyServerHandler {
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, FullHttpRequest fullHttpRequest) throws Exception {
         ByteBuf buf = fullHttpRequest.content();
 
-        System.err.println(new String(Reader.readContent(buf)));
-
         Object content = codec.decode(channelHandlerContext, buf);
         Object result = channel.dispatchLocal(content);
         buf = Unpooled.buffer();
