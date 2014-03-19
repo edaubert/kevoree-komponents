@@ -109,7 +109,7 @@ public abstract class AbstractNettyChannel implements ChannelDispatch {
                 }
             }
             for (String ip : ips) {
-                Log.info("Trying to send data on {}", "http://" + ip + ":" + port + "/");
+                Log.debug("Trying to send data on {}", "http://" + ip + ":" + port + "/");
                 NettyClientOutput output = client.sendRequest(ip, port, "/", new ByteArrayInputStream(bytes));
                 if (output != null && output.getContent() != null) {
                     return output.getContent();

@@ -53,7 +53,7 @@ public class NettyHTTPHandler extends NettyServerHandler {
             KevoreeHTTPServletResponse response = new NettyKevoteeHTTPServletResponse(ctx, httpResponse);
             Monitor monitor = new Monitor(server.getTimeout(), server);
             HTTPOperationTuple result = monitor.request(new HTTPOperationTuple(request, response, monitor));
-            Log.info("Status of the response: {} for request uri: {}", httpResponse.getStatus(), request.getRequestURI());
+            Log.debug("Status of the response: {} for request uri: {}", httpResponse.getStatus(), request.getRequestURI());
 
             ((NettyKevoteeHTTPServletResponse)response).end();
 
