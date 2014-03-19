@@ -37,7 +37,7 @@ public class SynchronizedChannelCallback<T> implements Callback<T> {
                 return result;
             }
         } else {
-            Log.warn("No result receive before timeout exceeeds...");
+            Log.debug("No result receive before timeout exceeeds...");
             return null;
         }
     }

@@ -49,7 +49,7 @@ public class Monitor {
             response = param.response;
             notify();
         } else {
-            Log.warn("Timeout exceeds for request uri: {}", param.request.getRequestURI());
+            Log.info("Timeout exceeds for request uri: {}", param.request.getRequestURI());
         }
     }
 }

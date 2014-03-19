@@ -23,7 +23,7 @@ public class HTTPHelper {
         try {
             p.load(StaticFileHandlerHelper.class.getClassLoader().getResourceAsStream("mime.properties"));
         } catch (Exception ex) {
-            Log.debug("MIME map can't be loaded: {}", ex, ex.getMessage());
+            Log.error("MIME map can't be loaded: {}", ex, ex.getMessage());
         }
         return p;
     }
