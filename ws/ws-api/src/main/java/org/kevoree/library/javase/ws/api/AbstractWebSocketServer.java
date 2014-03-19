@@ -28,16 +28,18 @@ public abstract class AbstractWebSocketServer {
     protected Port onClose;
 
     public void setPort(int port) throws Exception {
-        if (this.port != port) {
-            this.port = port;
+        int oldPort = this.port;
+        this.port = port;
+        if (oldPort != 0 && oldPort != port) {
             stop();
             start();
         }
     }
 
     public void setTimeout(long timeout) throws Exception {
-        if (this.timeout != timeout) {
-            this.timeout = timeout;
+        long oldTimeout = this.timeout;
+        this.timeout = timeout;
+        if (oldTimeout != 0l && oldTimeout != timeout) {
             stop();
             start();
         }
