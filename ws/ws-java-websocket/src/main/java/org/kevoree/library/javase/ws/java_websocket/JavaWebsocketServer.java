@@ -1,7 +1,10 @@
 package org.kevoree.library.javase.ws.java_websocket;
 
 import org.kevoree.annotation.ComponentType;
+import org.kevoree.annotation.KevoreeInject;
+import org.kevoree.api.Context;
 import org.kevoree.library.javase.ws.api.AbstractWebSocketServer;
+import org.kevoree.log.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
