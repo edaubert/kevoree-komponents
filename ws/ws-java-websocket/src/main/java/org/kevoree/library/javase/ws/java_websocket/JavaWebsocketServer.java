@@ -19,6 +19,9 @@ import java.util.Map;
 @ComponentType
 public class JavaWebsocketServer extends AbstractWebSocketServer {
 
+    @KevoreeInject
+    Context context;
+    
     private WebSocketServerImpl handler;
     private Map<Long, WebSocketWrapper> connectionsFromId;
     private Map<String, List<WebSocketWrapper>> connectionsFromUri;
@@ -30,6 +33,8 @@ public class JavaWebsocketServer extends AbstractWebSocketServer {
 
         handler = new WebSocketServerImpl(port, this);
         handler.start();
+        
+        Log.debug("Server {} is now started at {}", context.getInstanceName(), handler.getAddress().toString());
     }
 
     @Override

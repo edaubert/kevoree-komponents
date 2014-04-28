@@ -63,6 +63,6 @@ public class WebSocketServerImpl extends WebSocketServer {
     @Override
     public void onError(WebSocket connection, Exception e) {
 //        WebSocketWrapper wrapper = webSocketWrappers.get(connection);
-//        Log.debug("New request to handle on message: {}", wrapper.getUri());
+        Log.debug("New request to handle on message: ", e);
     }
 }
