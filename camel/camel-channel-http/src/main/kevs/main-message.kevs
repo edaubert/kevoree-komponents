@@ -1,0 +1,29 @@
+include mvn:org.kevoree.library.java:org.kevoree.library.java.javaNode:latest
+include mvn:org.kevoree.library.java:org.kevoree.library.java.toys:latest
+include mvn:org.kevoree.library.java:org.kevoree.library.java.ws:latest
+include mvn:org.kevoree.komponents:camel-channel-http:latest
+include mvn:org.kevoree.komponents:javafx:latest
+
+add node0 : JavaNode
+add node0.node1 : JavaNode
+add node0.node2 : JavaNode
+
+add camelMessage : CamelNettyMessage
+
+add node1.video : JavaFXVideoDisplay
+
+add node1.console : ToyConsole
+
+bind node1.console.textEntered camelMessage
+bind node1.video.media camelMessage
+
+set camelMessage.port/node1 = "10001"
+set camelMessage.port/node2 = "10002"
+
+//set node0.log = "TRACE"
+set node1.log = "TRACE"
+//set node2.log = "TRACE"
+
+
+// http://download.oracle.com/otndocs/products/javafx/JavaRap/prog_index.m3u8
+

@@ -1,0 +1,28 @@
+repo "http://oss.sonatype.org/content/groups/public/"
+
+include mvn:org.kevoree.library.java:org.kevoree.library.java.javaNode:latest
+include mvn:org.kevoree.library.java:org.kevoree.library.java.helloworld:latest
+include mvn:org.komponents:camel-mqtt:latest
+include mvn:org.kevoree.library.java:org.kevoree.library.java.toys:latest
+
+add node0 : JavaNode
+set node0.log = "debug"
+
+add node0.ticker : Ticker
+add node0.c1 : ToyConsole
+
+add hub : CamelMQTT
+
+bind node0.c1.showText hub
+bind node0.ticker.tick hub
+
+set node0.ticker.period = "1000"
+
+add node0.child1 : JavaNode
+set child1.log = "debug"
+add child1.c2 : ToyConsole
+
+bind child1.c2.showText hub
+
+set hub.master/node0 = "true"
+set hub.topic = "topic"

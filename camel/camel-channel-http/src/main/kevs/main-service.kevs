@@ -1,0 +1,32 @@
+repo "https://repo1.maven.org/maven2"
+repo "https://oss.sonatype.org/content/groups/public/"
+
+include mvn:org.kevoree.library.java:org.kevoree.library.java.javaNode:latest
+include mvn:org.kevoree.library.java:org.kevoree.library.java.toys:latest
+include mvn:org.kevoree.library.java:org.kevoree.library.java.ws:latest
+include mvn:org.kevoree.komponents:camel-channel-http:latest
+include mvn:org.kevoree.komponents:file-samples:latest
+
+add node0 : JavaNode
+add node0.node1 : JavaNode
+add node0.node2 : JavaNode
+
+add camelService : CamelNettyService
+
+add node1.video : JavaFXVideoDisplay
+
+add node2.console : ToyConsole
+
+bind node2.console.textEntered camelMessage
+bind node1.video.media camelMessage
+
+set camelMessage.port/node1 = "10001"
+set camelMessage.port/node2 = "10002"
+
+//set node0.log = "TRACE"
+//set node1.log = "TRACE"
+//set node2.log = "TRACE"
+
+
+// http://download.oracle.com/otndocs/products/javafx/JavaRap/prog_index.m3u8
+

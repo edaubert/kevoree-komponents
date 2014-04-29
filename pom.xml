@@ -12,8 +12,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <kevoree.version>3.5.4</kevoree.version>
-        <kevoree.library.version>3.5.2</kevoree.library.version>
+        <kevoree.version>3.5.5-SNAPSHOT</kevoree.version>
+        <kevoree.library.version>3.5.3-SNAPSHOT</kevoree.library.version>
     </properties>
 
     <dependencies>
@@ -38,7 +38,7 @@
         <module>http</module>
         <module>ws</module>
         <module>authentication</module>
-        <!--<module>camel</module>-->
+        <module>camel</module>
         <module>helpers</module>
     </modules>
 

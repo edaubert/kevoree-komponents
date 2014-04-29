@@ -1,9 +1,7 @@
 **bin/
-.svn
-**/.svn
-target/
-.DS_Store
-keystore
+**.svn
+**.DS_Store
+**keystore
 **.classpath
 **.project
 **.settings/
@@ -16,11 +14,7 @@ keystore
 **seed.txt
 **nbactions.xml
 **maven-eclipse.xml
-**/.scala_dependencies
+**.scala_dependencies
 **~
 **.hprof
-
-
-
-
-
+old
